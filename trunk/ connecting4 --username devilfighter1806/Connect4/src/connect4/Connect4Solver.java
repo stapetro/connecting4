@@ -13,6 +13,10 @@ import java.util.Scanner;
  */
 public class Connect4Solver {
 	/**
+	 * Stores how many men should be connected for winning the game.
+	 */
+	public static final int CONNECT_NUMBER = 4;
+	/**
 	 * Sqaure state filled by the black player.
 	 */
 	public static final char BLACK = 'x';
@@ -43,9 +47,19 @@ public class Connect4Solver {
 	 */
 	private char botPlayer;
 	/**
-	 * Stores number of moves which are done.
+	 * Stores number of moves which are done for both players.
 	 */
-	private int numberMoves;
+	private int[] numberMoves;
+	/**
+	 * Stores winning paths of the game. First index - how many winning paths
+	 * current player has, 4 row numbers and 4 column numbers for every winning
+	 * path.
+	 */
+	private int[][][] winPath;
+	/**
+	 * Stores the number of all winning paths.
+	 */
+	private int numberOfWinPaths;
 	/**
 	 * Stores game board for printing to the standard output.
 	 */
@@ -56,7 +70,7 @@ public class Connect4Solver {
 	private GameMode gameMode;
 
 	/**
-	 * General purpose contructor.
+	 * General purpose contructor. Sets the number of wining paths to zero.
 	 * 
 	 * @param gameMode
 	 *            Game mode to be set.
@@ -67,8 +81,10 @@ public class Connect4Solver {
 		setBoardSize(size);
 		board = new char[boardSize][boardSize];
 		initializeBoard();
-		output = new StringBuilder();
+		winPath = new int[Direction.DIRECTION_NUMBER][2][CONNECT_NUMBER];
+		numberOfWinPaths = 0;
 		this.gameMode = gameMode;
+		output = new StringBuilder();
 	}
 
 	/**
@@ -100,6 +116,7 @@ public class Connect4Solver {
 		if (i == boardSize || i == 0)
 			return false;
 		board[i - 1][col] = player;
+		numberMoves[getNumberMovesIndex(player)]++;
 		return true;
 	}
 
@@ -122,6 +139,7 @@ public class Connect4Solver {
 		if (i == -1 || i == boardSize - 1)
 			return false;
 		board[i + 1][col] = player;
+		numberMoves[getNumberMovesIndex(player)]++;
 		return true;
 	}
 
@@ -142,7 +160,8 @@ public class Connect4Solver {
 		}
 		if (j == boardSize || j == 0)
 			return false;
-		board[row][j-1] = player;
+		board[row][j - 1] = player;
+		numberMoves[getNumberMovesIndex(player)]++;
 		return true;
 	}
 
@@ -157,12 +176,27 @@ public class Connect4Solver {
 	 */
 	private boolean moveManFromRight(char player, int row) {
 		int j;
-		for(j = boardSize-1; j >=0; j--){
-			if(board[row][j] !=EMPTY) break;
+		for (j = boardSize - 1; j >= 0; j--) {
+			if (board[row][j] != EMPTY)
+				break;
 		}
-		if(j == boardSize-1 || j == -1) return false;
-		board[row][j+1] = player; 
+		if (j == boardSize - 1 || j == -1)
+			return false;
+		board[row][j + 1] = player;
+		numberMoves[getNumberMovesIndex(player)]++;
 		return true;
+	}
+
+	/**
+	 * Gets the index of the current player for fetching the data from number of
+	 * moves array.
+	 * 
+	 * @param player
+	 *            Current player.
+	 * @return Index for pointing element from number of moves array.
+	 */
+	private int getNumberMovesIndex(char player) {
+		return (player == BLACK) ? 0 : 1;
 	}
 
 	/**
@@ -251,6 +285,23 @@ public class Connect4Solver {
 			count++;
 		}
 		System.out.print(output);
+	}
 
+	/**
+	 * Prints all winning paths.
+	 */
+	public void printWinPaths() {
+		if (numberOfWinPaths > 0) {
+			for (int k = 0; k < numberOfWinPaths; k++) {
+				for (int i = 0; i < CONNECT_NUMBER; i++) {
+					System.out.print("( " + winPath[k][0][i] + ", "
+							+ winPath[k][1][i] + " )");
+					if (i == CONNECT_NUMBER - 1)
+						System.out.println();
+					else
+						System.out.print(", ");
+				}
+			}
+		}
 	}
 }
