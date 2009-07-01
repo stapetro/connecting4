@@ -93,7 +93,7 @@ public class GamePlay {
 	 * Determines the game mode and loops the relevant game play.
 	 */
 	public void loopGame() {
-		if (gameMode == GameMode.SIINGLE_PLAYER) {
+		if (gameMode == GameMode.SINGLE_PLAYER) {
 			playSinglePlayer();
 		} else {
 			playMultiPlayer();
@@ -151,7 +151,7 @@ public class GamePlay {
 	 */
 	public static void main(String[] args) {
 		// configure new game.
-		GamePlay game = new GamePlay(GameMode.SIINGLE_PLAYER, 7);
+		GamePlay game = new GamePlay(GameMode.SINGLE_PLAYER, 7);
 		// choose which player to be.
 		game.choosePlayer();
 		// game loop.
