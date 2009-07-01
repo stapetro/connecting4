@@ -10,6 +10,10 @@ public enum Direction {
 
 	TOP(1, 0), BOTTOM(2, 6), LEFT(3, 0), RIGHT(4, 6);
 	/**
+	 * Stores the number of all directions of a man.
+	 */
+	public static final int DIRECTION_NUMBER = 8;
+	/**
 	 * Stores sequential number of the direction.
 	 */
 	private final int number;
@@ -20,8 +24,11 @@ public enum Direction {
 
 	/**
 	 * General purpose constructor.
-	 * @param num Sequential number to be set.
-	 * @param position Position to be set.
+	 * 
+	 * @param num
+	 *            Sequential number to be set.
+	 * @param position
+	 *            Position to be set.
 	 */
 	Direction(int num, int position) {
 		this.number = num;
@@ -30,6 +37,7 @@ public enum Direction {
 
 	/**
 	 * Direction position getter.
+	 * 
 	 * @return Row or column of the relevant position.
 	 */
 	public int getPosition() {
