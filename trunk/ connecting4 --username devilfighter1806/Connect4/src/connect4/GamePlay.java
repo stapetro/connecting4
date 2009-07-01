@@ -118,21 +118,25 @@ public class GamePlay {
 				break;
 			switch (position) {
 			case 1:
-				if(connect4.moveMan(currentPlayer, Direction.TOP, num)==false){
+				if (connect4.moveMan(currentPlayer, Direction.TOP, num) == false) {
 					System.out.println("Invalid move!");
 				}
 				break;
-			case 2: 
-				validMove = connect4.moveMan(currentPlayer, Direction.BOTTOM, num);
+			case 2:
+				validMove = connect4.moveMan(currentPlayer, Direction.BOTTOM,
+						num);
 				break;
-			case 3: 
-				validMove = connect4.moveMan(currentPlayer, Direction.LEFT, num);
+			case 3:
+				validMove = connect4
+						.moveMan(currentPlayer, Direction.LEFT, num);
 				break;
-			case 4: 
-				validMove = connect4.moveMan(currentPlayer, Direction.RIGHT, num);
+			case 4:
+				validMove = connect4.moveMan(currentPlayer, Direction.RIGHT,
+						num);
 				break;
 			}
-			if(!validMove) System.out.println("Invalid move!");
+			if (!validMove)
+				System.out.println("Invalid move!");
 			connect4.printBoard();
 		}
 	}
