@@ -137,6 +137,11 @@ public class GamePlay {
 			}
 			if (!validMove)
 				System.out.println("Invalid move!");
+			else if (connect4.isPlayerWin(currentPlayer)) {
+				System.out.println("WIN!!!");
+				connect4.printWinPaths();
+				break;
+			}
 			connect4.printBoard();
 		}
 	}

@@ -15,6 +15,10 @@ import java.util.Scanner;
  */
 public class Connect4Solver {
 	/**
+	 * Stores number of players in the game.
+	 */
+	public static final int PLAYERS = 2;
+	/**
 	 * Stores how many men should be connected for winning the game.
 	 */
 	public static final int CONNECT_NUMBER = 4;
@@ -107,11 +111,14 @@ public class Connect4Solver {
 	 */
 	@SuppressWarnings("unchecked")
 	private void initialiazeMovesList() {
-		numberMoves = new int[2];
-		moves = (ArrayList<Point>[]) new ArrayList[2];
+		numberMoves = new int[PLAYERS];
+		moves = (ArrayList<Point>[]) new ArrayList[PLAYERS];
 		for (int i = 0; i < moves.length; i++) {
 			moves[i] = new ArrayList<Point>();
 		}
+		numberMoves[getMovesIndex(BLACK)] = 1;
+		moves[getMovesIndex(BLACK)]
+				.add(new Point(boardSize / 2, boardSize / 2));
 	}
 
 	/**
@@ -221,6 +228,197 @@ public class Connect4Solver {
 	}
 
 	/**
+	 * Validates position in the board.
+	 * 
+	 * @param pos
+	 *            Row or column in the board.
+	 * @return True - if position is valid, false - otherwise.
+	 */
+	private boolean isPositionValid(int pos) {
+		return (pos >= 0 && pos <= boardSize - 1) ? true : false;
+	}
+
+	/**
+	 * Checks if player is winning in horizontal direction.
+	 * 
+	 * @param player
+	 *            Current player.
+	 * @param x
+	 *            Row number of current player's position.
+	 * @param y
+	 *            Column number of current player's position.
+	 * @return True - if player wins, false - otherwise.
+	 */
+	private boolean isPlayerWinHorizontally(char player, int x, int y) {
+		int count = 0;
+		int endCol = y + (CONNECT_NUMBER - 1);
+		if (isPositionValid(endCol)) {
+			for (int i = y + (CONNECT_NUMBER - 1); i >= y; i--) {
+				if (board[x][i] != player)
+					break;
+				else {
+					winPathRow[count] = x;
+					winPathCol[count] = i;
+					count++;
+				}
+			}
+			if (count == CONNECT_NUMBER)
+				return true;
+			count = 0;
+		}
+		endCol = y - (CONNECT_NUMBER - 1);
+		if (isPositionValid(endCol)) {
+			for (int i = y - (CONNECT_NUMBER - 1); i <= y; i++) {
+				if (board[x][i] != player)
+					break;
+				else {
+					winPathRow[count] = x;
+					winPathCol[count] = i;
+					count++;
+				}
+			}
+			if (count == CONNECT_NUMBER)
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if player is winning in vertical direction.
+	 * 
+	 * @param player
+	 *            Current player.
+	 * @param x
+	 *            Row number of current player's position.
+	 * @param y
+	 *            Column number of current player's position.
+	 * @return True - if player wins, false - otherwise.
+	 */
+	private boolean isPlayerWinVertically(char player, int x, int y) {
+		int count = 0;
+		int endRow = x - (CONNECT_NUMBER - 1);
+		if (isPositionValid(endRow)) {
+			for (int i = x - (CONNECT_NUMBER - 1); i <= x; i++) {
+				if (board[i][y] != player)
+					break;
+				else {
+					winPathRow[count] = i;
+					winPathCol[count] = y;
+					count++;
+				}
+			}
+			if (count == CONNECT_NUMBER)
+				return true;
+			count = 0;
+		}
+		endRow = x + (CONNECT_NUMBER - 1);
+		if (isPositionValid(endRow)) {
+			for (int i = x + (CONNECT_NUMBER - 1); i >= x; i--) {
+				if (board[i][y] != player)
+					break;
+				else {
+					winPathRow[count] = i;
+					winPathCol[count] = y;
+					count++;
+				}
+			}
+			if (count == CONNECT_NUMBER)
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if player wins on the 4 diagonals.
+	 * 
+	 * @param player
+	 *            Current player.
+	 * @param x
+	 *            Row number of current player's position.
+	 * @param y
+	 *            Column number of current player's position.
+	 * @return True - if player wins, false - otherwise.
+	 */
+	private boolean isPlayerWinDiagonally(char player, int x, int y) {
+		//TODO TO be implemented.
+		return (isPlayerWinDiaognalUp(player, x, y) || isPlayerWinDiagonalDown(
+				player, x, y));
+	}
+
+	/**
+	 * Checks if player wins on the 2 diagonals in left-upper and right-upper
+	 * direction.
+	 * 
+	 * @param player
+	 *            Current player.
+	 * @param x
+	 *            Row number of current player's position.
+	 * @param y
+	 *            Column number of current player's position.
+	 * @return True - if player wins, false - otherwise.
+	 */
+	//TODO TO be splitted in two methods and tests if it works.
+	private boolean isPlayerWinDiaognalUp(char player, int x, int y) {
+		int count = 0;		
+		int endRow = x - (CONNECT_NUMBER - 1);
+		int endCol = y - (CONNECT_NUMBER - 1);
+		if (isPositionValid(endRow) && isPositionValid(endCol)) {
+			do {
+				if (board[endRow][endCol] != player)
+					break;
+				else {
+					winPathRow[count] = endRow;
+					winPathCol[count] = endCol;
+					count++;
+					endRow++;
+					endCol++;
+				}
+			} while (count < CONNECT_NUMBER);
+			if(count == CONNECT_NUMBER){
+				return true;
+			}
+			count = 0;
+		}
+		endRow = x - (CONNECT_NUMBER - 1);
+		endCol = y + (CONNECT_NUMBER - 1);
+		if (isPositionValid(endRow) && isPositionValid(endCol)) {
+			do {
+				if (board[endRow][endCol] != player)
+					break;
+				else {
+					winPathRow[count] = endRow;
+					winPathCol[count] = endCol;
+					count++;
+					endRow++;
+					endCol--;
+				}
+			} while (count < CONNECT_NUMBER);
+			if(count == CONNECT_NUMBER){
+				return true;
+			}
+			count = 0;
+		}
+		return false;
+	}
+
+	/**
+	 * Checks if player wins on the 2 diagonals in left-down and right-down
+	 * direction.
+	 * 
+	 * @param player
+	 *            Current player.
+	 * @param x
+	 *            Row number of current player's position.
+	 * @param y
+	 *            Column number of current player's position.
+	 * @return True - if player wins, false - otherwise.
+	 */
+	private boolean isPlayerWinDiagonalDown(char player, int x, int y) {
+		//TODO To be implemented.
+		return false;
+	}
+
+	/**
 	 * Board size setter.
 	 * 
 	 * @param boardSize
@@ -279,8 +477,18 @@ public class Connect4Solver {
 	 *            Current player.
 	 * @return True - if game has won, false - otherwise.
 	 */
-	public boolean isPlayerWon(char currentPlayer) {
-		// TODO To be implemented.
+	public boolean isPlayerWin(char currentPlayer) {
+		if (numberMoves[getMovesIndex(currentPlayer)] >= CONNECT_NUMBER) {
+			Point p;
+			for (int i = numberMoves[getMovesIndex(currentPlayer)] - 1; i >= 0; i--) {
+				p = moves[getMovesIndex(currentPlayer)].get(i);
+				if (isPlayerWinHorizontally(currentPlayer, p.x, p.y)) {
+					return true;
+				} else if (isPlayerWinVertically(currentPlayer, p.x, p.y)) {
+					return true;
+				}
+			}
+		}
 		return false;
 	}
 
@@ -314,7 +522,7 @@ public class Connect4Solver {
 	public void printWinPaths() {
 		for (int i = 0; i < CONNECT_NUMBER; i++) {
 			System.out.print("( " + winPathRow[i] + ", " + winPathCol[i] + ")");
-			if (i == CONNECT_NUMBER)
+			if (i == CONNECT_NUMBER - 1)
 				System.out.println();
 			else
 				System.out.print(", ");
