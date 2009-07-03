@@ -65,9 +65,9 @@ public class Connect4Solver {
 	 */
 	private int[] winPathCol;
 	/**
-	 * Stores both players' moves.
+	 * Stores the last move regardless of the current player.
 	 */
-	private ArrayList<Point>[] moves;
+	private Point lastMove;
 	/**
 	 * Stores game board for printing to the standard output.
 	 */
@@ -87,9 +87,8 @@ public class Connect4Solver {
 	 */
 	public Connect4Solver(GameMode gameMode, int size) {
 		setBoardSize(size);
-		board = new char[boardSize][boardSize];
 		initializeBoard();
-		initialiazeMovesList();
+		initialiazeMoves();
 		this.gameMode = gameMode;
 		winPathRow = new int[CONNECT_NUMBER];
 		winPathCol = new int[CONNECT_NUMBER];
@@ -100,25 +99,21 @@ public class Connect4Solver {
 	 * Initializes board with empty squares.
 	 */
 	private void initializeBoard() {
+		board = new char[boardSize][boardSize];
 		for (int i = 0; i < getBoardSize(); i++) {
 			Arrays.fill(board[i], '-');
 		}
 		board[boardSize / 2][boardSize / 2] = BLACK;
+		lastMove = new Point(boardSize / 2, boardSize / 2);
 	}
 
 	/**
-	 * Initializes moves list for both players.
+	 * Initializes moves number of both players.
 	 */
 	@SuppressWarnings("unchecked")
-	private void initialiazeMovesList() {
+	private void initialiazeMoves() {
 		numberMoves = new int[PLAYERS];
-		moves = (ArrayList<Point>[]) new ArrayList[PLAYERS];
-		for (int i = 0; i < moves.length; i++) {
-			moves[i] = new ArrayList<Point>();
-		}
 		numberMoves[getMovesIndex(BLACK)] = 1;
-		moves[getMovesIndex(BLACK)]
-				.add(new Point(boardSize / 2, boardSize / 2));
 	}
 
 	/**
@@ -140,7 +135,8 @@ public class Connect4Solver {
 		if (i == boardSize || i == 0)
 			return false;
 		board[i - 1][col] = player;
-		moves[getMovesIndex(player)].add(new Point(i - 1, col));
+		lastMove.x = i - 1;
+		lastMove.y = col;
 		numberMoves[getMovesIndex(player)]++;
 		return true;
 	}
@@ -164,7 +160,8 @@ public class Connect4Solver {
 		if (i == -1 || i == boardSize - 1)
 			return false;
 		board[i + 1][col] = player;
-		moves[getMovesIndex(player)].add(new Point(i + 1, col));
+		lastMove.x = i + 1;
+		lastMove.y = col;
 		numberMoves[getMovesIndex(player)]++;
 		return true;
 	}
@@ -187,7 +184,8 @@ public class Connect4Solver {
 		if (j == boardSize || j == 0)
 			return false;
 		board[row][j - 1] = player;
-		moves[getMovesIndex(player)].add(new Point(row, j - 1));
+		lastMove.x = row;
+		lastMove.y = j - 1;
 		numberMoves[getMovesIndex(player)]++;
 		return true;
 	}
@@ -210,7 +208,8 @@ public class Connect4Solver {
 		if (j == boardSize - 1 || j == -1)
 			return false;
 		board[row][j + 1] = player;
-		moves[getMovesIndex(player)].add(new Point(row, j + 1));
+		lastMove.x = row;
+		lastMove.y = j + 1;
 		numberMoves[getMovesIndex(player)]++;
 		return true;
 	}
@@ -340,14 +339,12 @@ public class Connect4Solver {
 	 * @return True - if player wins, false - otherwise.
 	 */
 	private boolean isPlayerWinDiagonally(char player, int x, int y) {
-		//TODO TO be implemented.
-		return (isPlayerWinDiaognalUp(player, x, y) || isPlayerWinDiagonalDown(
-				player, x, y));
+		return (isPlayerWinDiaognal(player, x, y, true) || isPlayerWinDiaognal(
+				player, x, y, false));
 	}
 
 	/**
-	 * Checks if player wins on the 2 diagonals in left-upper and right-upper
-	 * direction.
+	 * Checks if player wins on the 2 diagonals in left and right direction.
 	 * 
 	 * @param player
 	 *            Current player.
@@ -355,12 +352,16 @@ public class Connect4Solver {
 	 *            Row number of current player's position.
 	 * @param y
 	 *            Column number of current player's position.
+	 * @param up
+	 *            True - when checks diagonals in up direction, false - in down
+	 *            direction.
 	 * @return True - if player wins, false - otherwise.
 	 */
-	//TODO TO be splitted in two methods and tests if it works.
-	private boolean isPlayerWinDiaognalUp(char player, int x, int y) {
-		int count = 0;		
-		int endRow = x - (CONNECT_NUMBER - 1);
+	// TODO TO be splitted in two methods and tests if it works.
+	private boolean isPlayerWinDiaognal(char player, int x, int y, boolean up) {
+		int count = 0;
+		int endRow = (up) ? (x - (CONNECT_NUMBER - 1))
+				: (x + (CONNECT_NUMBER - 1));
 		int endCol = y - (CONNECT_NUMBER - 1);
 		if (isPositionValid(endRow) && isPositionValid(endCol)) {
 			do {
@@ -370,16 +371,15 @@ public class Connect4Solver {
 					winPathRow[count] = endRow;
 					winPathCol[count] = endCol;
 					count++;
-					endRow++;
+					endRow = (up) ? (endRow + 1) : (endRow - 1);
 					endCol++;
 				}
 			} while (count < CONNECT_NUMBER);
-			if(count == CONNECT_NUMBER){
+			if (count == CONNECT_NUMBER) {
 				return true;
 			}
 			count = 0;
 		}
-		endRow = x - (CONNECT_NUMBER - 1);
 		endCol = y + (CONNECT_NUMBER - 1);
 		if (isPositionValid(endRow) && isPositionValid(endCol)) {
 			do {
@@ -389,32 +389,15 @@ public class Connect4Solver {
 					winPathRow[count] = endRow;
 					winPathCol[count] = endCol;
 					count++;
-					endRow++;
+					endRow = (up) ? (endRow + 1) : (endRow - 1);
 					endCol--;
 				}
 			} while (count < CONNECT_NUMBER);
-			if(count == CONNECT_NUMBER){
+			if (count == CONNECT_NUMBER) {
 				return true;
 			}
 			count = 0;
 		}
-		return false;
-	}
-
-	/**
-	 * Checks if player wins on the 2 diagonals in left-down and right-down
-	 * direction.
-	 * 
-	 * @param player
-	 *            Current player.
-	 * @param x
-	 *            Row number of current player's position.
-	 * @param y
-	 *            Column number of current player's position.
-	 * @return True - if player wins, false - otherwise.
-	 */
-	private boolean isPlayerWinDiagonalDown(char player, int x, int y) {
-		//TODO To be implemented.
 		return false;
 	}
 
@@ -479,14 +462,14 @@ public class Connect4Solver {
 	 */
 	public boolean isPlayerWin(char currentPlayer) {
 		if (numberMoves[getMovesIndex(currentPlayer)] >= CONNECT_NUMBER) {
-			Point p;
-			for (int i = numberMoves[getMovesIndex(currentPlayer)] - 1; i >= 0; i--) {
-				p = moves[getMovesIndex(currentPlayer)].get(i);
-				if (isPlayerWinHorizontally(currentPlayer, p.x, p.y)) {
-					return true;
-				} else if (isPlayerWinVertically(currentPlayer, p.x, p.y)) {
-					return true;
-				}
+			if (isPlayerWinHorizontally(currentPlayer, lastMove.x, lastMove.y)) {
+				return true;
+			} else if (isPlayerWinVertically(currentPlayer, lastMove.x,
+					lastMove.y)) {
+				return true;
+			} else if (isPlayerWinDiagonally(currentPlayer, lastMove.x,
+					lastMove.y)) {
+				return true;
 			}
 		}
 		return false;
