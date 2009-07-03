@@ -135,6 +135,7 @@ public class GamePlay {
 						num);
 				break;
 			}
+			connect4.printBoard();
 			if (!validMove)
 				System.out.println("Invalid move!");
 			else if (connect4.isPlayerWin(currentPlayer)) {
@@ -142,7 +143,6 @@ public class GamePlay {
 				connect4.printWinPaths();
 				break;
 			}
-			connect4.printBoard();
 		}
 	}
 
