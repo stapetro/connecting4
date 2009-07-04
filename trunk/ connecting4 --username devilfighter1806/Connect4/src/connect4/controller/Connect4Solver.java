@@ -8,7 +8,8 @@ import java.util.Scanner;
 /**
  * Connect4 game. Board should be NxN size, where N is odd number. Two players
  * are playing the game - white and black. Each player has (NxN -1)/2 men. Black
- * player always begins first in the middle of the board.
+ * player always begins first in the middle of the board. Man is color which
+ * fills square of the board, square is empty in the playing board.
  * 
  * @author Stanislav Petrov
  * @date 28 June 2009
@@ -31,7 +32,7 @@ public class Connect4Solver {
 	 */
 	public static final char WHITE = 'o';
 	/**
-	 * Empty state of the square.
+	 * Empty square state.
 	 */
 	public static final char EMPTY = '-';
 	/**
@@ -56,6 +57,10 @@ public class Connect4Solver {
 	 * Stores number of moves which are done for both players.
 	 */
 	private int[] numberMoves;
+	/**
+	 * Stores all moves which are made.
+	 */
+	private int movesCounter;
 	/**
 	 * Stores row numbers of each man of winning configuration.
 	 */
@@ -88,7 +93,7 @@ public class Connect4Solver {
 	public Connect4Solver(GameMode gameMode, int size) {
 		setBoardSize(size);
 		initializeBoard();
-		initializeMoves();
+		initialiazeMoves();
 		this.gameMode = gameMode;
 		winPathRow = new int[CONNECT_NUMBER];
 		winPathCol = new int[CONNECT_NUMBER];
@@ -101,17 +106,17 @@ public class Connect4Solver {
 	private void initializeBoard() {
 		board = new char[boardSize][boardSize];
 		for (int i = 0; i < getBoardSize(); i++) {
-			Arrays.fill(board[i], '-');
+			Arrays.fill(board[i], EMPTY);
 		}
 		board[boardSize / 2][boardSize / 2] = BLACK;
 		lastMove = new Point(boardSize / 2, boardSize / 2);
+		movesCounter = 1;
 	}
 
 	/**
 	 * Initializes moves number of both players.
 	 */
-	@SuppressWarnings("unchecked")
-	private void initializeMoves() {
+	private void initialiazeMoves() {
 		numberMoves = new int[PLAYERS];
 		numberMoves[getMovesIndex(BLACK)] = 1;
 	}
@@ -138,6 +143,7 @@ public class Connect4Solver {
 		lastMove.x = i - 1;
 		lastMove.y = col;
 		numberMoves[getMovesIndex(player)]++;
+		movesCounter++;
 		return true;
 	}
 
@@ -163,6 +169,7 @@ public class Connect4Solver {
 		lastMove.x = i + 1;
 		lastMove.y = col;
 		numberMoves[getMovesIndex(player)]++;
+		movesCounter++;
 		return true;
 	}
 
@@ -187,6 +194,7 @@ public class Connect4Solver {
 		lastMove.x = row;
 		lastMove.y = j - 1;
 		numberMoves[getMovesIndex(player)]++;
+		movesCounter++;
 		return true;
 	}
 
@@ -211,6 +219,7 @@ public class Connect4Solver {
 		lastMove.x = row;
 		lastMove.y = j + 1;
 		numberMoves[getMovesIndex(player)]++;
+		movesCounter++;
 		return true;
 	}
 
@@ -227,7 +236,7 @@ public class Connect4Solver {
 	}
 
 	/**
-	 * Validates position in the board.
+	 * Validates position(row or column) in the board.
 	 * 
 	 * @param pos
 	 *            Row or column in the board.
@@ -357,7 +366,6 @@ public class Connect4Solver {
 	 *            direction.
 	 * @return True - if player wins, false - otherwise.
 	 */
-	// TODO TO be splitted in two methods and tests if it works.
 	private boolean isPlayerWinDiaognal(char player, int x, int y, boolean up) {
 		int count = 0;
 		int endRow = (up) ? (x - (CONNECT_NUMBER - 1))
@@ -402,6 +410,235 @@ public class Connect4Solver {
 	}
 
 	/**
+	 * Checks whether specified man is filled in the playing board.
+	 * 
+	 * @param x
+	 *            Row number of the man.
+	 * @param y
+	 *            Column number of the man.
+	 * @return True - if man is filled, false - otherwise.
+	 */
+	private boolean isSquareFilled(int x, int y) {
+		return (board[x][y] == BLACK || board[x][y] == WHITE) ? true : false;
+	}
+
+	/**
+	 * Checks whether move is valid for bot player, not for human being player.
+	 * 
+	 * @param x
+	 *            Row number of the man.
+	 * @param y
+	 *            Column number of the man.
+	 * @return True - if move is valid, false - otherwise.
+	 */
+	private boolean isMoveValid(int x, int y) {
+		return (isSquareFilled(x, y - 1) && !isSquareFilled(x, y + 1))
+				|| (!isSquareFilled(x, y - 1) && isSquareFilled(x, y + 1))
+				|| (isSquareFilled(x + 1, y) && !isSquareFilled(x - 1, y))
+				|| (!isSquareFilled(x + 1, y) && isSquareFilled(x - 1, y));
+	}
+
+	/**
+	 * Gets max number of the specified man's neighbors in vertical direction.
+	 * This is a helper method.
+	 * 
+	 * @param x
+	 *            Row number of the given man.
+	 * @param y
+	 *            Row number of the given man.
+	 * @param player
+	 *            Player whose neighbors are counted.
+	 * @return 0 if the given man has no neighbors , max number of man's
+	 *         neighbors vertically.
+	 */
+	private int getMaxNeighborsVertically(char player, int x, int y) {
+		int maxNeigbors = 0;
+		int countNeighbors = 0;
+		int row = 0;
+		if (isPositionValid(x + CONNECT_NUMBER)) {
+			row = x + 1;
+			while (row < x + CONNECT_NUMBER) {
+				if (board[row][y] == player) {
+					countNeighbors++;
+					row++;
+				} else
+					break;
+			}
+			maxNeigbors = Math.max(maxNeigbors, countNeighbors);
+			countNeighbors = 0;
+		}
+		if (isPositionValid(x - CONNECT_NUMBER)) {
+			row = x - 1;
+			while (row > x - CONNECT_NUMBER) {
+				if (board[row][y] == player) {
+					countNeighbors++;
+					row--;
+				} else
+					break;
+			}
+			maxNeigbors = Math.max(maxNeigbors, countNeighbors);
+		}
+		return maxNeigbors;
+	}
+
+	/**
+	 * Gets max number of the specified man's neighbors in horizontal direction.
+	 * This is a helper method.
+	 * 
+	 * @param x
+	 *            Row number of the given man.
+	 * @param y
+	 *            Row number of the given man.
+	 * @param player
+	 *            Player whose neighbors are counted.
+	 * @return 0 if the given man has no neighbors , max number of man's
+	 *         neighbors horizontally.
+	 */
+	private int getMaxNeighborsHorizontally(char player, int x, int y) {
+		int maxNeigbors = 0;
+		int countNeighbors = 0;
+		int col;
+		if (isPositionValid(y + CONNECT_NUMBER)) {
+			col = y + 1;
+			while (col < y + CONNECT_NUMBER) {
+				if (board[x][col] == player) {
+					countNeighbors++;
+					col++;
+				} else {
+					break;
+				}
+			}
+			maxNeigbors = Math.max(maxNeigbors, countNeighbors);
+			countNeighbors = 0;
+		}
+		if (isPositionValid(y - CONNECT_NUMBER)) {
+			col = y - 1;
+			while (col > y - CONNECT_NUMBER) {
+				if (board[x][col] == player) {
+					countNeighbors++;
+					col--;
+				} else {
+					break;
+				}
+			}
+			maxNeigbors = Math.max(maxNeigbors, countNeighbors);
+		}
+		return maxNeigbors;
+	}
+
+	/**
+	 * Gets max number of the specified man's neighbors in all diagonals
+	 * direction. This is a helper method.
+	 * 
+	 * @param x
+	 *            Row number of the given man.
+	 * @param y
+	 *            Row number of the given man.
+	 * @param player
+	 *            Player whose neighbors are counted.
+	 * @return 0 if the given man has no neighbors , max number of man's
+	 *         neighbors diagonally.
+	 */
+	private int getMaxNeighborsDiagonally(char player, int x, int y) {
+		int maxNeighbors = 0;
+		maxNeighbors = Math.max(getMaxNeighborsDiagonal(player, x, y, true),
+				getMaxNeighborsDiagonal(player, x, y, false));
+		return maxNeighbors;
+	}
+
+	/**
+	 * Gets max number of the specified man's neighbors in two diagonals in
+	 * specified direction. This is a helper method.
+	 * 
+	 * @param x
+	 *            Row number of the given man.
+	 * @param y
+	 *            Row number of the given man.
+	 * @param player
+	 *            Player whose neighbors are counted.
+	 * @param up
+	 *            True when traverses diagonals in up direction, false -
+	 *            diagonals in down direction.
+	 * @return 0 if the given man has no neighbors , max number of man's
+	 *         neighbors in the 2 diagonals.
+	 */
+	private int getMaxNeighborsDiagonal(char player, int x, int y, boolean up) {
+		int maxNeighbors = 0;
+		int countNeigbors = 0;
+		int row = (up) ? x - 1 : x + 1;
+		int col = y - 1;
+		if (isPositionValid(x - CONNECT_NUMBER)
+				&& isPositionValid(y - CONNECT_NUMBER)) {
+			col = y - 1;
+			while (row > x - CONNECT_NUMBER) {
+				if (board[row][col] == player) {
+					countNeigbors++;
+					row = (up) ? (row - 1) : (row + 1);
+					col--;
+				} else
+					break;
+			}
+			maxNeighbors = Math.max(maxNeighbors, countNeigbors);
+			countNeigbors = 0;
+			row = (up) ? x - 1 : x + 1;
+		}
+		if (isPositionValid(x - CONNECT_NUMBER)
+				&& isPositionValid(y + CONNECT_NUMBER)) {
+			col = y + 1;
+			while (row > x - CONNECT_NUMBER) {
+				if (board[row][col] == player) {
+					countNeigbors++;
+					row = (up) ? (row - 1) : (row + 1);
+					col++;
+				} else
+					break;
+			}
+			maxNeighbors = Math.max(maxNeighbors, countNeigbors);
+		}
+		return maxNeighbors;
+	}
+
+	/**
+	 * Gets max number of the specified man's neighbors.
+	 * 
+	 * @param x
+	 *            Row number of the given man.
+	 * @param y
+	 *            Row number of the given man.
+	 * @param player
+	 *            Player whose neighbors are counted.
+	 * @return 0 if the given man has no neighbors, max number of man's
+	 *         neighbors.
+	 */
+	private int getMaxNeighbors(char player, int x, int y) {
+		int maxNeigbors = 0;
+		maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsVertically(player,
+				x, y));
+		maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsHorizontally(player,
+				x, y));
+		maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsDiagonally(player,
+				x, y));
+		return maxNeigbors;
+	}
+
+	/**
+	 * Checks whether this man is threaten from the current player. Threaten man
+	 * means that this man has 3 men in any of the its winning paths.
+	 * 
+	 * @param x
+	 *            Row number of the possibly threaten man.
+	 * @param y
+	 *            Column number of the possibly threaten man.
+	 * @param player
+	 *            The player who threats the opponent.
+	 * @return True - if man is threaten, false - otherwise.
+	 */
+	private boolean isSquareThreaten(char player, int x, int y) {
+		return (getMaxNeighbors(player, x, y) == CONNECT_NUMBER - 1) ? true
+				: false;
+	}
+
+	/**
 	 * Board size setter.
 	 * 
 	 * @param boardSize
@@ -421,10 +658,13 @@ public class Connect4Solver {
 	}
 
 	/**
-	 * Sets bot player state when game is in multiplayer mode.
+	 * Sets first player and bot player if game mode is single player.
 	 */
-	public void setBotPlayer() {
-		botPlayer = (currentPlayer == BLACK) ? WHITE : BLACK;
+	public void setPlayer(char player) {
+		this.currentPlayer = player;
+		if (gameMode == GameMode.SINGLE_PLAYER) {
+			botPlayer = (currentPlayer == BLACK) ? WHITE : BLACK;
+		}
 	}
 
 	/**
@@ -473,6 +713,47 @@ public class Connect4Solver {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks whether game is a draw,i.e. if none of both players wins and there
+	 * is no empty men in the playing board.
+	 * 
+	 * @return True - if game is over with no winner, false - otherwise.
+	 */
+	public boolean isGameDraw() {
+		return (movesCounter == boardSize * boardSize - 1) ? true : false;
+	}
+
+	/**
+	 * Indicates next move on bot player over the playing board.
+	 * 
+	 * @return Current position which bot player puts his color in the playing
+	 *         board on.
+	 */
+	public Point nextBotMove() {
+		Point p = new Point(-1, -1);
+		int maxNeighbours = -1;
+		int neighbours = 0;
+		for (int i = 0; i < boardSize; i++) {
+			for (int j = 0; j < boardSize; j++) {
+				if (isMoveValid(i, j)) {
+					if (isSquareThreaten(currentPlayer, i, j)) {
+						p.x = i;
+						p.y = j;
+						return p;
+					} else {
+						neighbours = getMaxNeighbors(botPlayer, i, j);
+						if (neighbours > maxNeighbours) {
+							maxNeighbours = neighbours;
+							p.x = i;
+							p.y = j;
+						}
+					}
+				}
+			}
+		}
+		return p;
 	}
 
 	/**
