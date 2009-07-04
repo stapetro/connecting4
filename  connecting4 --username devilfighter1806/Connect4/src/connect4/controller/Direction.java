@@ -1,4 +1,4 @@
-package connect4;
+package connect4.controller;
 
 /**
  * Represents directions from which user can move man.

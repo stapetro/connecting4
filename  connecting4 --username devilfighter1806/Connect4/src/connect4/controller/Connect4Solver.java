@@ -1,4 +1,4 @@
-package connect4;
+package connect4.controller;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class Connect4Solver {
 	public Connect4Solver(GameMode gameMode, int size) {
 		setBoardSize(size);
 		initializeBoard();
-		initialiazeMoves();
+		initializeMoves();
 		this.gameMode = gameMode;
 		winPathRow = new int[CONNECT_NUMBER];
 		winPathCol = new int[CONNECT_NUMBER];
@@ -111,7 +111,7 @@ public class Connect4Solver {
 	 * Initializes moves number of both players.
 	 */
 	@SuppressWarnings("unchecked")
-	private void initialiazeMoves() {
+	private void initializeMoves() {
 		numberMoves = new int[PLAYERS];
 		numberMoves[getMovesIndex(BLACK)] = 1;
 	}
