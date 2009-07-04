@@ -108,11 +108,14 @@ public class GamePlay {
 		int position, num;
 		boolean validMove = true;
 		connect4.printBoard();
+		if (currentPlayer == Connect4Solver.BLACK) {
+			connect4.nextBotMove();
+			connect4.printBoard();
+		}
 		while (true) {
 			System.out.println("Current player is: " + currentPlayer);
 			System.out.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
 			position = stdin.nextInt();
-			System.out.print("Number: ");
 			num = stdin.nextInt();
 			if (position == -1 && num == -1)
 				break;
@@ -135,6 +138,9 @@ public class GamePlay {
 						num);
 				break;
 			}
+			connect4.printBoard();
+			System.out.println("Bot move..........");
+			connect4.nextBotMove();
 			connect4.printBoard();
 			if (!validMove)
 				System.out.println("Invalid move!");
