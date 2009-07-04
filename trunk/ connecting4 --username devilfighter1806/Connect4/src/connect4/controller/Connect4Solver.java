@@ -419,7 +419,11 @@ public class Connect4Solver {
 	 * @return True - if man is filled, false - otherwise.
 	 */
 	private boolean isSquareFilled(int x, int y) {
-		return (board[x][y] == BLACK || board[x][y] == WHITE) ? true : false;
+		if (isPositionValid(x) && isPositionValid(y)) {
+			return (board[x][y] == BLACK || board[x][y] == WHITE) ? true
+					: false;
+		} else
+			return false;
 	}
 
 	/**
@@ -455,29 +459,25 @@ public class Connect4Solver {
 		int maxNeigbors = 0;
 		int countNeighbors = 0;
 		int row = 0;
-		if (isPositionValid(x + CONNECT_NUMBER)) {
-			row = x + 1;
-			while (row < x + CONNECT_NUMBER) {
-				if (board[row][y] == player) {
-					countNeighbors++;
-					row++;
-				} else
-					break;
-			}
-			maxNeigbors = Math.max(maxNeigbors, countNeighbors);
-			countNeighbors = 0;
+		row = x + 1;
+		while (isPositionValid(row) && countNeighbors < CONNECT_NUMBER) {
+			if (board[row][y] == player) {
+				countNeighbors++;
+				row++;
+			} else
+				break;
 		}
-		if (isPositionValid(x - CONNECT_NUMBER)) {
-			row = x - 1;
-			while (row > x - CONNECT_NUMBER) {
-				if (board[row][y] == player) {
-					countNeighbors++;
-					row--;
-				} else
-					break;
-			}
-			maxNeigbors = Math.max(maxNeigbors, countNeighbors);
+		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
+		countNeighbors = 0;
+		row = x - 1;
+		while (isPositionValid(row) && countNeighbors < CONNECT_NUMBER) {
+			if (board[row][y] == player) {
+				countNeighbors++;
+				row--;
+			} else
+				break;
 		}
+		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
 		return maxNeigbors;
 	}
 
@@ -498,31 +498,27 @@ public class Connect4Solver {
 		int maxNeigbors = 0;
 		int countNeighbors = 0;
 		int col;
-		if (isPositionValid(y + CONNECT_NUMBER)) {
-			col = y + 1;
-			while (col < y + CONNECT_NUMBER) {
-				if (board[x][col] == player) {
-					countNeighbors++;
-					col++;
-				} else {
-					break;
-				}
+		col = y + 1;
+		while (isPositionValid(col) && countNeighbors < CONNECT_NUMBER) {
+			if (board[x][col] == player) {
+				countNeighbors++;
+				col++;
+			} else {
+				break;
 			}
-			maxNeigbors = Math.max(maxNeigbors, countNeighbors);
-			countNeighbors = 0;
 		}
-		if (isPositionValid(y - CONNECT_NUMBER)) {
-			col = y - 1;
-			while (col > y - CONNECT_NUMBER) {
-				if (board[x][col] == player) {
-					countNeighbors++;
-					col--;
-				} else {
-					break;
-				}
+		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
+		countNeighbors = 0;
+		col = y - 1;
+		while (isPositionValid(col) && countNeighbors < CONNECT_NUMBER) {
+			if (board[x][col] == player) {
+				countNeighbors++;
+				col--;
+			} else {
+				break;
 			}
-			maxNeigbors = Math.max(maxNeigbors, countNeighbors);
 		}
+		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
 		return maxNeigbors;
 	}
 
@@ -567,34 +563,30 @@ public class Connect4Solver {
 		int countNeigbors = 0;
 		int row = (up) ? x - 1 : x + 1;
 		int col = y - 1;
-		if (isPositionValid(x - CONNECT_NUMBER)
-				&& isPositionValid(y - CONNECT_NUMBER)) {
-			col = y - 1;
-			while (row > x - CONNECT_NUMBER) {
-				if (board[row][col] == player) {
-					countNeigbors++;
-					row = (up) ? (row - 1) : (row + 1);
-					col--;
-				} else
-					break;
-			}
-			maxNeighbors = Math.max(maxNeighbors, countNeigbors);
-			countNeigbors = 0;
-			row = (up) ? x - 1 : x + 1;
+		col = y - 1;
+		while (isPositionValid(row) && isPositionValid(col)
+				&& countNeigbors < CONNECT_NUMBER) {
+			if (board[row][col] == player) {
+				countNeigbors++;
+				row = (up) ? (row - 1) : (row + 1);
+				col--;
+			} else
+				break;
 		}
-		if (isPositionValid(x - CONNECT_NUMBER)
-				&& isPositionValid(y + CONNECT_NUMBER)) {
-			col = y + 1;
-			while (row > x - CONNECT_NUMBER) {
-				if (board[row][col] == player) {
-					countNeigbors++;
-					row = (up) ? (row - 1) : (row + 1);
-					col++;
-				} else
-					break;
-			}
-			maxNeighbors = Math.max(maxNeighbors, countNeigbors);
+		maxNeighbors = Math.max(maxNeighbors, countNeigbors);
+		countNeigbors = 0;
+		row = (up) ? x - 1 : x + 1;
+		col = y + 1;
+		while (isPositionValid(row) && isPositionValid(col)
+				&& countNeigbors < CONNECT_NUMBER) {
+			if (board[row][col] == player) {
+				countNeigbors++;
+				row = (up) ? (row - 1) : (row + 1);
+				col++;
+			} else
+				break;
 		}
+		maxNeighbors = Math.max(maxNeighbors, countNeigbors);
 		return maxNeighbors;
 	}
 
@@ -612,12 +604,14 @@ public class Connect4Solver {
 	 */
 	private int getMaxNeighbors(char player, int x, int y) {
 		int maxNeigbors = 0;
-		maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsVertically(player,
-				x, y));
-		maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsHorizontally(player,
-				x, y));
-		maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsDiagonally(player,
-				x, y));
+		if (board[x][y] == EMPTY) {
+			maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsVertically(
+					player, x, y));
+			maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsHorizontally(
+					player, x, y));
+			maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsDiagonally(
+					player, x, y));
+		}
 		return maxNeigbors;
 	}
 
@@ -634,8 +628,42 @@ public class Connect4Solver {
 	 * @return True - if man is threaten, false - otherwise.
 	 */
 	private boolean isSquareThreaten(char player, int x, int y) {
-		return (getMaxNeighbors(player, x, y) == CONNECT_NUMBER - 1) ? true
-				: false;
+		if (board[x][y] == EMPTY) {
+			return (getMaxNeighbors(player, x, y) == CONNECT_NUMBER - 1) ? true
+					: false;
+		}
+		return false;
+	}
+
+	/**
+	 * Chooses next move of the bot.
+	 * 
+	 * @return Current position which bot player puts his color in the playing
+	 *         board on.
+	 */
+	private Point chooseBotMove() {
+		Point p = new Point(-1, -1);
+		int maxNeighbours = -1;
+		int neighbours = 0;
+		for (int i = 0; i < boardSize; i++) {
+			for (int j = 0; j < boardSize; j++) {
+				if (isMoveValid(i, j)) {
+					if (isSquareThreaten(currentPlayer, i, j)) {
+						p.x = i;
+						p.y = j;
+						return p;
+					} else {
+						neighbours = getMaxNeighbors(botPlayer, i, j);
+						if (neighbours > maxNeighbours) {
+							maxNeighbours = neighbours;
+							p.x = i;
+							p.y = j;
+						}
+					}
+				}
+			}
+		}
+		return p;
 	}
 
 	/**
@@ -727,33 +755,13 @@ public class Connect4Solver {
 
 	/**
 	 * Indicates next move on bot player over the playing board.
-	 * 
-	 * @return Current position which bot player puts his color in the playing
-	 *         board on.
 	 */
-	public Point nextBotMove() {
-		Point p = new Point(-1, -1);
-		int maxNeighbours = -1;
-		int neighbours = 0;
-		for (int i = 0; i < boardSize; i++) {
-			for (int j = 0; j < boardSize; j++) {
-				if (isMoveValid(i, j)) {
-					if (isSquareThreaten(currentPlayer, i, j)) {
-						p.x = i;
-						p.y = j;
-						return p;
-					} else {
-						neighbours = getMaxNeighbors(botPlayer, i, j);
-						if (neighbours > maxNeighbours) {
-							maxNeighbours = neighbours;
-							p.x = i;
-							p.y = j;
-						}
-					}
-				}
-			}
-		}
-		return p;
+	public void nextBotMove() {
+		Point move = chooseBotMove();
+		System.out.println("Bot pos: " + move);
+		board[move.x][move.y] = botPlayer;
+		if (isPlayerWin(botPlayer))
+			System.out.println("Bot win!");
 	}
 
 	/**
