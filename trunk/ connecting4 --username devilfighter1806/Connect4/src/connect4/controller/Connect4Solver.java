@@ -81,6 +81,10 @@ public class Connect4Solver {
 	 * Stores mode of the game - single | multi player.
 	 */
 	private GameMode gameMode;
+	/**
+	 * Stores max number of neighbors when checking for threaten square.
+	 */
+	private int maxNeighbors;
 
 	/**
 	 * General purpose contructor. Sets the number of wining paths to zero.
@@ -410,7 +414,7 @@ public class Connect4Solver {
 	}
 
 	/**
-	 * Checks whether specified man is filled in the playing board.
+	 * Checks whether specified square is filled in the playing board.
 	 * 
 	 * @param x
 	 *            Row number of the man.
@@ -476,6 +480,9 @@ public class Connect4Solver {
 				row--;
 			} else
 				break;
+		}
+		if (x == 5 && y == 1) {
+			System.out.println("countN: " + countNeighbors);
 		}
 		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
 		return maxNeigbors;
@@ -629,10 +636,34 @@ public class Connect4Solver {
 	 */
 	private boolean isSquareThreaten(char player, int x, int y) {
 		if (board[x][y] == EMPTY) {
-			return (getMaxNeighbors(player, x, y) == CONNECT_NUMBER - 1) ? true
-					: false;
+			maxNeighbors = getMaxNeighbors(player, x, y);
+			if (x == 2 && y == 2) {
+				System.out.println("maxN: " + maxNeighbors);
+			}
+			if (maxNeighbors == CONNECT_NUMBER - 1) {
+				return true;
+			}
+			if (maxNeighbors == CONNECT_NUMBER - 2 && (isDoubleThreaten(x, y))) {
+				return true;
+			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks whether opponent double threats the bot, i.e. player can win from
+	 * two sides in one win configuration.
+	 * @param x Row number.
+	 * @param y Column number.
+	 * @return True - if this square is part from the double threat, false - 
+	 * otherwise.
+	 */
+	private boolean isDoubleThreaten(int x, int y) {
+		//TODO To be implemented - checks whether move is valid from the two sides.
+		return ((isPositionValid(y - 1) && isMoveValid(x, y-1))
+				|| (isPositionValid(y + 1) && isMoveValid(x, y+1))
+				|| (isPositionValid(x - 1) && isMoveValid(x-1, y)) || 
+				(isPositionValid(x + 1) && isMoveValid(x+1, y)));
 	}
 
 	/**
@@ -643,7 +674,7 @@ public class Connect4Solver {
 	 */
 	private Point chooseBotMove() {
 		Point p = new Point(-1, -1);
-		int maxNeighbours = -1;
+		int maxNeigh = -1;
 		int neighbours = 0;
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize; j++) {
@@ -651,11 +682,13 @@ public class Connect4Solver {
 					if (isSquareThreaten(currentPlayer, i, j)) {
 						p.x = i;
 						p.y = j;
-						return p;
+						if (maxNeighbors == CONNECT_NUMBER - 1) {
+							return p;
+						}
 					} else {
 						neighbours = getMaxNeighbors(botPlayer, i, j);
-						if (neighbours > maxNeighbours) {
-							maxNeighbours = neighbours;
+						if (neighbours > maxNeigh) {
+							maxNeigh = neighbours;
 							p.x = i;
 							p.y = j;
 						}
