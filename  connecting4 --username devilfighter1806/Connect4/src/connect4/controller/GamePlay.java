@@ -108,10 +108,10 @@ public class GamePlay {
 		int position, num;
 		boolean validMove = true;
 		connect4.printBoard();
-		if (currentPlayer == Connect4Solver.BLACK) {
-			connect4.nextBotMove();
-			connect4.printBoard();
-		}
+//		if (currentPlayer == Connect4Solver.BLACK) {
+//			connect4.nextBotMove();
+//			connect4.printBoard();
+//		}
 		while (true) {
 			System.out.println("Current player is: " + currentPlayer);
 			System.out.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
@@ -121,27 +121,27 @@ public class GamePlay {
 				break;
 			switch (position) {
 			case 1:
-				if (connect4.moveMan(currentPlayer, Direction.TOP, num) == false) {
+				if (connect4.moveMan(currentPlayer, Direction.VERTICAL_UP, num) == false) {
 					System.out.println("Invalid move!");
 				}
 				break;
 			case 2:
-				validMove = connect4.moveMan(currentPlayer, Direction.BOTTOM,
+				validMove = connect4.moveMan(currentPlayer, Direction.VERTICAL_DOWN,
 						num);
 				break;
 			case 3:
 				validMove = connect4
-						.moveMan(currentPlayer, Direction.LEFT, num);
+						.moveMan(currentPlayer, Direction.HORIZONTAL_LEFT, num);
 				break;
 			case 4:
-				validMove = connect4.moveMan(currentPlayer, Direction.RIGHT,
+				validMove = connect4.moveMan(currentPlayer, Direction.HORIZONTAL_RIGHT,
 						num);
 				break;
 			}
 			connect4.printBoard();
-			System.out.println("Bot move..........");
-			connect4.nextBotMove();
-			connect4.printBoard();
+//			System.out.println("Bot move..........");
+//			connect4.nextBotMove();
+//			connect4.printBoard();
 			if (!validMove)
 				System.out.println("Invalid move!");
 			else if (connect4.isPlayerWin(currentPlayer)) {

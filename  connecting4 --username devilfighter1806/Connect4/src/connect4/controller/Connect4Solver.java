@@ -70,9 +70,9 @@ public class Connect4Solver {
 	 */
 	private int[] winPathCol;
 	/**
-	 * Stores the last move regardless of the current player.
+	 * Stores the last move for both players.
 	 */
-	private Point lastMove;
+	private Point[] lastMove;
 	/**
 	 * Stores game board for printing to the standard output.
 	 */
@@ -85,6 +85,16 @@ public class Connect4Solver {
 	 * Stores max number of neighbors when checking for threaten square.
 	 */
 	private int maxNeighbors;
+	/**
+	 * Stores all bot statistics from traversing the board in the game.
+	 */
+	private ArrayList<Point>[] botStatistics;
+	/**
+	 * Stores in which direction current square of the board has maximum
+	 * neighbors. Gives information when bot inspects the board for choosing
+	 * bot's next move.
+	 */
+	private Direction maxNeighborsDirection;
 
 	/**
 	 * General purpose contructor. Sets the number of wining paths to zero.
@@ -95,10 +105,11 @@ public class Connect4Solver {
 	 *            Board size to be set.
 	 */
 	public Connect4Solver(GameMode gameMode, int size) {
+		this.gameMode = gameMode;
 		setBoardSize(size);
 		initializeBoard();
 		initialiazeMoves();
-		this.gameMode = gameMode;
+		initBotProperties();
 		winPathRow = new int[CONNECT_NUMBER];
 		winPathCol = new int[CONNECT_NUMBER];
 		output = new StringBuilder();
@@ -113,7 +124,10 @@ public class Connect4Solver {
 			Arrays.fill(board[i], EMPTY);
 		}
 		board[boardSize / 2][boardSize / 2] = BLACK;
-		lastMove = new Point(boardSize / 2, boardSize / 2);
+		lastMove = new Point[PLAYERS];
+		for(int i = 0; i < lastMove.length; i++){
+			lastMove[i] = new Point();
+		}
 		movesCounter = 1;
 	}
 
@@ -123,6 +137,20 @@ public class Connect4Solver {
 	private void initialiazeMoves() {
 		numberMoves = new int[PLAYERS];
 		numberMoves[getMovesIndex(BLACK)] = 1;
+	}
+
+	/**
+	 * Initialize the data structure which stores the bot statistics.
+	 */
+	@SuppressWarnings("unchecked")
+	private void initBotProperties() {
+		if (gameMode != GameMode.SINGLE_PLAYER) {
+			return;
+		}
+		botStatistics = new ArrayList[BotTactics.TACTICS_NUMBER];
+		for (int i = 0; i < botStatistics.length; i++) {
+			botStatistics[i] = new ArrayList<Point>();
+		}
 	}
 
 	/**
@@ -144,8 +172,8 @@ public class Connect4Solver {
 		if (i == boardSize || i == 0)
 			return false;
 		board[i - 1][col] = player;
-		lastMove.x = i - 1;
-		lastMove.y = col;
+		lastMove[getMovesIndex(player)].x = i - 1;
+		lastMove[getMovesIndex(player)].y = col;
 		numberMoves[getMovesIndex(player)]++;
 		movesCounter++;
 		return true;
@@ -170,8 +198,8 @@ public class Connect4Solver {
 		if (i == -1 || i == boardSize - 1)
 			return false;
 		board[i + 1][col] = player;
-		lastMove.x = i + 1;
-		lastMove.y = col;
+		lastMove[getMovesIndex(player)].x = i + 1;
+		lastMove[getMovesIndex(player)].y = col;
 		numberMoves[getMovesIndex(player)]++;
 		movesCounter++;
 		return true;
@@ -195,8 +223,8 @@ public class Connect4Solver {
 		if (j == boardSize || j == 0)
 			return false;
 		board[row][j - 1] = player;
-		lastMove.x = row;
-		lastMove.y = j - 1;
+		lastMove[getMovesIndex(player)].x = row;
+		lastMove[getMovesIndex(player)].y = j - 1;
 		numberMoves[getMovesIndex(player)]++;
 		movesCounter++;
 		return true;
@@ -220,8 +248,8 @@ public class Connect4Solver {
 		if (j == boardSize - 1 || j == -1)
 			return false;
 		board[row][j + 1] = player;
-		lastMove.x = row;
-		lastMove.y = j + 1;
+		lastMove[getMovesIndex(player)].x = row;
+		lastMove[getMovesIndex(player)].y = j + 1;
 		numberMoves[getMovesIndex(player)]++;
 		movesCounter++;
 		return true;
@@ -431,7 +459,7 @@ public class Connect4Solver {
 	}
 
 	/**
-	 * Checks whether move is valid for bot player, not for human being player.
+	 * Checks whether move is valid for bot player.
 	 * 
 	 * @param x
 	 *            Row number of the man.
@@ -439,162 +467,19 @@ public class Connect4Solver {
 	 *            Column number of the man.
 	 * @return True - if move is valid, false - otherwise.
 	 */
-	private boolean isMoveValid(int x, int y) {
-		return (isSquareFilled(x, y - 1) && !isSquareFilled(x, y + 1))
-				|| (!isSquareFilled(x, y - 1) && isSquareFilled(x, y + 1))
-				|| (isSquareFilled(x + 1, y) && !isSquareFilled(x - 1, y))
-				|| (!isSquareFilled(x + 1, y) && isSquareFilled(x - 1, y));
-	}
-
-	/**
-	 * Gets max number of the specified man's neighbors in vertical direction.
-	 * This is a helper method.
-	 * 
-	 * @param x
-	 *            Row number of the given man.
-	 * @param y
-	 *            Row number of the given man.
-	 * @param player
-	 *            Player whose neighbors are counted.
-	 * @return 0 if the given man has no neighbors , max number of man's
-	 *         neighbors vertically.
-	 */
-	private int getMaxNeighborsVertically(char player, int x, int y) {
-		int maxNeigbors = 0;
-		int countNeighbors = 0;
-		int row = 0;
-		row = x + 1;
-		while (isPositionValid(row) && countNeighbors < CONNECT_NUMBER) {
-			if (board[row][y] == player) {
-				countNeighbors++;
-				row++;
-			} else
-				break;
+	private boolean isMoveValid(int x, int y, Direction[] directions) {
+		if (!isPositionValid(x) || !isPositionValid(y)) {
+			return false;
 		}
-		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
-		countNeighbors = 0;
-		row = x - 1;
-		while (isPositionValid(row) && countNeighbors < CONNECT_NUMBER) {
-			if (board[row][y] == player) {
-				countNeighbors++;
-				row--;
-			} else
-				break;
-		}
-		if (x == 5 && y == 1) {
-			System.out.println("countN: " + countNeighbors);
-		}
-		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
-		return maxNeigbors;
-	}
-
-	/**
-	 * Gets max number of the specified man's neighbors in horizontal direction.
-	 * This is a helper method.
-	 * 
-	 * @param x
-	 *            Row number of the given man.
-	 * @param y
-	 *            Row number of the given man.
-	 * @param player
-	 *            Player whose neighbors are counted.
-	 * @return 0 if the given man has no neighbors , max number of man's
-	 *         neighbors horizontally.
-	 */
-	private int getMaxNeighborsHorizontally(char player, int x, int y) {
-		int maxNeigbors = 0;
-		int countNeighbors = 0;
-		int col;
-		col = y + 1;
-		while (isPositionValid(col) && countNeighbors < CONNECT_NUMBER) {
-			if (board[x][col] == player) {
-				countNeighbors++;
-				col++;
-			} else {
-				break;
+		for (int i = 0; i < Direction.DIRECTIONS_MOVE_NUMBERS / 2; i++) {
+			if (moveMan(botPlayer, directions[i], (i < 2) ? y : x)) {
+				System.out.println("Last move: " + x + ", " + y);
+				board[lastMove[getMovesIndex(botPlayer)].x][lastMove[getMovesIndex(botPlayer)].y] = EMPTY;
+				return (lastMove[getMovesIndex(botPlayer)].x == x && lastMove[getMovesIndex(botPlayer)].y == y) ? true
+						: false;
 			}
 		}
-		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
-		countNeighbors = 0;
-		col = y - 1;
-		while (isPositionValid(col) && countNeighbors < CONNECT_NUMBER) {
-			if (board[x][col] == player) {
-				countNeighbors++;
-				col--;
-			} else {
-				break;
-			}
-		}
-		maxNeigbors = Math.max(maxNeigbors, countNeighbors);
-		return maxNeigbors;
-	}
-
-	/**
-	 * Gets max number of the specified man's neighbors in all diagonals
-	 * direction. This is a helper method.
-	 * 
-	 * @param x
-	 *            Row number of the given man.
-	 * @param y
-	 *            Row number of the given man.
-	 * @param player
-	 *            Player whose neighbors are counted.
-	 * @return 0 if the given man has no neighbors , max number of man's
-	 *         neighbors diagonally.
-	 */
-	private int getMaxNeighborsDiagonally(char player, int x, int y) {
-		int maxNeighbors = 0;
-		maxNeighbors = Math.max(getMaxNeighborsDiagonal(player, x, y, true),
-				getMaxNeighborsDiagonal(player, x, y, false));
-		return maxNeighbors;
-	}
-
-	/**
-	 * Gets max number of the specified man's neighbors in two diagonals in
-	 * specified direction. This is a helper method.
-	 * 
-	 * @param x
-	 *            Row number of the given man.
-	 * @param y
-	 *            Row number of the given man.
-	 * @param player
-	 *            Player whose neighbors are counted.
-	 * @param up
-	 *            True when traverses diagonals in up direction, false -
-	 *            diagonals in down direction.
-	 * @return 0 if the given man has no neighbors , max number of man's
-	 *         neighbors in the 2 diagonals.
-	 */
-	private int getMaxNeighborsDiagonal(char player, int x, int y, boolean up) {
-		int maxNeighbors = 0;
-		int countNeigbors = 0;
-		int row = (up) ? x - 1 : x + 1;
-		int col = y - 1;
-		col = y - 1;
-		while (isPositionValid(row) && isPositionValid(col)
-				&& countNeigbors < CONNECT_NUMBER) {
-			if (board[row][col] == player) {
-				countNeigbors++;
-				row = (up) ? (row - 1) : (row + 1);
-				col--;
-			} else
-				break;
-		}
-		maxNeighbors = Math.max(maxNeighbors, countNeigbors);
-		countNeigbors = 0;
-		row = (up) ? x - 1 : x + 1;
-		col = y + 1;
-		while (isPositionValid(row) && isPositionValid(col)
-				&& countNeigbors < CONNECT_NUMBER) {
-			if (board[row][col] == player) {
-				countNeigbors++;
-				row = (up) ? (row - 1) : (row + 1);
-				col++;
-			} else
-				break;
-		}
-		maxNeighbors = Math.max(maxNeighbors, countNeigbors);
-		return maxNeighbors;
+		return false;
 	}
 
 	/**
@@ -606,64 +491,99 @@ public class Connect4Solver {
 	 *            Row number of the given man.
 	 * @param player
 	 *            Player whose neighbors are counted.
-	 * @return 0 if the given man has no neighbors, max number of man's
-	 *         neighbors.
+	 * @return 0 if the given man has no neighbors, otherwise - max number of
+	 *         man's neighbors.
 	 */
-	private int getMaxNeighbors(char player, int x, int y) {
-		int maxNeigbors = 0;
-		if (board[x][y] == EMPTY) {
-			maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsVertically(
-					player, x, y));
-			maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsHorizontally(
-					player, x, y));
-			maxNeigbors = Math.max(maxNeigbors, getMaxNeighborsDiagonally(
-					player, x, y));
-		}
-		return maxNeigbors;
-	}
-
-	/**
-	 * Checks whether this man is threaten from the current player. Threaten man
-	 * means that this man has 3 men in any of the its winning paths.
-	 * 
-	 * @param x
-	 *            Row number of the possibly threaten man.
-	 * @param y
-	 *            Column number of the possibly threaten man.
-	 * @param player
-	 *            The player who threats the opponent.
-	 * @return True - if man is threaten, false - otherwise.
-	 */
-	private boolean isSquareThreaten(char player, int x, int y) {
-		if (board[x][y] == EMPTY) {
-			maxNeighbors = getMaxNeighbors(player, x, y);
-			if (x == 2 && y == 2) {
-				System.out.println("maxN: " + maxNeighbors);
+	private int getMaxNeighbors(char player, int x, int y,
+			Direction[] directions) {
+		int maxNeighbors = 0;
+		int cnt = 0;
+		int row = x;
+		int col = y;
+		for (Direction d : directions) {
+			cnt = 0;
+			row += Direction.COORD_X[d.getIndex()];
+			col += Direction.COORD_Y[d.getIndex()];
+			while (isPositionValid(row) && isPositionValid(col)) {
+				if (board[row][col] == player) {
+					cnt++;
+					row += Direction.COORD_X[d.getIndex()];
+					col += Direction.COORD_Y[d.getIndex()];
+				} else
+					break;
 			}
-			if (maxNeighbors == CONNECT_NUMBER - 1) {
-				return true;
-			}
-			if (maxNeighbors == CONNECT_NUMBER - 2 && (isDoubleThreaten(x, y))) {
-				return true;
+			if (maxNeighbors < cnt) {
+				maxNeighbors = cnt;
+				maxNeighborsDirection = d;
 			}
 		}
-		return false;
+		return maxNeighbors;
 	}
 
 	/**
 	 * Checks whether opponent double threats the bot, i.e. player can win from
 	 * two sides in one win configuration.
-	 * @param x Row number.
-	 * @param y Column number.
-	 * @return True - if this square is part from the double threat, false - 
-	 * otherwise.
+	 * 
+	 * @param x
+	 *            Row number.
+	 * @param y
+	 *            Column number.
+	 * @return True - if this square is part from the double threat, false -
+	 *         otherwise.
 	 */
 	private boolean isDoubleThreaten(int x, int y) {
-		//TODO To be implemented - checks whether move is valid from the two sides.
-		return ((isPositionValid(y - 1) && isMoveValid(x, y-1))
-				|| (isPositionValid(y + 1) && isMoveValid(x, y+1))
-				|| (isPositionValid(x - 1) && isMoveValid(x-1, y)) || 
-				(isPositionValid(x + 1) && isMoveValid(x+1, y)));
+		// TODO To be implemented - checks whether move is valid from the two
+		// sides.
+		return false;
+	}
+
+	/**
+	 * Bot tries tow win, i.e. checks whether he can win(3 consecutive men), or
+	 * prevent user from wining when user has 3 consecutive men. Coordinates
+	 * should be valid, otherwise - throws exception.
+	 * 
+	 * @param x
+	 *            X-coordinate of the square(row number).
+	 * @param y
+	 *            Y-coordinate of the square(column number).
+	 */
+	private void tryBotWin(int x, int y, Direction[] directions) {
+		int neighborsBot = 0;
+		int neighborsCurrPlayer = 0;
+		neighborsBot = getMaxNeighbors(botPlayer, x, y, directions);
+		neighborsCurrPlayer = getMaxNeighbors(currentPlayer, x, y, directions);
+		if (neighborsBot == CONNECT_NUMBER - 1) {
+			botStatistics[BotTactics.BOT_WIN.getIndex()].add(new Point(x, y));
+		} else if (neighborsCurrPlayer == CONNECT_NUMBER - 1) {
+			botStatistics[BotTactics.NOT_USER_WIN.getIndex()].add(new Point(x,
+					y));
+		}
+	}
+
+	/**
+	 * Prevents user threats in the game.
+	 */
+	private void preventPlayerThreats(int x, int y, Direction[] directions) {
+		int neighborsCurrPlayer = getMaxNeighbors(currentPlayer, x, y,
+				directions);
+		if (neighborsCurrPlayer == CONNECT_NUMBER - 2) {
+			if (isMoveValid(x
+					+ Direction.COORD_X[maxNeighborsDirection.getIndex()]
+					* CONNECT_NUMBER, y
+					+ Direction.COORD_Y[maxNeighborsDirection.getIndex()]
+					* CONNECT_NUMBER, directions)) {
+				botStatistics[BotTactics.NOT_USER_THREAT.getIndex()]
+						.add(new Point(x, y));
+			}
+		} else if (isPositionValid(x - 1) && board[x - 1][y] == currentPlayer
+				&& isPositionValid(y + 1) && board[x][y + 1] == currentPlayer) {
+			botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(new Point(
+					x, y));
+		}
+	}
+
+	private void botTactics(int x, int y, Direction[] directions) {
+
 	}
 
 	/**
@@ -673,27 +593,34 @@ public class Connect4Solver {
 	 *         board on.
 	 */
 	private Point chooseBotMove() {
+		int maxBotNeighbors = 0;
+		int tempBotNeighbors = 0;
 		Point p = new Point(-1, -1);
-		int maxNeigh = -1;
-		int neighbours = 0;
+		Direction[] directions = Direction.values();
 		for (int i = 0; i < boardSize; i++) {
+			System.out.println("Valid moves");
 			for (int j = 0; j < boardSize; j++) {
-				if (isMoveValid(i, j)) {
-					if (isSquareThreaten(currentPlayer, i, j)) {
+				if (isMoveValid(i, j, directions)) {
+					System.out.println(i + ",  " + j);
+					tryBotWin(i, j, directions); // bot win, not user win
+					preventPlayerThreats(i, j, directions); // not user threats
+					tempBotNeighbors = getMaxNeighbors(botPlayer, i, j,
+							directions);
+					if (maxBotNeighbors < tempBotNeighbors) {
+						maxBotNeighbors = tempBotNeighbors;
+						botStatistics[BotTactics.TACTIC.getIndex()].add(0,
+								new Point(i, j));
+					} else {
 						p.x = i;
 						p.y = j;
-						if (maxNeighbors == CONNECT_NUMBER - 1) {
-							return p;
-						}
-					} else {
-						neighbours = getMaxNeighbors(botPlayer, i, j);
-						if (neighbours > maxNeigh) {
-							maxNeigh = neighbours;
-							p.x = i;
-							p.y = j;
-						}
 					}
 				}
+			}
+		}
+		for (int i = 0; i < botStatistics.length; i++) {
+			if (botStatistics[i].size() > 0) {
+				p = botStatistics[i].get(0);
+				break;
 			}
 		}
 		return p;
@@ -742,13 +669,13 @@ public class Connect4Solver {
 	public boolean moveMan(char player, Direction direction, int position) {
 
 		switch (direction) {
-		case TOP:
+		case VERTICAL_UP:
 			return (moveManFromTop(player, position));
-		case BOTTOM:
+		case VERTICAL_DOWN:
 			return moveManFromBottom(player, position);
-		case LEFT:
+		case HORIZONTAL_LEFT:
 			return moveManFromLeft(player, position);
-		case RIGHT:
+		case HORIZONTAL_RIGHT:
 			return moveManFromRight(player, position);
 		}
 		return false;
@@ -763,13 +690,17 @@ public class Connect4Solver {
 	 */
 	public boolean isPlayerWin(char currentPlayer) {
 		if (numberMoves[getMovesIndex(currentPlayer)] >= CONNECT_NUMBER) {
-			if (isPlayerWinHorizontally(currentPlayer, lastMove.x, lastMove.y)) {
+			if (isPlayerWinHorizontally(currentPlayer,
+					lastMove[getMovesIndex(currentPlayer)].x,
+					lastMove[getMovesIndex(currentPlayer)].y)) {
 				return true;
-			} else if (isPlayerWinVertically(currentPlayer, lastMove.x,
-					lastMove.y)) {
+			} else if (isPlayerWinVertically(currentPlayer,
+					lastMove[getMovesIndex(currentPlayer)].x,
+					lastMove[getMovesIndex(currentPlayer)].y)) {
 				return true;
-			} else if (isPlayerWinDiagonally(currentPlayer, lastMove.x,
-					lastMove.y)) {
+			} else if (isPlayerWinDiagonally(currentPlayer,
+					lastMove[getMovesIndex(currentPlayer)].x,
+					lastMove[getMovesIndex(currentPlayer)].y)) {
 				return true;
 			}
 		}
