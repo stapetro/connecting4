@@ -29,9 +29,11 @@ public class RotatableSquare {
 	public void paint(Graphics g) {
 		int x = mid.x;
 		int y = mid.y;
-		int cos, sin;
+		int cos = (int) ((DrawMan.SIZE * Math.cos(22.5) * Math.sqrt(2)) / 2);
+		int sin = (int) ((DrawMan.SIZE * Math.sin(22.5) * Math.sqrt(2)) / 2);
 
 		switch (position.i) {
+
 		case 0:
 			int sqr2 = (int) (DrawMan.SIZE * Math.sqrt(2) / 2);
 
@@ -40,15 +42,15 @@ public class RotatableSquare {
 			g.drawLine(x - sqr2, y, x, y - sqr2);
 			g.drawLine(x, y - sqr2, x + sqr2, y);
 			break;
-		case 1:
-			cos = (int) ((DrawMan.SIZE * Math.cos(22.5) * Math.sqrt(2)) / 2);
-			sin = (int) ((DrawMan.SIZE * Math.sin(22.5) * Math.sqrt(2)) / 2);
 
-			g.drawLine(x + cos, y + sin, x - sin, y + cos);
-			g.drawLine(x - sin, y + cos, x - cos, y - sin);
-			g.drawLine(x - cos, y - sin, x + sin, y - cos);
-			g.drawLine(x + sin, y - cos, x + cos, y + sin);
+		case 1:
+
+			g.drawLine(x + sin, y + cos, x - cos, y + sin);
+			g.drawLine(x - cos, y + sin, x - sin, y - cos);
+			g.drawLine(x - sin, y - cos, x + cos, y - sin);
+			g.drawLine(x + cos, y - sin, x + sin, y + cos);
 			break;
+
 		case 2:
 			g.drawRect(upLeft.x, upLeft.y, DrawMan.SIZE + 2, DrawMan.SIZE + 2);
 			break;
@@ -57,11 +59,12 @@ public class RotatableSquare {
 			cos = (int) ((DrawMan.SIZE * Math.cos(22.5) * Math.sqrt(2)) / 2);
 			sin = (int) ((DrawMan.SIZE * Math.sin(22.5) * Math.sqrt(2)) / 2);
 
-			g.drawLine(x + sin, y + cos, x - cos, y + sin);
-			g.drawLine(x - cos, y + sin, x - sin, y - cos);
-			g.drawLine(x - sin, y - cos, x + cos, y - sin);
-			g.drawLine(x + cos, y - sin, x + sin, y + cos);
+			g.drawLine(x + cos, y + sin, x - sin, y + cos);
+			g.drawLine(x - sin, y + cos, x - cos, y - sin);
+			g.drawLine(x - cos, y - sin, x + sin, y - cos);
+			g.drawLine(x + sin, y - cos, x + cos, y + sin);
 			break;
+
 		}
 	}
 }

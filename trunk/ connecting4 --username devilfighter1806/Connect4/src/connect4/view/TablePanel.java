@@ -46,12 +46,41 @@ public class TablePanel extends JPanel {
 			private void action(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					getGraphics().drawString("left button!", 10, 10);
-					rotateRight();
-					square.rotateRight();
+					rotateBoardRight();
+					
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							for (int i = 0; i < 4; i++) {
+								square.rotateRight();
+								repaint();
+								try {
+									Thread.sleep(100);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					}).start();
+					
 				} else if (e.getButton() == MouseEvent.BUTTON3) {
 					getGraphics().drawString("right button!", 10, 10);
-					rotateLeft();
-					square.rotateLeft();
+					rotateBoardLeft();
+					
+					new Thread(new Runnable() {
+						@Override
+						public void run() {
+							for (int i = 0; i < 4; i++) {
+								square.rotateLeft();
+								repaint();
+								try {
+									Thread.sleep(100);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+						}
+					}).start();
 				}
 
 				try {
@@ -62,9 +91,9 @@ public class TablePanel extends JPanel {
 				}
 			}
 		});
+		
 		square = new RotatableSquare(30, 30);
-		
-		
+
 		this.frame = frame;
 		this.tableSize = tableSize;
 
@@ -112,18 +141,18 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	private void rotateLeft() {
+	private void rotateBoardLeft() {
 		rotate(false);
 	}
 
-	private void rotateRight() {
+	private void rotateBoardRight() {
 		rotate(true);
 	}
 
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
-		
+
 		square.paint(g);
 
 		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
