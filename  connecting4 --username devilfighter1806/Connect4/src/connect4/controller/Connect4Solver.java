@@ -443,8 +443,8 @@ public class Connect4Solver {
 		if (neighborsCurrPlayer == CONNECT_NUMBER - 2) {
 			for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
 				if (isMoveValid(
-						x + Direction.COORD_X[i] * (CONNECT_NUMBER - 1), y
-								+ Direction.COORD_Y[i] * (CONNECT_NUMBER - 1),
+						x + Direction.COORD_X[neighborsDirection[getMovesIndex(currentPlayer)]] * (CONNECT_NUMBER - 1), 
+						y + Direction.COORD_Y[neighborsDirection[getMovesIndex(currentPlayer)]] * (CONNECT_NUMBER - 1),
 						directions)) {
 					botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
 							new Point(x, y));
@@ -586,7 +586,6 @@ public class Connect4Solver {
 	public boolean isPlayerWin(char currentPlayer) {
 		int row = lastMove[getMovesIndex(currentPlayer)].x;
 		int col = lastMove[getMovesIndex(currentPlayer)].y;
-		System.out.println("last moves: " + row + ". " + col);
 		if (isPlayerWin(currentPlayer, row, col))
 			return true;
 		for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
