@@ -7,21 +7,20 @@ public class DrawMan {
 
 	public static int SIZE = 25;
 
-//	private TablePanel drawPanel;
 	private int x;
 	private int y;
 	private Color color;
 	private boolean visible;
 
-	public DrawMan(/*TablePanel panel,*/ int x, int y) {
-//		drawPanel = panel;
+	public DrawMan(int x, int y) {
 		this.x = x;
 		this.y = y;
 
-		visible = true;
-
 		if (System.nanoTime() % 2 == 0) {
 			color = Color.RED;
+		}
+		if (System.nanoTime() % 2 == 0) {
+			visible = true;
 		}
 	}
 
@@ -42,5 +41,9 @@ public class DrawMan {
 
 	public void setColor(Color c) {
 		color = c;
+	}
+
+	public Color getColor() {
+		return color;
 	}
 }
