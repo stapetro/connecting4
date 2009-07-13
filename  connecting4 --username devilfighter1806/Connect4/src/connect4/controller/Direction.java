@@ -36,9 +36,9 @@ public enum Direction {
 	DIOAGONAL_UP_LEFT(4, -1), DIOAGONAL_UP_RIGHT(5, -1), DIOAGONAL_DOWN_LEFT(6,
 			-1), DIOAGONAL_DOWN_RIGHT(7, -1);
 	/**
-	 * Stores the number of all directions for a moving man from the user.
+	 * Stores the number of all directions for checking wining configurations.
 	 */
-	public static final int DIRECTIONS_MOVE_NUMBERS = 4;
+	public static final int DIRECTIONS_MOVES_NUMBER = 8;
 	/**
 	 * Stores moves for x-coordinate(row offsets) in the board.
 	 */

@@ -82,19 +82,15 @@ public class Connect4Solver {
 	 */
 	private GameMode gameMode;
 	/**
-	 * Stores max number of neighbors when checking for threaten square.
-	 */
-	private int maxNeighbors;
-	/**
 	 * Stores all bot statistics from traversing the board in the game.
 	 */
 	private ArrayList<Point>[] botStatistics;
 	/**
-	 * Stores in which direction current square of the board has maximum
-	 * neighbors. Gives information when bot inspects the board for choosing
-	 * bot's next move.
+	 * Stores in which direction's index current square of the board has maximum
+	 * neighbors for both players. Gives information when bot inspects the board
+	 * for choosing bot's next move.
 	 */
-	private Direction maxNeighborsDirection;
+	private int[] neighborsDirection;
 
 	/**
 	 * General purpose contructor. Sets the number of wining paths to zero.
@@ -125,7 +121,7 @@ public class Connect4Solver {
 		}
 		board[boardSize / 2][boardSize / 2] = BLACK;
 		lastMove = new Point[PLAYERS];
-		for(int i = 0; i < lastMove.length; i++){
+		for (int i = 0; i < lastMove.length; i++) {
 			lastMove[i] = new Point();
 		}
 		movesCounter = 1;
@@ -150,6 +146,16 @@ public class Connect4Solver {
 		botStatistics = new ArrayList[BotTactics.TACTICS_NUMBER];
 		for (int i = 0; i < botStatistics.length; i++) {
 			botStatistics[i] = new ArrayList<Point>();
+		}
+		neighborsDirection = new int[PLAYERS];
+	}
+
+	/**
+	 * Clears all bot statistics on every move of the bot during the game.
+	 */
+	private void clearBotStatistics() {
+		for (int i = 0; i < botStatistics.length; i++) {
+			botStatistics[i].clear();
 		}
 	}
 
@@ -279,183 +285,16 @@ public class Connect4Solver {
 	}
 
 	/**
-	 * Checks if player is winning in horizontal direction.
-	 * 
-	 * @param player
-	 *            Current player.
-	 * @param x
-	 *            Row number of current player's position.
-	 * @param y
-	 *            Column number of current player's position.
-	 * @return True - if player wins, false - otherwise.
-	 */
-	private boolean isPlayerWinHorizontally(char player, int x, int y) {
-		int count = 0;
-		int endCol = y + (CONNECT_NUMBER - 1);
-		if (isPositionValid(endCol)) {
-			for (int i = y + (CONNECT_NUMBER - 1); i >= y; i--) {
-				if (board[x][i] != player)
-					break;
-				else {
-					winPathRow[count] = x;
-					winPathCol[count] = i;
-					count++;
-				}
-			}
-			if (count == CONNECT_NUMBER)
-				return true;
-			count = 0;
-		}
-		endCol = y - (CONNECT_NUMBER - 1);
-		if (isPositionValid(endCol)) {
-			for (int i = y - (CONNECT_NUMBER - 1); i <= y; i++) {
-				if (board[x][i] != player)
-					break;
-				else {
-					winPathRow[count] = x;
-					winPathCol[count] = i;
-					count++;
-				}
-			}
-			if (count == CONNECT_NUMBER)
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if player is winning in vertical direction.
-	 * 
-	 * @param player
-	 *            Current player.
-	 * @param x
-	 *            Row number of current player's position.
-	 * @param y
-	 *            Column number of current player's position.
-	 * @return True - if player wins, false - otherwise.
-	 */
-	private boolean isPlayerWinVertically(char player, int x, int y) {
-		int count = 0;
-		int endRow = x - (CONNECT_NUMBER - 1);
-		if (isPositionValid(endRow)) {
-			for (int i = x - (CONNECT_NUMBER - 1); i <= x; i++) {
-				if (board[i][y] != player)
-					break;
-				else {
-					winPathRow[count] = i;
-					winPathCol[count] = y;
-					count++;
-				}
-			}
-			if (count == CONNECT_NUMBER)
-				return true;
-			count = 0;
-		}
-		endRow = x + (CONNECT_NUMBER - 1);
-		if (isPositionValid(endRow)) {
-			for (int i = x + (CONNECT_NUMBER - 1); i >= x; i--) {
-				if (board[i][y] != player)
-					break;
-				else {
-					winPathRow[count] = i;
-					winPathCol[count] = y;
-					count++;
-				}
-			}
-			if (count == CONNECT_NUMBER)
-				return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Checks if player wins on the 4 diagonals.
-	 * 
-	 * @param player
-	 *            Current player.
-	 * @param x
-	 *            Row number of current player's position.
-	 * @param y
-	 *            Column number of current player's position.
-	 * @return True - if player wins, false - otherwise.
-	 */
-	private boolean isPlayerWinDiagonally(char player, int x, int y) {
-		return (isPlayerWinDiaognal(player, x, y, true) || isPlayerWinDiaognal(
-				player, x, y, false));
-	}
-
-	/**
-	 * Checks if player wins on the 2 diagonals in left and right direction.
-	 * 
-	 * @param player
-	 *            Current player.
-	 * @param x
-	 *            Row number of current player's position.
-	 * @param y
-	 *            Column number of current player's position.
-	 * @param up
-	 *            True - when checks diagonals in up direction, false - in down
-	 *            direction.
-	 * @return True - if player wins, false - otherwise.
-	 */
-	private boolean isPlayerWinDiaognal(char player, int x, int y, boolean up) {
-		int count = 0;
-		int endRow = (up) ? (x - (CONNECT_NUMBER - 1))
-				: (x + (CONNECT_NUMBER - 1));
-		int endCol = y - (CONNECT_NUMBER - 1);
-		if (isPositionValid(endRow) && isPositionValid(endCol)) {
-			do {
-				if (board[endRow][endCol] != player)
-					break;
-				else {
-					winPathRow[count] = endRow;
-					winPathCol[count] = endCol;
-					count++;
-					endRow = (up) ? (endRow + 1) : (endRow - 1);
-					endCol++;
-				}
-			} while (count < CONNECT_NUMBER);
-			if (count == CONNECT_NUMBER) {
-				return true;
-			}
-			count = 0;
-		}
-		endCol = y + (CONNECT_NUMBER - 1);
-		if (isPositionValid(endRow) && isPositionValid(endCol)) {
-			do {
-				if (board[endRow][endCol] != player)
-					break;
-				else {
-					winPathRow[count] = endRow;
-					winPathCol[count] = endCol;
-					count++;
-					endRow = (up) ? (endRow + 1) : (endRow - 1);
-					endCol--;
-				}
-			} while (count < CONNECT_NUMBER);
-			if (count == CONNECT_NUMBER) {
-				return true;
-			}
-			count = 0;
-		}
-		return false;
-	}
-
-	/**
 	 * Checks whether specified square is filled in the playing board.
 	 * 
 	 * @param x
 	 *            Row number of the man.
 	 * @param y
 	 *            Column number of the man.
-	 * @return True - if man is filled, false - otherwise.
+	 * @return True - if square is filled, false - otherwise.
 	 */
 	private boolean isSquareFilled(int x, int y) {
-		if (isPositionValid(x) && isPositionValid(y)) {
-			return (board[x][y] == BLACK || board[x][y] == WHITE) ? true
-					: false;
-		} else
-			return false;
+		return (board[x][y] == EMPTY) ? false : true;
 	}
 
 	/**
@@ -468,15 +307,15 @@ public class Connect4Solver {
 	 * @return True - if move is valid, false - otherwise.
 	 */
 	private boolean isMoveValid(int x, int y, Direction[] directions) {
-		if (!isPositionValid(x) || !isPositionValid(y)) {
+		if (!isPositionValid(x) || !isPositionValid(y) || isSquareFilled(x, y)) {
 			return false;
 		}
-		for (int i = 0; i < Direction.DIRECTIONS_MOVE_NUMBERS / 2; i++) {
+		for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER / 2; i++) {
 			if (moveMan(botPlayer, directions[i], (i < 2) ? y : x)) {
-				System.out.println("Last move: " + x + ", " + y);
 				board[lastMove[getMovesIndex(botPlayer)].x][lastMove[getMovesIndex(botPlayer)].y] = EMPTY;
-				return (lastMove[getMovesIndex(botPlayer)].x == x && lastMove[getMovesIndex(botPlayer)].y == y) ? true
-						: false;
+				if (lastMove[getMovesIndex(botPlayer)].x == x
+						&& lastMove[getMovesIndex(botPlayer)].y == y)
+					return true;
 			}
 		}
 		return false;
@@ -498,43 +337,26 @@ public class Connect4Solver {
 			Direction[] directions) {
 		int maxNeighbors = 0;
 		int cnt = 0;
-		int row = x;
-		int col = y;
-		for (Direction d : directions) {
+		int row = 0;
+		int col = 0;
+		for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
 			cnt = 0;
-			row += Direction.COORD_X[d.getIndex()];
-			col += Direction.COORD_Y[d.getIndex()];
+			row = x + Direction.COORD_X[i];
+			col = y + Direction.COORD_Y[i];
 			while (isPositionValid(row) && isPositionValid(col)) {
 				if (board[row][col] == player) {
 					cnt++;
-					row += Direction.COORD_X[d.getIndex()];
-					col += Direction.COORD_Y[d.getIndex()];
+					row += Direction.COORD_X[i];
+					col += Direction.COORD_Y[i];
 				} else
 					break;
 			}
 			if (maxNeighbors < cnt) {
 				maxNeighbors = cnt;
-				maxNeighborsDirection = d;
+				neighborsDirection[getMovesIndex(player)] = i;
 			}
 		}
 		return maxNeighbors;
-	}
-
-	/**
-	 * Checks whether opponent double threats the bot, i.e. player can win from
-	 * two sides in one win configuration.
-	 * 
-	 * @param x
-	 *            Row number.
-	 * @param y
-	 *            Column number.
-	 * @return True - if this square is part from the double threat, false -
-	 *         otherwise.
-	 */
-	private boolean isDoubleThreaten(int x, int y) {
-		// TODO To be implemented - checks whether move is valid from the two
-		// sides.
-		return false;
 	}
 
 	/**
@@ -546,15 +368,17 @@ public class Connect4Solver {
 	 *            X-coordinate of the square(row number).
 	 * @param y
 	 *            Y-coordinate of the square(column number).
+	 * @param botNeighbors
+	 *            Maximum number of bot neighbors for specified square.
+	 * @param currPlayerNeighbors
+	 *            Maximum number of current player neighbors for the specified
+	 *            square.
 	 */
-	private void tryBotWin(int x, int y, Direction[] directions) {
-		int neighborsBot = 0;
-		int neighborsCurrPlayer = 0;
-		neighborsBot = getMaxNeighbors(botPlayer, x, y, directions);
-		neighborsCurrPlayer = getMaxNeighbors(currentPlayer, x, y, directions);
-		if (neighborsBot == CONNECT_NUMBER - 1) {
+	private void tryBotWin(int x, int y, int botNeighbors,
+			int currPlayerNeighbors) {
+		if (botNeighbors == CONNECT_NUMBER - 1) {
 			botStatistics[BotTactics.BOT_WIN.getIndex()].add(new Point(x, y));
-		} else if (neighborsCurrPlayer == CONNECT_NUMBER - 1) {
+		} else if (currPlayerNeighbors == CONNECT_NUMBER - 1) {
 			botStatistics[BotTactics.NOT_USER_WIN.getIndex()].add(new Point(x,
 					y));
 		}
@@ -562,18 +386,28 @@ public class Connect4Solver {
 
 	/**
 	 * Prevents user threats in the game.
+	 * 
+	 * @param x
+	 *            Row number of the board.
+	 * @param y
+	 *            Column number of the board.
+	 * @param directions
+	 *            Directions of all wining paths.
 	 */
+	// TODO To be implemented for all threats.
 	private void preventPlayerThreats(int x, int y, Direction[] directions) {
 		int neighborsCurrPlayer = getMaxNeighbors(currentPlayer, x, y,
 				directions);
 		if (neighborsCurrPlayer == CONNECT_NUMBER - 2) {
-			if (isMoveValid(x
-					+ Direction.COORD_X[maxNeighborsDirection.getIndex()]
-					* CONNECT_NUMBER, y
-					+ Direction.COORD_Y[maxNeighborsDirection.getIndex()]
-					* CONNECT_NUMBER, directions)) {
-				botStatistics[BotTactics.NOT_USER_THREAT.getIndex()]
-						.add(new Point(x, y));
+			for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
+				if (isMoveValid(
+						x + Direction.COORD_X[i] * (CONNECT_NUMBER - 1), y
+								+ Direction.COORD_Y[i] * (CONNECT_NUMBER - 1),
+						directions)) {
+					botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
+							new Point(x, y));
+					break;
+				}
 			}
 		} else if (isPositionValid(x - 1) && board[x - 1][y] == currentPlayer
 				&& isPositionValid(y + 1) && board[x][y + 1] == currentPlayer) {
@@ -582,8 +416,18 @@ public class Connect4Solver {
 		}
 	}
 
-	private void botTactics(int x, int y, Direction[] directions) {
-
+	/**
+	 * Bot makes some tactics during his move.
+	 * 
+	 * @param x
+	 *            Row number of the board.
+	 * @param y
+	 *            Column number of the board.
+	 * @param directions
+	 *            Directions for all wining paths.
+	 */
+	private void goBotTactics(int x, int y, Direction[] directions) {
+		botStatistics[BotTactics.TACTIC.getIndex()].add(0, new Point(x, y));
 	}
 
 	/**
@@ -594,22 +438,24 @@ public class Connect4Solver {
 	 */
 	private Point chooseBotMove() {
 		int maxBotNeighbors = 0;
-		int tempBotNeighbors = 0;
+		int botNeighbors = 0;
+		int currPlayerNeighbors = 0;
 		Point p = new Point(-1, -1);
 		Direction[] directions = Direction.values();
 		for (int i = 0; i < boardSize; i++) {
-			System.out.println("Valid moves");
 			for (int j = 0; j < boardSize; j++) {
 				if (isMoveValid(i, j, directions)) {
-					System.out.println(i + ",  " + j);
-					tryBotWin(i, j, directions); // bot win, not user win
-					preventPlayerThreats(i, j, directions); // not user threats
-					tempBotNeighbors = getMaxNeighbors(botPlayer, i, j,
+					botNeighbors = getMaxNeighbors(botPlayer, i, j, directions);
+					currPlayerNeighbors = getMaxNeighbors(currentPlayer, i, j,
 							directions);
-					if (maxBotNeighbors < tempBotNeighbors) {
-						maxBotNeighbors = tempBotNeighbors;
-						botStatistics[BotTactics.TACTIC.getIndex()].add(0,
-								new Point(i, j));
+					tryBotWin(i, j, botNeighbors, currPlayerNeighbors); // bot
+																		// win,not
+																		// user
+																		// win
+					preventPlayerThreats(i, j, directions); // not user threats
+					if (maxBotNeighbors < botNeighbors) {
+						maxBotNeighbors = botNeighbors;
+						goBotTactics(i, j, directions);
 					} else {
 						p.x = i;
 						p.y = j;
@@ -623,6 +469,7 @@ public class Connect4Solver {
 				break;
 			}
 		}
+		clearBotStatistics();
 		return p;
 	}
 
@@ -690,18 +537,30 @@ public class Connect4Solver {
 	 */
 	public boolean isPlayerWin(char currentPlayer) {
 		if (numberMoves[getMovesIndex(currentPlayer)] >= CONNECT_NUMBER) {
-			if (isPlayerWinHorizontally(currentPlayer,
-					lastMove[getMovesIndex(currentPlayer)].x,
-					lastMove[getMovesIndex(currentPlayer)].y)) {
-				return true;
-			} else if (isPlayerWinVertically(currentPlayer,
-					lastMove[getMovesIndex(currentPlayer)].x,
-					lastMove[getMovesIndex(currentPlayer)].y)) {
-				return true;
-			} else if (isPlayerWinDiagonally(currentPlayer,
-					lastMove[getMovesIndex(currentPlayer)].x,
-					lastMove[getMovesIndex(currentPlayer)].y)) {
-				return true;
+			int cnt = 0;
+			int row = 0;
+			int col = 0;
+			for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
+				cnt = 0;
+				row = lastMove[getMovesIndex(currentPlayer)].x;
+				col = lastMove[getMovesIndex(currentPlayer)].y;
+				winPathRow[cnt] = row;
+				winPathCol[cnt] = col;
+				row += Direction.COORD_X[i];
+				col += Direction.COORD_Y[i];
+				while (isPositionValid(row) && isPositionValid(col)) {
+					if (board[row][col] != currentPlayer)
+						break;
+					else {
+						cnt++;
+						winPathRow[cnt] = row;
+						winPathCol[cnt] = col;
+						if (cnt == CONNECT_NUMBER - 1)
+							return true;
+						row += Direction.COORD_X[i];
+						col += Direction.COORD_Y[i];
+					}
+				}
 			}
 		}
 		return false;
