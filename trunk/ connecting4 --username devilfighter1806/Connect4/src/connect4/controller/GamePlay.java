@@ -140,15 +140,12 @@ public class GamePlay {
 			}
 			connect4.printBoard();
 			System.out.println("Bot move..........");
-			connect4.nextBotMove();
-			connect4.printBoard();
-			currentPlayer = switchPlayer();
-			if (connect4.isPlayerWin(currentPlayer)) {
-				System.out.println("WIN!!!");
+			if(connect4.nextBotMove()){
+				connect4.printBoard();
 				connect4.printWinPaths();
 				break;
 			}
-			currentPlayer = switchPlayer();
+			connect4.printBoard();
 			if (!validMove)
 				System.out.println("Invalid move!");
 			else if (connect4.isPlayerWin(currentPlayer)) {
