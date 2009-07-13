@@ -298,6 +298,48 @@ public class Connect4Solver {
 	}
 
 	/**
+	 * Checks whether player wins.
+	 * 
+	 * @param player
+	 *            Current player of the game.
+	 * @param x
+	 *            Row number of the board.
+	 * @param y
+	 *            Column number of the board.
+	 * @return True - if current player wins, false - otherwise.
+	 */
+	private boolean isPlayerWin(char player, int x, int y) {
+		if (isPositionValid(x) && isPositionValid(y) && board[x][y] == player) {
+			int cnt = 0;
+			int row = 0;
+			int col = 0;
+			for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
+				cnt = 0;
+				row = x;
+				col = y;
+				winPathRow[cnt] = row;
+				winPathCol[cnt] = col;
+				row += Direction.COORD_X[i];
+				col += Direction.COORD_Y[i];
+				while (isPositionValid(row) && isPositionValid(col)) {
+					if (board[row][col] != player)
+						break;
+					else {
+						cnt++;
+						winPathRow[cnt] = row;
+						winPathCol[cnt] = col;
+						if (cnt == CONNECT_NUMBER - 1)
+							return true;
+						row += Direction.COORD_X[i];
+						col += Direction.COORD_Y[i];
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Checks whether move is valid for bot player.
 	 * 
 	 * @param x
@@ -409,8 +451,14 @@ public class Connect4Solver {
 					break;
 				}
 			}
-		} else if (isPositionValid(x - 1) && board[x - 1][y] == currentPlayer
-				&& isPositionValid(y + 1) && board[x][y + 1] == currentPlayer) {
+		} else if ((isPositionValid(x - 1) && board[x - 1][y] == currentPlayer
+				&& isPositionValid(y + 1) && board[x][y + 1] == currentPlayer)
+				|| (isPositionValid(y - 1) && board[x][y - 1] == currentPlayer
+						&& isPositionValid(x + 1) && board[x + 1][y] == currentPlayer)
+				|| (isPositionValid(y + 1) && board[x][y + 1] == currentPlayer
+						&& isPositionValid(x + 1) && board[x + 1][y] == currentPlayer)
+				|| (isPositionValid(y - 1) && board[x][y - 1] == currentPlayer
+						&& isPositionValid(x - 1) && board[x - 1][y] == currentPlayer)) {
 			botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(new Point(
 					x, y));
 		}
@@ -448,11 +496,11 @@ public class Connect4Solver {
 					botNeighbors = getMaxNeighbors(botPlayer, i, j, directions);
 					currPlayerNeighbors = getMaxNeighbors(currentPlayer, i, j,
 							directions);
-					tryBotWin(i, j, botNeighbors, currPlayerNeighbors); // bot
-																		// win,not
-																		// user
-																		// win
-					preventPlayerThreats(i, j, directions); // not user threats
+					tryBotWin(i, j, botNeighbors, currPlayerNeighbors);
+					if (botStatistics[BotTactics.NOT_USER_THREAT.getIndex()]
+							.isEmpty()) {
+						preventPlayerThreats(i, j, directions);
+					} // not user threats
 					if (maxBotNeighbors < botNeighbors) {
 						maxBotNeighbors = botNeighbors;
 						goBotTactics(i, j, directions);
@@ -536,32 +584,15 @@ public class Connect4Solver {
 	 * @return True - if game has won, false - otherwise.
 	 */
 	public boolean isPlayerWin(char currentPlayer) {
-		if (numberMoves[getMovesIndex(currentPlayer)] >= CONNECT_NUMBER) {
-			int cnt = 0;
-			int row = 0;
-			int col = 0;
-			for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
-				cnt = 0;
-				row = lastMove[getMovesIndex(currentPlayer)].x;
-				col = lastMove[getMovesIndex(currentPlayer)].y;
-				winPathRow[cnt] = row;
-				winPathCol[cnt] = col;
-				row += Direction.COORD_X[i];
-				col += Direction.COORD_Y[i];
-				while (isPositionValid(row) && isPositionValid(col)) {
-					if (board[row][col] != currentPlayer)
-						break;
-					else {
-						cnt++;
-						winPathRow[cnt] = row;
-						winPathCol[cnt] = col;
-						if (cnt == CONNECT_NUMBER - 1)
-							return true;
-						row += Direction.COORD_X[i];
-						col += Direction.COORD_Y[i];
-					}
-				}
-			}
+		int row = lastMove[getMovesIndex(currentPlayer)].x;
+		int col = lastMove[getMovesIndex(currentPlayer)].y;
+		System.out.println("last moves: " + row + ". " + col);
+		if (isPlayerWin(currentPlayer, row, col))
+			return true;
+		for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
+			if (isPlayerWin(currentPlayer, row + Direction.COORD_X[i], col
+					+ Direction.COORD_Y[i]))
+				return true;
 		}
 		return false;
 	}
@@ -578,13 +609,21 @@ public class Connect4Solver {
 
 	/**
 	 * Indicates next move on bot player over the playing board.
+	 * 
+	 * @return True - if bot wins with this move, false - otherwise.
 	 */
-	public void nextBotMove() {
+	public boolean nextBotMove() {
 		Point move = chooseBotMove();
 		System.out.println("Bot pos: " + move);
 		board[move.x][move.y] = botPlayer;
-		if (isPlayerWin(botPlayer))
-			System.out.println("Bot win!");
+		lastMove[getMovesIndex(botPlayer)].x = move.x;
+		lastMove[getMovesIndex(botPlayer)].y = move.y;
+		numberMoves[getMovesIndex(botPlayer)]++;
+		if (isPlayerWin(botPlayer)) {
+			System.out.println("BOT WIN!");
+			return true;
+		}
+		return false;
 	}
 
 	/**
