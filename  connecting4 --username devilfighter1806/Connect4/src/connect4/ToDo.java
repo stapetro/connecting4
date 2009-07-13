@@ -22,9 +22,4 @@ public class ToDo {
 	 * 
 	 * po-konkretni zabelejki - sled PRPSP-to
 	 */
-
-	// TODO Mnogo vajno: Vinago kogato se commit-va ili se pravqt promeni po
-	// failove se preduprejdava drugiq partner. Zashtoto ti beshe pravil promeni
-	// i az dosega pisheh nov kode i vsichko se omaza. Sega go opravih. SLed
-	// kato prochetesh tova go iztrii.
 }
