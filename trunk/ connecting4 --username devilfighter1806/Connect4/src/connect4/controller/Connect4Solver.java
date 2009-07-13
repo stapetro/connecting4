@@ -262,12 +262,11 @@ public class Connect4Solver {
 	}
 
 	/**
-	 * Gets the index of the current player for fetching the data from number of
-	 * moves array.
+	 * Gets the index of the current player for last move array.
 	 * 
 	 * @param player
 	 *            Current player.
-	 * @return Index for pointing element from number of moves array.
+	 * @return Index for pointing element from last move array.
 	 */
 	private int getMovesIndex(char player) {
 		return (player == BLACK) ? 0 : 1;
@@ -346,6 +345,8 @@ public class Connect4Solver {
 	 *            Row number of the man.
 	 * @param y
 	 *            Column number of the man.
+	 * @param directions
+	 *            Directions for all wining paths on the board.
 	 * @return True - if move is valid, false - otherwise.
 	 */
 	private boolean isMoveValid(int x, int y, Direction[] directions) {
@@ -372,6 +373,8 @@ public class Connect4Solver {
 	 *            Row number of the given man.
 	 * @param player
 	 *            Player whose neighbors are counted.
+	 * @param directions
+	 *            Directions for all wining paths on the board.
 	 * @return 0 if the given man has no neighbors, otherwise - max number of
 	 *         man's neighbors.
 	 */
@@ -434,7 +437,7 @@ public class Connect4Solver {
 	 * @param y
 	 *            Column number of the board.
 	 * @param directions
-	 *            Directions of all wining paths.
+	 *            Directions for all wining paths on the board.
 	 */
 	// TODO To be implemented for all threats.
 	private void preventPlayerThreats(int x, int y, Direction[] directions) {
@@ -443,9 +446,12 @@ public class Connect4Solver {
 		if (neighborsCurrPlayer == CONNECT_NUMBER - 2) {
 			for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
 				if (isMoveValid(
-						x + Direction.COORD_X[neighborsDirection[getMovesIndex(currentPlayer)]] * (CONNECT_NUMBER - 1), 
-						y + Direction.COORD_Y[neighborsDirection[getMovesIndex(currentPlayer)]] * (CONNECT_NUMBER - 1),
-						directions)) {
+						x
+								+ Direction.COORD_X[neighborsDirection[getMovesIndex(currentPlayer)]]
+								* (CONNECT_NUMBER - 1),
+						y
+								+ Direction.COORD_Y[neighborsDirection[getMovesIndex(currentPlayer)]]
+								* (CONNECT_NUMBER - 1), directions)) {
 					botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
 							new Point(x, y));
 					break;
@@ -472,7 +478,7 @@ public class Connect4Solver {
 	 * @param y
 	 *            Column number of the board.
 	 * @param directions
-	 *            Directions for all wining paths.
+	 *            Directions for all wining paths on the board.
 	 */
 	private void goBotTactics(int x, int y, Direction[] directions) {
 		botStatistics[BotTactics.TACTIC.getIndex()].add(0, new Point(x, y));
@@ -541,7 +547,11 @@ public class Connect4Solver {
 	}
 
 	/**
-	 * Sets first player and bot player if game mode is single player.
+	 * Sets first player(only first player if it's multiplayer), and bot player
+	 * if game mode is single player.
+	 * 
+	 * @param player
+	 *            First player to be set.
 	 */
 	public void setPlayer(char player) {
 		this.currentPlayer = player;
