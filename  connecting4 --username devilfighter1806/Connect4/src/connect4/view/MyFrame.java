@@ -15,7 +15,7 @@ public class MyFrame extends JFrame {
 		statusBar = new StatusBarPanel(getWidth(), getHeight() / 5);
 		hei = h;
 		wid = w;
-		drawPanel = new TablePanel(this, 11);
+		drawPanel = new TablePanel(wid, hei, 11);
 		init();
 	}
 

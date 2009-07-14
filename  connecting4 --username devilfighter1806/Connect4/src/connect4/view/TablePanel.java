@@ -10,14 +10,16 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class TablePanel extends JPanel {
 
+	private int w;
+	private int h;
+
 	private DrawMan[][] men;
-	private MyFrame frame;
 	private int sidewaysBuffer;
 	private int upDownBuffer;
 	private int tableSize;
 	private RotatableSquare square;
 
-	public TablePanel(MyFrame frame, int tableSize) {
+	public TablePanel(int wid, int hei, int tableSize) {
 		addMouseListener(new MouseListener() {
 
 			private boolean animating;
@@ -101,12 +103,14 @@ public class TablePanel extends JPanel {
 			}
 		});
 
-		this.frame = frame;
 		this.tableSize = tableSize;
 
+		w = wid;
+		h = hei;
+
 		men = new DrawMan[tableSize][tableSize];
-		sidewaysBuffer = (frame.wid - ((1 + tableSize) * DrawMan.SIZE)) / 2;
-		upDownBuffer = (frame.hei - ((2 + tableSize) * DrawMan.SIZE)) / 2;
+		sidewaysBuffer = (w - ((1 + tableSize) * DrawMan.SIZE)) / 2;
+		upDownBuffer = (h - ((2 + tableSize) * DrawMan.SIZE)) / 2;
 
 		square = new RotatableSquare(sidewaysBuffer, upDownBuffer, tableSize
 				* DrawMan.SIZE + 3);
