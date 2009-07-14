@@ -51,6 +51,38 @@ public class GamePlay {
 	}
 
 	/**
+	 * Moves man from the specified position and row/column number.
+	 * 
+	 * @param position
+	 *            Position from which user drops a man.
+	 * @param num
+	 *            Row/column number in the board.
+	 * @return True - if the move is valid, false - otherwise.
+	 */
+	private boolean moveMan(int position, int num) {
+		boolean validMove = false;
+		switch (position) {
+		case 1:
+			validMove = connect4.moveMan(currentPlayer, Direction.VERTICAL_UP,
+					num);
+			break;
+		case 2:
+			validMove = connect4.moveMan(currentPlayer,
+					Direction.VERTICAL_DOWN, num);
+			break;
+		case 3:
+			validMove = connect4.moveMan(currentPlayer,
+					Direction.HORIZONTAL_LEFT, num);
+			break;
+		case 4:
+			validMove = connect4.moveMan(currentPlayer,
+					Direction.HORIZONTAL_RIGHT, num);
+			break;
+		}
+		return validMove;
+	}
+
+	/**
 	 * Configures new game.
 	 * 
 	 * @param boardSize
@@ -94,10 +126,19 @@ public class GamePlay {
 	 * Determines the game mode and loops the relevant game play.
 	 */
 	public void loopGame() {
-		if (gameMode == GameMode.SINGLE_PLAYER) {
+		switch (gameMode) {
+		case SINGLE_PLAYER: {
 			playSinglePlayer();
-		} else {
-			playMultiPlayer();
+			break;
+		}
+		case HOT_SEED: {
+			playHotSeed();
+			break;
+		}
+		case TCP_CONNECTION: {
+			playClientServer();
+			break;
+		}
 		}
 	}
 
@@ -119,28 +160,10 @@ public class GamePlay {
 			num = stdin.nextInt();
 			if (position == -1 && num == -1)
 				break;
-			switch (position) {
-			case 1:
-				if (connect4.moveMan(currentPlayer, Direction.VERTICAL_UP, num) == false) {
-					System.out.println("Invalid move!");
-				}
-				break;
-			case 2:
-				validMove = connect4.moveMan(currentPlayer, Direction.VERTICAL_DOWN,
-						num);
-				break;
-			case 3:
-				validMove = connect4
-						.moveMan(currentPlayer, Direction.HORIZONTAL_LEFT, num);
-				break;
-			case 4:
-				validMove = connect4.moveMan(currentPlayer, Direction.HORIZONTAL_RIGHT,
-						num);
-				break;
-			}
+			validMove = moveMan(position, num);
 			connect4.printBoard();
 			System.out.println("Bot move..........");
-			if(connect4.nextBotMove()){
+			if (connect4.nextBotMove()) {
 				connect4.printBoard();
 				connect4.printWinPaths();
 				break;
@@ -157,9 +180,38 @@ public class GamePlay {
 	}
 
 	/**
-	 * Controls the game play in multiplayer mode.
+	 * Controls the game play in multiplayer hot seed mode, i.e. two players
+	 * play on a single computer.
 	 */
-	public void playMultiPlayer() {
+	public void playHotSeed() {
+		int position, num;
+		boolean validMove = true;
+		connect4.printBoard();
+		switchPlayer();
+		while (true) {
+			System.out.println("Current player is: " + currentPlayer);
+			System.out.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
+			position = stdin.nextInt();
+			num = stdin.nextInt();
+			if (position == -1 && num == -1)
+				break;
+			validMove = moveMan(position, num);
+			connect4.printBoard();
+			if (!validMove)
+				System.out.println("Invalid move!");
+			else if (connect4.isPlayerWin(currentPlayer)) {
+				System.out.println("WIN!!!");
+				connect4.printWinPaths();
+				break;
+			}
+			switchPlayer();
+		}
+	}
+
+	/**
+	 * Controls the game play in multi player game mode over the network.
+	 */
+	public void playClientServer() {
 		// TODO To be implemented.
 	}
 

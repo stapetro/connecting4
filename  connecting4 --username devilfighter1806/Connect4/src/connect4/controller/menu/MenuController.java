@@ -76,7 +76,7 @@ public class MenuController {
 	 */
 	public void addContentToContainer(JComponent component) {
 		containerPnl.removeAll();
-		containerPnl.add(component, BorderLayout.CENTER);
+		containerPnl.add(component);
 		containerPnl.updateUI();
 	}
 }
