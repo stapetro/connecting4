@@ -128,7 +128,7 @@ public class MultiPlayer {
 	/**
 	 * Closes sockets and associated streams with them.
 	 */
-	private void closeConnection() {
+	public void closeConnection() {
 		try {
 			input.close();
 			output.close();
