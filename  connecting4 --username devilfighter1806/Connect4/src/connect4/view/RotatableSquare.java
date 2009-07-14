@@ -1,5 +1,6 @@
 package connect4.view;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
@@ -33,8 +34,8 @@ public class RotatableSquare {
 	public void paint(Graphics g) {
 		int x = mid.x;
 		int y = mid.y;
-		int cos = (int) ((size * Math.cos(22.5) * Math.sqrt(2)) / 2);
-		int sin = (int) ((size * Math.sin(22.5) * Math.sqrt(2)) / 2);
+		int cos = (int) ((size * Math.cos(Math.PI / 8) * Math.sqrt(2)) / 2);
+		int sin = (int) ((size * Math.sin(Math.PI / 8) * Math.sqrt(2)) / 2);
 		int sqr2 = (int) (size * Math.sqrt(2) / 2);
 
 		switch (position.i) {
@@ -55,8 +56,8 @@ public class RotatableSquare {
 		case 1:
 
 			System.out.println("case 1");
-			tempUpLeft.x = upLeft.x + (int) (sqr2)/2;
-			tempUpLeft.y = upLeft.y - (int) (sqr2)/2;
+			tempUpLeft.x = upLeft.x + (int) (sqr2) / 2;
+			tempUpLeft.y = upLeft.y - (int) (sqr2) / 2;
 
 			g.drawLine(x + sin, y + cos, x - cos, y + sin);
 			g.drawLine(x - cos, y + sin, x - sin, y - cos);
@@ -68,8 +69,10 @@ public class RotatableSquare {
 		case 2:
 
 			System.out.println("case 2");
-			tempUpLeft.x = 0;
-			tempUpLeft.y = 0;
+			tempUpLeft.x = x - sin;
+			tempUpLeft.y = y - cos;
+
+			System.out.println("tempUL " + tempUpLeft);
 
 			g.drawRect(upLeft.x, upLeft.y, size + 2, size + 2);
 			break;
@@ -79,15 +82,14 @@ public class RotatableSquare {
 
 			System.out.println("case 3");
 
-			tempUpLeft.x = upLeft.x - (int) (sqr2)/2;
-			tempUpLeft.y = upLeft.y + (int) (sqr2)/2;
+			tempUpLeft.x = upLeft.x - (int) (sqr2) / 2;
+			tempUpLeft.y = upLeft.y + (int) (sqr2) / 2;
 
 			g.drawLine(x + cos, y + sin, x - sin, y + cos);
 			g.drawLine(x - sin, y + cos, x - cos, y - sin);
 			g.drawLine(x - cos, y - sin, x + sin, y - cos);
 			g.drawLine(x + sin, y - cos, x + cos, y + sin);
 			break;
-
 		}
 	}
 
