@@ -230,6 +230,38 @@ public class GamePlay extends Thread {
 		protocol = new MultiPlayerProtocol(currentPlayer, 0, 0);
 	}
 
+	private void sendData() {
+		Point p = connect4.getLastMove(currentPlayer);
+		MultiPlayerProtocol prot1 = new MultiPlayerProtocol(currentPlayer, p.x,
+				p.y);
+		try {
+			output.writeObject(prot1);
+			output.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private char receiveData() {
+		Object obj = null;
+		while (obj == null) {
+			try {
+				obj = input.readObject();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		protocol = (MultiPlayerProtocol) obj;
+		connect4.setSquare(protocol.getPlayer(), protocol.getRow(), protocol
+				.getCol());
+		return protocol.getPlayer();
+	}
+
 	/**
 	 * Controls the game play in multi player game mode over the network.
 	 */
@@ -238,9 +270,7 @@ public class GamePlay extends Thread {
 		createConnection();
 		int position = 0, num = 0;
 		boolean validMove = true;
-		Point p;
 		connect4.printBoard();
-		MultiPlayerProtocol prot;
 		connect4.printBoard();
 		if (currentPlayer == 'o') {
 			do {
@@ -251,32 +281,14 @@ public class GamePlay extends Thread {
 				num = stdin.nextInt();
 			} while (!(validMove = moveMan(currentPlayer, position, num)));
 			connect4.printBoard();
-			p = connect4.getLastMove(currentPlayer);
-			MultiPlayerProtocol prot1 = new MultiPlayerProtocol(currentPlayer,
-					p.x, p.y);
-			try {
-				output.writeObject(prot1);
-				output.flush();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			sendData();
 		}
 		while (true) {
-			Object obj = null;
-			while (obj == null) {
-				try {
-					obj = input.readObject();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			if (connect4.isPlayerWin(receiveData())) {
+				System.out.println("WIN!!!");
+				connect4.printWinPaths();
+				break;
 			}
-			prot = (MultiPlayerProtocol) obj;
-			connect4.setSquare(prot.getPlayer(), prot.getRow(), prot.getCol());
 			connect4.printBoard();
 			do {
 				System.out.println("Current player is: " + currentPlayer);
@@ -286,16 +298,7 @@ public class GamePlay extends Thread {
 				num = stdin.nextInt();
 			} while (!(validMove = moveMan(currentPlayer, position, num)));
 			connect4.printBoard();
-			p = connect4.getLastMove(currentPlayer);
-			MultiPlayerProtocol prot1 = new MultiPlayerProtocol(currentPlayer,
-					p.x, p.y);
-			try {
-				output.writeObject(prot1);
-				output.flush();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			sendData();
 			if (!validMove)
 				System.out.println("Invalid move!");
 			else if (connect4.isPlayerWin(currentPlayer)) {

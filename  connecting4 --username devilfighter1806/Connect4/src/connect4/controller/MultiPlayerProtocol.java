@@ -30,6 +30,8 @@ public class MultiPlayerProtocol implements Serializable {
 	 * Stores row/column number from which player moves a man.
 	 */
 	private int rowColNum;
+	
+	private boolean isPlayerWin;
 
 	public MultiPlayerProtocol(char player, int row, int col) {
 		this.player = player;
@@ -79,5 +81,13 @@ public class MultiPlayerProtocol implements Serializable {
 
 	public String toString(){
 		return player + " " +  row + " " + col;
+	}
+	
+	public void setPlayerWin(boolean win){
+		this.isPlayerWin = win;
+	}
+	
+	public boolean isPlayerWin(){
+		return this.isPlayerWin;
 	}
 }
