@@ -20,6 +20,8 @@ public class TablePanel extends JPanel {
 	public TablePanel(MyFrame frame, int tableSize) {
 		addMouseListener(new MouseListener() {
 
+			private boolean animating;
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
@@ -42,6 +44,12 @@ public class TablePanel extends JPanel {
 			}
 
 			private void action(MouseEvent e) {
+				if (!animating) {
+					animating = true;
+				} else {
+					return;
+				}
+
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					getGraphics().drawString("left button!", 10, 10);
 
@@ -58,6 +66,7 @@ public class TablePanel extends JPanel {
 									ex.printStackTrace();
 								}
 							}
+							animating = false;
 						}
 					}).start();
 
@@ -77,6 +86,8 @@ public class TablePanel extends JPanel {
 									e.printStackTrace();
 								}
 							}
+
+							animating = false;
 						}
 					}).start();
 				}
@@ -122,7 +133,7 @@ public class TablePanel extends JPanel {
 			case 0: // 22
 
 				System.out.println("rotate 22");
-				rotate22();
+				rotate22(right);
 				break;
 
 			case 1: // 0
@@ -155,7 +166,7 @@ public class TablePanel extends JPanel {
 
 			case 2: // 22
 				System.out.println("rotate 22");
-				rotate22();
+				rotate22(right);
 				break;
 
 			case 3: // 45
@@ -166,10 +177,6 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	//
-	// EBI MU MAMATA; Ostana
-	// HARD-CODE I ZA OSTANALITE 2 ANIMACIA
-	//	
 	private void rotate0(boolean right) {
 		double sqr2 = Math.sqrt(2);
 
@@ -219,8 +226,38 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	private void rotate22() {
+	// OSTAVA V POSOKA NALQVO I POSLEDNATA POZICIQ
+	// parvi problemi - leko razminavane v aglite na zavartane...
+	// ne se vijda pri visoka skorost na animaciq, no bavno - da
+	private void rotate22(boolean right) {
+		Point temp = new Point(square.tempUpLeft);
 
+		double sqr2 = Math.sqrt(2);
+		int size = DrawMan.SIZE;
+		int cos = (int) (size * Math.cos(Math.PI / 8));
+		int sin = (int) (size * Math.sin(Math.PI / 8));
+
+		if (right) {
+			for (int i = 0; i < tableSize; i++) {
+				System.out.println(temp);
+				temp.x += (int) (cos);
+				temp.y -= 3 * (int) (sin);
+
+				for (int j = 0; j < tableSize; j++) {
+					men[i][j].paintPoint.x = (int) (temp.x - sin * sqr2 / 2
+							- size * sqr2 / 2 - 4);
+					men[i][j].paintPoint.y = (int) (temp.y + cos * sqr2 / 2
+							+ size * sqr2 / 2 + 4);
+
+					temp.x += (int) (cos);
+					temp.y += (int) (sin);
+				}
+				temp.x = (int) (square.tempUpLeft.x - (i + 1) * sin) + 1;
+				temp.y = (int) (square.tempUpLeft.y + (i + 1) * cos) + 1;
+			}
+		} else {
+
+		}
 	}
 
 	// final position of men (NORMAL position
