@@ -4,20 +4,21 @@ import java.awt.GridBagLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
 /**
  * Represents content associated with the relevant menu item.
  * @author Stanislav Petrov
  */
 //TODO To be impelemented.
-public class GameMenuContentPanel extends JPanel {
+public class MenuContentPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
 	/**
 	 * This is the default constructor
 	 */
-	public GameMenuContentPanel() {
+	public MenuContentPanel() {
 		super();
 		initialize();
 	}
@@ -29,7 +30,7 @@ public class GameMenuContentPanel extends JPanel {
 	 */
 	private void initialize() {
 		this.setSize(350, 500);
-		this.setLayout(new GridBagLayout());
+		this.setLayout(new BorderLayout());
 	}
 
 }
