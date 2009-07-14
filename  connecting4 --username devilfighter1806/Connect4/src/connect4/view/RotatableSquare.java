@@ -79,8 +79,8 @@ public class RotatableSquare {
 
 			System.out.println("case 3");
 
-			tempUpLeft.x = upLeft.x + (int) (sqr2)/2;
-			tempUpLeft.y = upLeft.y - (int) (sqr2)/2;
+			tempUpLeft.x = upLeft.x - (int) (sqr2)/2;
+			tempUpLeft.y = upLeft.y + (int) (sqr2)/2;
 
 			g.drawLine(x + cos, y + sin, x - sin, y + cos);
 			g.drawLine(x - sin, y + cos, x - cos, y - sin);

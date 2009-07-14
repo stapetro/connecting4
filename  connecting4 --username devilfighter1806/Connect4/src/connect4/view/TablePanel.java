@@ -127,7 +127,7 @@ public class TablePanel extends JPanel {
 
 			case 1: // 0
 				System.out.println("rotate 0");
-				rotate0();
+				rotate0(right);
 				break;
 
 			case 2: // 77
@@ -150,7 +150,7 @@ public class TablePanel extends JPanel {
 
 			case 1: // 0
 				System.out.println("rotate 0");
-				rotate0();
+				rotate0(right);
 				break;
 
 			case 2: // 22
@@ -167,33 +167,55 @@ public class TablePanel extends JPanel {
 	}
 
 	//
-	//	EBI MU MAMATA
-	//	VATRI SE PRAVILNO SAMO NADQSNO
-	//	HARD-CODE I ZA NALQVO + OSTANALITE 2 ANIMACII...
+	// EBI MU MAMATA; Ostana
+	// HARD-CODE I ZA OSTANALITE 2 ANIMACIA
 	//	
-	private void rotate0() {
+	private void rotate0(boolean right) {
 		double sqr2 = Math.sqrt(2);
 
 		Point temp = new Point(square.tempUpLeft);
 
-		for (int i = 0; i < tableSize; i++) {
-			temp.x += (int) (DrawMan.SIZE * sqr2 / 2);
-			temp.y += (int) (DrawMan.SIZE * sqr2);
-
-			for (int j = 0; j < tableSize; j++) {
-				men[i][j].paintPoint.x = temp.x + DrawMan.SIZE / 2;
-				men[i][j].paintPoint.y = temp.y
-						- (int) ((1 - sqr2) * DrawMan.SIZE / 2) + DrawMan.SIZE
-						/ 4;
-
+		if (right) {
+			for (int i = 0; i < tableSize; i++) {
 				temp.x += (int) (DrawMan.SIZE * sqr2 / 2);
+				temp.y += (int) (DrawMan.SIZE * sqr2);
+
+				for (int j = 0; j < tableSize; j++) {
+					men[i][j].paintPoint.x = temp.x + DrawMan.SIZE / 2 + 3;
+					men[i][j].paintPoint.y = temp.y + 5
+							- (int) ((1 - sqr2) * DrawMan.SIZE / 2)
+							+ DrawMan.SIZE / 4;
+
+					temp.x += (int) (DrawMan.SIZE * sqr2 / 2);
+					temp.y += (int) (DrawMan.SIZE * sqr2 / 2);
+
+				}
+				temp.x = (int) (square.tempUpLeft.x - (i + 1) * DrawMan.SIZE
+						* sqr2 / 2) + 2;
+				temp.y = (int) (square.tempUpLeft.y + (i + 1) * DrawMan.SIZE
+						* sqr2 / 2) + 2;
+			}
+
+		} else {
+			for (int i = 0; i < tableSize; i++) {
+				temp.x += (int) (DrawMan.SIZE * sqr2);
 				temp.y += (int) (DrawMan.SIZE * sqr2 / 2);
 
+				for (int j = 0; j < tableSize; j++) {
+					men[i][j].paintPoint.x = temp.x + DrawMan.SIZE / 2 + 4;
+					men[i][j].paintPoint.y = temp.y + 7
+							+ (int) ((1 - sqr2) * DrawMan.SIZE / 2)
+							+ DrawMan.SIZE / 4;
+
+					temp.x += (int) (DrawMan.SIZE * sqr2 / 2);
+					temp.y -= (int) (DrawMan.SIZE * sqr2 / 2);
+
+				}
+				temp.x = (int) (square.tempUpLeft.x + (i + 1) * DrawMan.SIZE
+						* sqr2 / 2) + 2;
+				temp.y = (int) (square.tempUpLeft.y + (i + 1) * DrawMan.SIZE
+						* sqr2 / 2) + 2;
 			}
-			temp.x = (int) (square.tempUpLeft.x - (i + 1) * DrawMan.SIZE * sqr2
-					/ 2) + 2;
-			temp.y = (int) (square.tempUpLeft.y + (i + 1) * DrawMan.SIZE * sqr2
-					/ 2) + 2;
 		}
 	}
 
