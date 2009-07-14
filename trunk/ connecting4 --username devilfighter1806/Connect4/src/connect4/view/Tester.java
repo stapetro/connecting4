@@ -1,5 +1,3 @@
-//TUKA SI IGRAQ - ne tarsi smislen/krasiv kod
-
 package connect4.view;
 
 import javax.swing.JFrame;
