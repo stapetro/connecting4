@@ -664,6 +664,16 @@ public class Connect4Solver {
 		}
 		return false;
 	}
+	
+	public Point getLastMove(char player){
+		return lastMove[getMovesIndex(player)];
+	}
+	
+	public void setSquare(char player, int row, int col){
+		if(isPositionValid(row) && isPositionValid(col)){
+			board[row][col] = player;
+		}
+	}
 
 	/**
 	 * Prints board on the standard output.

@@ -68,7 +68,6 @@ public class ConfigurationPanel extends JPanel {
 		boardSizelbl.setPreferredSize(new Dimension(300, 24));
 		boardSizelbl.setFont(new Font("Dialog", Font.BOLD, 18));
 		this.setLayout(flowLayout);
-		boardSizelbl.setFont(new Font("Dialog", Font.BOLD, 14));
 		colorChooser = new JColorChooser(Color.BLUE);
 		this.setSize(350, 500);
 		this.setPreferredSize(new Dimension(350, 150));
