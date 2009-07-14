@@ -63,7 +63,7 @@ public class TablePanel extends JPanel {
 								rotateBoardRight(i);
 								repaint();
 								try {
-									Thread.sleep(100);
+									Thread.sleep(1000);
 								} catch (InterruptedException ex) {
 									ex.printStackTrace();
 								}
@@ -83,7 +83,7 @@ public class TablePanel extends JPanel {
 								rotateBoardLeft(i);
 								repaint();
 								try {
-									Thread.sleep(100);
+									Thread.sleep(1000);
 								} catch (InterruptedException e) {
 									e.printStackTrace();
 								}
@@ -147,7 +147,7 @@ public class TablePanel extends JPanel {
 
 			case 2: // 77
 				System.out.println("rotate 77");
-				rotate77();
+				rotate77(right);
 				break;
 
 			case 3: // 45
@@ -160,7 +160,7 @@ public class TablePanel extends JPanel {
 			switch (step) {
 			case 0: // 77
 				System.out.println("rotate 77");
-				rotate77();
+				rotate77(right);
 				break;
 
 			case 1: // 0
@@ -230,7 +230,7 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	// OSTAVA V POSOKA NALQVO I POSLEDNATA POZICIQ
+	// OSTAVA POSLEDNATA POZICIQ
 	// parvi problemi - leko razminavane v aglite na zavartane...
 	// ne se vijda pri visoka skorost na animaciq, no bavno - da
 	private void rotate22(boolean right) {
@@ -243,15 +243,14 @@ public class TablePanel extends JPanel {
 
 		if (right) {
 			for (int i = 0; i < tableSize; i++) {
-				System.out.println(temp);
 				temp.x += (int) (cos);
 				temp.y -= 3 * (int) (sin);
 
 				for (int j = 0; j < tableSize; j++) {
 					men[i][j].paintPoint.x = (int) (temp.x - sin * sqr2 / 2
-							- size * sqr2 / 2 - 4);
+							- size * sqr2 / 2 - 5);
 					men[i][j].paintPoint.y = (int) (temp.y + cos * sqr2 / 2
-							+ size * sqr2 / 2 + 4);
+							+ size * sqr2 / 2 + 3);
 
 					temp.x += (int) (cos);
 					temp.y += (int) (sin);
@@ -260,13 +259,28 @@ public class TablePanel extends JPanel {
 				temp.y = (int) (square.tempUpLeft.y + (i + 1) * cos) + 1;
 			}
 		} else {
+			for (int i = 0; i < tableSize; i++) {
+				temp.x += (int) (8 * cos);
+				temp.y += (int) (sin);
 
+				for (int j = 0; j < tableSize; j++) {
+					men[j][tableSize - i - 1].paintPoint.x = (int) (temp.x
+							- sin * sqr2 / 2 - size * sqr2 / 2 - 2);
+					men[j][tableSize - i - 1].paintPoint.y = (int) (temp.y
+							+ cos * sqr2 / 2 + size * sqr2 / 2 + 12);
+
+					temp.x += (int) (cos);
+					temp.y += (int) (sin);
+				}
+				temp.x = (int) (square.tempUpLeft.x - (i + 1) * sin) + 1;
+				temp.y = (int) (square.tempUpLeft.y + (i + 1) * cos) + 1;
+
+			}
 		}
 	}
 
 	// final position of men (NORMAL position
 	private void rotate45(boolean right) {
-
 		Color[][] colors = new Color[tableSize][tableSize];
 		boolean[][] visibility = new boolean[tableSize][tableSize];
 
@@ -292,7 +306,51 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	private void rotate77() {
+	
+	private void rotate77(boolean right) {
+		Point temp = new Point(square.tempUpLeft);
+
+		double sqr2 = Math.sqrt(2);
+		int size = DrawMan.SIZE;
+		int cos = (int) (size * Math.cos(Math.PI / 8));
+		int sin = (int) (size * Math.sin(Math.PI / 8));
+
+		if (right) {
+			for (int i = 0; i < tableSize; i++) {
+				temp.x += (int) (cos);
+				temp.y -= 3 * (int) (sin);
+
+				for (int j = 0; j < tableSize; j++) {
+					men[i][j].paintPoint.x = (int) (temp.x - sin * sqr2 / 2
+							- size * sqr2 / 2 - 5);
+					men[i][j].paintPoint.y = (int) (temp.y + cos * sqr2 / 2
+							+ size * sqr2 / 2 + 3);
+
+					temp.x += (int) (cos);
+					temp.y += (int) (sin);
+				}
+				temp.x = (int) (square.tempUpLeft.x - (i + 1) * sin) + 1;
+				temp.y = (int) (square.tempUpLeft.y + (i + 1) * cos) + 1;
+			}
+		} else {
+//			for (int i = 0; i < tableSize; i++) {
+//				temp.x += (int) (8 * cos);
+//				temp.y += (int) (sin);
+//
+//				for (int j = 0; j < tableSize; j++) {
+//					men[j][tableSize - i - 1].paintPoint.x = (int) (temp.x
+//							- sin * sqr2 / 2 - size * sqr2 / 2 - 2);
+//					men[j][tableSize - i - 1].paintPoint.y = (int) (temp.y
+//							+ cos * sqr2 / 2 + size * sqr2 / 2 + 12);
+//
+//					temp.x += (int) (cos);
+//					temp.y += (int) (sin);
+//				}
+//				temp.x = (int) (square.tempUpLeft.x - (i + 1) * sin) + 1;
+//				temp.y = (int) (square.tempUpLeft.y + (i + 1) * cos) + 1;
+
+//			}
+		}
 
 	}
 
