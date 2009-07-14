@@ -1,8 +1,10 @@
 package connect4.controller;
 
+import java.awt.Point;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Scanner;
-
-import javax.security.auth.callback.TextOutputCallback;
 
 /**
  * Controls game play.
@@ -10,7 +12,7 @@ import javax.security.auth.callback.TextOutputCallback;
  * @author Stanislav Petrov
  * 
  */
-public class GamePlay {
+public class GamePlay extends Thread {
 	/**
 	 * Stores game mode - single|multi player.
 	 */
@@ -27,6 +29,17 @@ public class GamePlay {
 	 * Reads from standard input.
 	 */
 	private Scanner stdin;
+	private MultiPlayer mp;
+	private MultiPlayerProtocol protocol;
+	/**
+	 * Stores reference to input stream for client/server communication.
+	 */
+	private ObjectInputStream input;
+	/**
+	 * Stores reference to output stream for client/srever communication.
+	 */
+	private ObjectOutputStream output;
+	private String serverAddress;
 
 	public GamePlay(GameMode gameMode, int boardSize) {
 		stdin = new Scanner(System.in);
@@ -59,24 +72,22 @@ public class GamePlay {
 	 *            Row/column number in the board.
 	 * @return True - if the move is valid, false - otherwise.
 	 */
-	private boolean moveMan(int position, int num) {
+	private boolean moveMan(char player, int position, int num) {
 		boolean validMove = false;
 		switch (position) {
 		case 1:
-			validMove = connect4.moveMan(currentPlayer, Direction.VERTICAL_UP,
-					num);
+			validMove = connect4.moveMan(player, Direction.VERTICAL_UP, num);
 			break;
 		case 2:
-			validMove = connect4.moveMan(currentPlayer,
-					Direction.VERTICAL_DOWN, num);
+			validMove = connect4.moveMan(player, Direction.VERTICAL_DOWN, num);
 			break;
 		case 3:
-			validMove = connect4.moveMan(currentPlayer,
-					Direction.HORIZONTAL_LEFT, num);
+			validMove = connect4
+					.moveMan(player, Direction.HORIZONTAL_LEFT, num);
 			break;
 		case 4:
-			validMove = connect4.moveMan(currentPlayer,
-					Direction.HORIZONTAL_RIGHT, num);
+			validMove = connect4.moveMan(player, Direction.HORIZONTAL_RIGHT,
+					num);
 			break;
 		}
 		return validMove;
@@ -160,7 +171,7 @@ public class GamePlay {
 			num = stdin.nextInt();
 			if (position == -1 && num == -1)
 				break;
-			validMove = moveMan(position, num);
+			validMove = moveMan(currentPlayer, position, num);
 			connect4.printBoard();
 			System.out.println("Bot move..........");
 			if (connect4.nextBotMove()) {
@@ -195,7 +206,7 @@ public class GamePlay {
 			num = stdin.nextInt();
 			if (position == -1 && num == -1)
 				break;
-			validMove = moveMan(position, num);
+			validMove = moveMan(currentPlayer, position, num);
 			connect4.printBoard();
 			if (!validMove)
 				System.out.println("Invalid move!");
@@ -208,11 +219,104 @@ public class GamePlay {
 		}
 	}
 
+	private void createConnection() {
+		if (serverAddress == null) {
+			mp = new MultiPlayer(true, null);
+		} else {
+			mp = new MultiPlayer(false, serverAddress);
+		}
+		input = mp.getInputStream();
+		output = mp.getOutputStream();
+		protocol = new MultiPlayerProtocol(currentPlayer, 0, 0);
+	}
+
 	/**
 	 * Controls the game play in multi player game mode over the network.
 	 */
+	// TODO To be implemented.
 	public void playClientServer() {
-		// TODO To be implemented.
+		createConnection();
+		int position = 0, num = 0;
+		boolean validMove = true;
+		Point p;
+		connect4.printBoard();
+		MultiPlayerProtocol prot;
+		connect4.printBoard();
+		if (currentPlayer == 'o') {
+			do {
+				System.out.println("Current player is: " + currentPlayer);
+				System.out
+						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
+				position = stdin.nextInt();
+				num = stdin.nextInt();
+			} while (!(validMove = moveMan(currentPlayer, position, num)));
+			connect4.printBoard();
+			p = connect4.getLastMove(currentPlayer);
+			MultiPlayerProtocol prot1 = new MultiPlayerProtocol(currentPlayer,
+					p.x, p.y);
+			try {
+				output.writeObject(prot1);
+				output.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		while (true) {
+			Object obj = null;
+			while (obj == null) {
+				try {
+					obj = input.readObject();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			prot = (MultiPlayerProtocol) obj;
+			connect4.setSquare(prot.getPlayer(), prot.getRow(), prot.getCol());
+			connect4.printBoard();
+			do {
+				System.out.println("Current player is: " + currentPlayer);
+				System.out
+						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
+				position = stdin.nextInt();
+				num = stdin.nextInt();
+			} while (!(validMove = moveMan(currentPlayer, position, num)));
+			connect4.printBoard();
+			p = connect4.getLastMove(currentPlayer);
+			MultiPlayerProtocol prot1 = new MultiPlayerProtocol(currentPlayer,
+					p.x, p.y);
+			try {
+				output.writeObject(prot1);
+				output.flush();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (!validMove)
+				System.out.println("Invalid move!");
+			else if (connect4.isPlayerWin(currentPlayer)) {
+				System.out.println("WIN!!!");
+				connect4.printWinPaths();
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void run() {
+		loopGame();
+	}
+
+	public String getServerAddress() {
+		return serverAddress;
+	}
+
+	public void setServerAddress(String serverAddress) {
+		this.serverAddress = serverAddress;
 	}
 
 	/**
@@ -222,11 +326,13 @@ public class GamePlay {
 	 */
 	public static void main(String[] args) {
 		// configure new game.
-		GamePlay game = new GamePlay(GameMode.SINGLE_PLAYER, 7);
+		GamePlay game = new GamePlay(GameMode.TCP_CONNECTION, 7);
 		// choose which player to be.
 		game.choosePlayer();
+		if (args.length > 0) {
+			game.setServerAddress(args[0]);
+		}
 		// game loop.
-		game.loopGame();
+		game.start();
 	}
-
 }

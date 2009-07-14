@@ -112,7 +112,7 @@ public class MenuPanel extends JPanel {
 		private void addAcitonToItem(MenuItem item) {
 			switch (item) {
 			case SINGLE_PLAYER:
-				menuController.addContentToContainer(new TablePanel(new MyFrame(500, 500), 11));
+				menuController.addContentToContainer(new TablePanel(500, 500, 11));
 				break;
 			case MULTI_PLAYER:
 				selectItem();

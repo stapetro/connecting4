@@ -1,9 +1,6 @@
 package connect4.controller.menu;
 
-import java.awt.BorderLayout;
-
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import connect4.view.menu.ConfigurationPanel;
