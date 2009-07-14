@@ -13,6 +13,10 @@ public class TablePanel extends JPanel {
 	private int w;
 	private int h;
 
+	private Arrow arrow;
+	private boolean[][] arrowPosition;
+	private int arrowPos;
+
 	private DrawMan[][] men;
 	private int sidewaysBuffer;
 	private int upDownBuffer;
@@ -51,47 +55,72 @@ public class TablePanel extends JPanel {
 				} else {
 					return;
 				}
-
 				if (e.getButton() == MouseEvent.BUTTON1) {
 					getGraphics().drawString("left button!", 10, 10);
 
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							for (int i = 0; i < 4; i++) {
-								square.rotateRight();
-								rotateBoardRight(i);
-								repaint();
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException ex) {
-									ex.printStackTrace();
-								}
-							}
-							animating = false;
-						}
-					}).start();
+					Direction dir = arrow.getDirection();
+					switch (dir) {
+					case UP:
+					case DOWN:
+						arrowMoveLeft();
+						break;
+
+					case LEFT:
+					case RIGHT:
+						arrowMoveDown();
+						break;
+					}
+
+					// new Thread(new Runnable() {
+					// @Override
+					// public void run() {
+					// for (int i = 0; i < 4; i++) {
+					// square.rotateRight();
+					// rotateBoardRight(i);
+					// repaint();
+					// try {
+					// Thread.sleep(1000);
+					// } catch (InterruptedException ex) {
+					// ex.printStackTrace();
+					// }
+					// }
+					animating = false;
+					// }
+					// }).start();
 
 				} else if (e.getButton() == MouseEvent.BUTTON3) {
 					getGraphics().drawString("right button!", 10, 10);
 
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							for (int i = 0; i < 4; i++) {
-								square.rotateLeft();
-								rotateBoardLeft(i);
-								repaint();
-								try {
-									Thread.sleep(1000);
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								}
-							}
+					Direction dir = arrow.getDirection();
+					switch (dir) {
+					case UP:
+					case DOWN:
+						arrowMoveRight();
+						break;
 
-							animating = false;
-						}
-					}).start();
+					case LEFT:
+					case RIGHT:
+						arrowMoveUp();
+						break;
+					}
+
+					// new Thread(new Runnable() {
+					// @Override
+					// public void run() {
+					// for (int i = 0; i < 4; i++) {
+					// square.rotateLeft();
+					// rotateBoardLeft(i);
+					// repaint();
+					// try {
+					// Thread.sleep(1000);
+					// } catch (InterruptedException e) {
+					// e.printStackTrace();
+					// }
+					// }
+					//
+					animating = false;
+					// }
+					// }).start();
 				}
 
 				try {
@@ -100,7 +129,10 @@ public class TablePanel extends JPanel {
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
+				System.out.println(arrowPos);
+
 			}
+
 		});
 
 		this.tableSize = tableSize;
@@ -128,6 +160,81 @@ public class TablePanel extends JPanel {
 				}
 			}
 		}
+
+		this.arrow = new Arrow(DrawMan.SIZE, sidewaysBuffer + DrawMan.SIZE
+				* tableSize / 2, upDownBuffer - DrawMan.SIZE);
+
+		// 0 - upper row
+		// 1 - lower row
+		// 2 - left collumn
+		// 3 - right collumn
+		for (int i = 0; i < 4; i++) {
+			arrowPosition = new boolean[i][tableSize];
+		}
+		arrowPosition[0][tableSize / 2 + 1] = true;
+		arrowPos = tableSize / 2 + 1;
+	}
+
+	private void arrowMoveLeft() {
+		if (arrowPos == 0) {
+			if (arrow.getDirection() == Direction.DOWN) {
+				arrowPos = tableSize;
+			} else {
+				arrowPos = 0;
+			}
+			arrow.setDirection(Direction.RIGHT);
+			return;
+		}
+		arrowPos--;
+		arrow.setStartPoint(new Point(arrow.getStartPoint().x - DrawMan.SIZE,
+				arrow.getStartPoint().y));
+	}
+
+	private void arrowMoveRight() {
+		if (arrowPos == tableSize) {
+			if (arrow.getDirection() == Direction.DOWN) {
+				arrowPos = tableSize;
+			} else {
+				arrowPos = 0;
+			}
+			arrow.setDirection(Direction.LEFT);
+			return;
+		}
+		arrowPos++;
+		arrow.setStartPoint(new Point(arrow.getStartPoint().x + DrawMan.SIZE,
+				arrow.getStartPoint().y));
+	}
+
+	private void arrowMoveUp() {
+		if (arrowPos == tableSize) {
+			if (arrow.getDirection() == Direction.LEFT) {
+				arrowPos = tableSize;
+			} else {
+				arrowPos = 0;
+			}
+			arrow.setDirection(Direction.DOWN);
+			return;
+		}
+		arrowPos++;
+		arrow.setStartPoint(new Point(arrow.getStartPoint().x, arrow
+				.getStartPoint().y
+				- DrawMan.SIZE));
+	}
+
+	private void arrowMoveDown() {
+		if (arrowPos == 0) {
+			if (arrow.getDirection() == Direction.LEFT) {
+				arrowPos = tableSize;
+			} else {
+				arrowPos = 0;
+			}
+			arrow.setDirection(Direction.UP);
+			return;
+		}
+		arrowPos--;
+		arrow.setStartPoint(new Point(arrow.getStartPoint().x, arrow
+				.getStartPoint().y
+				+ DrawMan.SIZE));
 	}
 
 	private void rotate(boolean right, int step) {
@@ -140,43 +247,28 @@ public class TablePanel extends JPanel {
 				rotate22(right);
 				break;
 
-			case 1: // 0
-				System.out.println("rotate 0");
-				rotate0(right);
-				break;
+			case 1: // 0 System.out.println("rotate 0"); rotate0(right); break;
 
-			case 2: // 77
-				System.out.println("rotate 77");
-				rotate77(right);
-				break;
+			case 2: // 77 System.out.println("rotate 77"); rotate77(right);
+				// break;
 
-			case 3: // 45
-				System.out.println("rotate 45");
-				rotate45(right);
-				break;
+			case 3: // 45 System.out.println("rotate 45"); rotate45(right);
+				// break; }
 			}
 		} else {
 
 			switch (step) {
-			case 0: // 77
-				System.out.println("rotate 77");
+			case 0: // 77 System.out.println("rotate 77");
 				rotate77(right);
 				break;
 
-			case 1: // 0
-				System.out.println("rotate 0");
-				rotate0(right);
-				break;
+			case 1: // 0 System.out.println("rotate 0"); rotate0(right); break;
 
-			case 2: // 22
-				System.out.println("rotate 22");
-				rotate22(right);
-				break;
+			case 2: // 22 System.out.println("rotate 22"); rotate22(right);
+				// break;
 
-			case 3: // 45
-				System.out.println("rotate 45");
-				rotate45(right);
-				break;
+			case 3: // 45 System.out.println("rotate 45"); rotate45(right);
+				// break; }
 			}
 		}
 	}
@@ -185,11 +277,13 @@ public class TablePanel extends JPanel {
 		double sqr2 = Math.sqrt(2);
 
 		Point temp = new Point(square.tempUpLeft);
+		System.out.println(temp);
+		System.out.println(square.keyPositions[1]);
 
 		if (right) {
 			for (int i = 0; i < tableSize; i++) {
-				temp.x += (int) (DrawMan.SIZE * sqr2 / 2);
-				temp.y += (int) (DrawMan.SIZE * sqr2);
+				temp.x += 3 * (int) (DrawMan.SIZE * sqr2 / 2);
+				temp.y -= (int) (DrawMan.SIZE * sqr2);
 
 				for (int j = 0; j < tableSize; j++) {
 					men[i][j].paintPoint.x = temp.x + DrawMan.SIZE / 2 + 3;
@@ -230,9 +324,9 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	// OSTAVA POSLEDNATA POZICIQ
-	// parvi problemi - leko razminavane v aglite na zavartane...
-	// ne se vijda pri visoka skorost na animaciq, no bavno - da
+	// OSTAVA POSLEDNATA POZICIQ // parvi problemi - leko razminavane v
+	// aglite na zavartane... // ne se vijda pri visoka skorost na animaciq, no
+	// bavno - da
 	private void rotate22(boolean right) {
 		Point temp = new Point(square.tempUpLeft);
 
@@ -306,7 +400,6 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	
 	private void rotate77(boolean right) {
 		Point temp = new Point(square.tempUpLeft);
 
@@ -315,16 +408,17 @@ public class TablePanel extends JPanel {
 		int cos = (int) (size * Math.cos(Math.PI / 8));
 		int sin = (int) (size * Math.sin(Math.PI / 8));
 
-		if (right) {
+		if (!right) {
+			System.out.println(temp);
 			for (int i = 0; i < tableSize; i++) {
-				temp.x += (int) (cos);
-				temp.y -= 3 * (int) (sin);
+				temp.x -= (int) (cos);
+				temp.y += (int) (sin);
 
 				for (int j = 0; j < tableSize; j++) {
-					men[i][j].paintPoint.x = (int) (temp.x - sin * sqr2 / 2
-							- size * sqr2 / 2 - 5);
-					men[i][j].paintPoint.y = (int) (temp.y + cos * sqr2 / 2
-							+ size * sqr2 / 2 + 3);
+					men[tableSize - 1 - j][i].paintPoint.x = (int) (temp.x
+							+ sin * sqr2 / 2 - size * sqr2 / 2);
+					men[tableSize - 1 - j][i].paintPoint.y = (int) (temp.y
+							- cos * sqr2 / 2 + size * sqr2 / 2);
 
 					temp.x += (int) (cos);
 					temp.y += (int) (sin);
@@ -333,25 +427,26 @@ public class TablePanel extends JPanel {
 				temp.y = (int) (square.tempUpLeft.y + (i + 1) * cos) + 1;
 			}
 		} else {
-//			for (int i = 0; i < tableSize; i++) {
-//				temp.x += (int) (8 * cos);
-//				temp.y += (int) (sin);
-//
-//				for (int j = 0; j < tableSize; j++) {
-//					men[j][tableSize - i - 1].paintPoint.x = (int) (temp.x
-//							- sin * sqr2 / 2 - size * sqr2 / 2 - 2);
-//					men[j][tableSize - i - 1].paintPoint.y = (int) (temp.y
-//							+ cos * sqr2 / 2 + size * sqr2 / 2 + 12);
-//
-//					temp.x += (int) (cos);
-//					temp.y += (int) (sin);
-//				}
-//				temp.x = (int) (square.tempUpLeft.x - (i + 1) * sin) + 1;
-//				temp.y = (int) (square.tempUpLeft.y + (i + 1) * cos) + 1;
-
-//			}
+			// for (int i = 0; i < tableSize; i++) {
+			// temp.x += (int) (8 * cos);
+			// temp.y += (int) (sin);
+			// for (int j = 0; j < tableSize; j++) { //
+			// men[j][tableSize -
+			// i - 1].paintPoint.x = (int) (temp.x // - sin * sqr2 / 2 - size *
+			// sqr2
+			// / 2
+			// - 2); // men[j][tableSize - i - 1].paintPoint.y = (int) (temp.y
+			// // +
+			// cos
+			// * sqr2 / 2 + size * sqr2 / 2 + 12); // // temp.x += (int) (cos);
+			// //
+			// temp.y += (int) (sin); // } // temp.x = (int)
+			// (square.tempUpLeft.x -
+			// (i +
+			// 1) * sin) + 1; // temp.y = (int) (square.tempUpLeft.y + (i + 1) *
+			// cos) +
+			// 1; // // } }
 		}
-
 	}
 
 	private void rotateBoardLeft(int step) {
@@ -367,6 +462,7 @@ public class TablePanel extends JPanel {
 		super.paintComponent(g);
 
 		square.paint(g);
+		arrow.paint(g);
 
 		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		// g.drawRect(sidewaysBuffer, upDownBuffer, tableSize * DrawMan.SIZE +
