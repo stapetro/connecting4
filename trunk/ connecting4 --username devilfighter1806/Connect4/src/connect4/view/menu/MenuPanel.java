@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import java.awt.GridLayout;
@@ -17,29 +19,38 @@ import javax.swing.BoxLayout;
 import javax.swing.JTree;
 import javax.swing.JSlider;
 
+import connect4.controller.menu.MenuController;
+import connect4.view.MyFrame;
+import connect4.view.TablePanel;
+
 /**
  * Represents game menu panel which visualize all menu items.
  * 
  * @author Stanislav Petrov
  */
-public class GameMenuPanel extends JPanel {
+public class MenuPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	/**
 	 * Stores all menu and sub menu items.
 	 */
-	private final GameMenuItem[] ITEMS;
+	private final MenuItem[] ITEMS;
 	/**
 	 * Stores the current menu items to be presented.
 	 */
 	private JButton[] currMenuItems;
+	/**
+	 * Stores reference to the menu controller.
+	 */
+	private MenuController menuController;
 
 	/**
 	 * Initializes current menu items.
 	 */
-	public GameMenuPanel() {
+	public MenuPanel(MenuContentPanel contentPnl, ContainerPanel containerPnl) {
 		super();
-		ITEMS = GameMenuItem.values();
+		ITEMS = MenuItem.values();
+		menuController = new MenuController(contentPnl, containerPnl);
 		initialize();
 		initMenuItems();
 	}
@@ -49,7 +60,7 @@ public class GameMenuPanel extends JPanel {
 	 * item.
 	 */
 	private void initMenuItems() {
-		currMenuItems = new JButton[GameMenuItem.MENU_ITEMS_NUMBER];
+		currMenuItems = new JButton[MenuItem.MENU_ITEMS_NUMBER];
 		for (int i = 0; i < currMenuItems.length; i++) {
 			currMenuItems[i] = new JButton(ITEMS[i].toString());
 			currMenuItems[i]
@@ -73,14 +84,14 @@ public class GameMenuPanel extends JPanel {
 	 * 
 	 * @author Stanislav Petrov
 	 */
-	private class ItemActionListener implements ActionListener {
+	public class ItemActionListener implements ActionListener {
 
 		/**
 		 * Stores the menu item for which action should be performed.
 		 */
-		private GameMenuItem item;
+		private MenuItem item;
 
-		public ItemActionListener(GameMenuItem item) {
+		public ItemActionListener(MenuItem item) {
 			this.item = item;
 		}
 
@@ -98,25 +109,32 @@ public class GameMenuPanel extends JPanel {
 		 * @param item
 		 *            The specified menu item.
 		 */
-		private void addAcitonToItem(GameMenuItem item) {
+		private void addAcitonToItem(MenuItem item) {
 			switch (item) {
 			case SINGLE_PLAYER:
+				menuController.addContentToContainer(new TablePanel(new MyFrame(500, 500), 11));
 				break;
 			case MULTI_PLAYER:
+				selectItem();
 				break;
 			case OPTIONS: {
-				selectOptionsItem();
+				selectItem();
 				break;
 			}
 			case CREDITS:
 				break;
+			case CONFIGURE_GAME: {
+				menuController.setContent(new ConfigurationPanel());
+				break;
+			}
 			case EXIT:
 				System.exit(0);
 				break;
 			case BACK: {
 				removeAll();
-				updateUI();
+				menuController.clearContent();
 				initMenuItems();
+				updateUI();
 				break;
 			}
 			}
@@ -126,7 +144,7 @@ public class GameMenuPanel extends JPanel {
 		 * Selects options menu item, initializes the new current menu items and
 		 * visualizes them on the game menu panel.
 		 */
-		private void selectOptionsItem() {
+		private void selectItem() {
 			removeAll();
 			updateUI();
 			currMenuItems = new JButton[item.getSubMenu().length];

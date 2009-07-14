@@ -444,20 +444,9 @@ public class Connect4Solver {
 		int neighborsCurrPlayer = getMaxNeighbors(currentPlayer, x, y,
 				directions);
 		if (neighborsCurrPlayer == CONNECT_NUMBER - 2) {
-			for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
-				if (isMoveValid(
-						x
-								+ Direction.COORD_X[neighborsDirection[getMovesIndex(currentPlayer)]]
-								* (CONNECT_NUMBER - 1),
-						y
-								+ Direction.COORD_Y[neighborsDirection[getMovesIndex(currentPlayer)]]
-								* (CONNECT_NUMBER - 1), directions)) {
-					botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
-							new Point(x, y));
-					break;
-				}
-			}
-		} else if ((isPositionValid(x - 1) && board[x - 1][y] == currentPlayer
+			isDoubleThreat(x, y, directions);
+		}
+		if ((isPositionValid(x - 1) && board[x - 1][y] == currentPlayer
 				&& isPositionValid(y + 1) && board[x][y + 1] == currentPlayer)
 				|| (isPositionValid(y - 1) && board[x][y - 1] == currentPlayer
 						&& isPositionValid(x + 1) && board[x + 1][y] == currentPlayer)
@@ -465,9 +454,53 @@ public class Connect4Solver {
 						&& isPositionValid(x + 1) && board[x + 1][y] == currentPlayer)
 				|| (isPositionValid(y - 1) && board[x][y - 1] == currentPlayer
 						&& isPositionValid(x - 1) && board[x - 1][y] == currentPlayer)) {
-			botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(new Point(
-					x, y));
+			botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
+					new Point(x, y));
 		}
+		System.out.println("Prevent threats: ");
+		for (Point p : botStatistics[BotTactics.NOT_USER_THREAT.getIndex()]) {
+			System.out.println(p.x + ",  " + p.y + " | ");
+		}
+	}
+
+	/**
+	 * Prevents from player's double threats.
+	 * 
+	 * @param x
+	 *            Row number of the board.
+	 * @param y
+	 *            Column number of the board.
+	 * @param directions
+	 *            Directions for all wining paths on the board.
+	 */
+	private boolean isDoubleThreat(int x, int y, Direction[] directions) {
+		boolean result = false;
+		for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER; i++) {
+			if (isMoveValid(
+					x
+							+ Direction.COORD_X[neighborsDirection[getMovesIndex(currentPlayer)]]
+							* (CONNECT_NUMBER - 1),
+					y
+							+ Direction.COORD_Y[neighborsDirection[getMovesIndex(currentPlayer)]]
+							* (CONNECT_NUMBER - 1), directions)) {
+				botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
+						new Point(x, y));
+				result = true;
+				// this check is may be redundant.
+				if (isMoveValid(
+						x
+								+ Direction.COORD_X[neighborsDirection[getMovesIndex(currentPlayer)]]
+								* (CONNECT_NUMBER),
+						y
+								+ Direction.COORD_Y[neighborsDirection[getMovesIndex(currentPlayer)]]
+								* (CONNECT_NUMBER), directions)) {
+					botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
+							new Point(x, y));
+				}
+				// break;
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -503,10 +536,7 @@ public class Connect4Solver {
 					currPlayerNeighbors = getMaxNeighbors(currentPlayer, i, j,
 							directions);
 					tryBotWin(i, j, botNeighbors, currPlayerNeighbors);
-					if (botStatistics[BotTactics.NOT_USER_THREAT.getIndex()]
-							.isEmpty()) {
-						preventPlayerThreats(i, j, directions);
-					} // not user threats
+					preventPlayerThreats(i, j, directions);
 					if (maxBotNeighbors < botNeighbors) {
 						maxBotNeighbors = botNeighbors;
 						goBotTactics(i, j, directions);

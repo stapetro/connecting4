@@ -5,11 +5,12 @@ package connect4.view.menu;
  * 
  * @author Stanislav Petrov
  */
-public enum GameMenuItem {
+public enum MenuItem {
 
-	SINGLE_PLAYER(0, null), MULTI_PLAYER(1, null), OPTIONS(2, new int[] { 5, 6,
-			7 }), CREDITS(3, null), EXIT(4, null), CONFIGURE_GAME(5, null), CONTROLS(
-			6, null), BACK(7, null);
+	SINGLE_PLAYER(0, null), MULTI_PLAYER(1, new int[] { 7, 8, 9 }), OPTIONS(2,
+			new int[] { 5, 6, 9 }), CREDITS(3, null), EXIT(4, null), CONFIGURE_GAME(
+			5, null), CONTROLS(6, null), HOT_SEED(7, null), TCP_CONNECTION(8,
+			null), BACK(9, null);
 
 	/**
 	 * Stores the number of parent menu items.
@@ -24,7 +25,7 @@ public enum GameMenuItem {
 	 */
 	private final int[] subMenuItem;
 
-	GameMenuItem(int index, int[] subMenuItems) {
+	MenuItem(int index, int[] subMenuItems) {
 		this.index = index;
 		this.subMenuItem = subMenuItems;
 	}

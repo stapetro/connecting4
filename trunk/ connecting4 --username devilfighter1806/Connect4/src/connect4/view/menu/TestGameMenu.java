@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 import javax.swing.JFrame;
+import java.awt.Dimension;
 
 /**
  * Tests the game menu.
@@ -17,8 +18,9 @@ public class TestGameMenu extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
-	private GameMenuPanel menuPanel;
-	private GameMenuContentPanel menuContent;
+	private MenuPanel menuPanel;
+	private MenuContentPanel menuContent;
+	private ContainerPanel containerPnl;
 
 	/**
 	 * This is the default constructor
@@ -38,10 +40,10 @@ public class TestGameMenu extends JFrame {
 		this.setContentPane(getJContentPane());
 		this.setTitle("Test game menu");
 		this.setResizable(false);
-		menuPanel = new GameMenuPanel();
-		menuContent = new GameMenuContentPanel();
-		add(menuPanel, BorderLayout.WEST);
-		add(menuContent, BorderLayout.EAST);
+		menuContent = new MenuContentPanel();
+		menuContent.setPreferredSize(new Dimension(350, 500));
+		containerPnl = new ContainerPanel();
+		add(containerPnl);
 	}
 
 	/**
