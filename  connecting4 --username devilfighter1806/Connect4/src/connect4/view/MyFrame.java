@@ -1,6 +1,7 @@
 package connect4.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.JFrame;
 
@@ -15,7 +16,7 @@ public class MyFrame extends JFrame {
 		statusBar = new StatusBarPanel(getWidth(), getHeight() / 5);
 		hei = h;
 		wid = w;
-		drawPanel = new TablePanel(wid, hei, 13);
+		drawPanel = new TablePanel(wid, hei, 13, Color.RED, Color.BLUE);
 		init();
 	}
 
