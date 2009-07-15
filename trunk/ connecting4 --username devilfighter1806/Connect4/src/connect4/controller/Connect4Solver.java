@@ -457,10 +457,6 @@ public class Connect4Solver {
 			botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
 					new Point(x, y));
 		}
-		System.out.println("Prevent threats: ");
-		for (Point p : botStatistics[BotTactics.NOT_USER_THREAT.getIndex()]) {
-			System.out.println(p.x + ",  " + p.y + " | ");
-		}
 	}
 
 	/**
@@ -486,7 +482,7 @@ public class Connect4Solver {
 				botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
 						new Point(x, y));
 				result = true;
-				// this check is may be redundant.
+				// this check might be redundant.
 				if (isMoveValid(
 						x
 								+ Direction.COORD_X[neighborsDirection[getMovesIndex(currentPlayer)]]
@@ -497,7 +493,6 @@ public class Connect4Solver {
 					botStatistics[BotTactics.NOT_USER_THREAT.getIndex()].add(0,
 							new Point(x, y));
 				}
-				// break;
 			}
 		}
 		return result;
@@ -664,15 +659,46 @@ public class Connect4Solver {
 		}
 		return false;
 	}
-	
-	public Point getLastMove(char player){
+
+	/**
+	 * Gets last move made from the specified player.
+	 * 
+	 * @param player
+	 *            Player to be specified.
+	 * @return The last move made by the specified player.
+	 */
+	public Point getLastMove(char player) {
 		return lastMove[getMovesIndex(player)];
 	}
-	
-	public void setSquare(char player, int row, int col){
-		if(isPositionValid(row) && isPositionValid(col)){
+
+	/**
+	 * Sets square from the board with value. Used in client/server
+	 * communicaiton.
+	 * 
+	 * @param player
+	 *            Player to be set on the board.
+	 * @param row
+	 *            Row number of the board.
+	 * @param col
+	 *            Column number of the board.
+	 */
+	public void setSquare(char player, int row, int col) {
+		if (isPositionValid(row) && isPositionValid(col)) {
 			board[row][col] = player;
 		}
+	}
+
+	/**
+	 * Gets the winning path, used in client/server communication.
+	 * 
+	 * @return Array with the wining path which contains 4 squares' coordinates.
+	 */
+	public Point[] getWinPath() {
+		Point[] winP = new Point[winPathRow.length];
+		for (int i = 0; i < winP.length; i++) {
+			winP[i] = new Point(winPathRow[i], winPathCol[i]);
+		}
+		return winP;
 	}
 
 	/**
