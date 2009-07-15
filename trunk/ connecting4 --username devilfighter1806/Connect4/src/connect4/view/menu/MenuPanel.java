@@ -1,5 +1,6 @@
 package connect4.view.menu;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 
@@ -19,9 +20,11 @@ import javax.swing.BoxLayout;
 import javax.swing.JTree;
 import javax.swing.JSlider;
 
+import connect4.controller.GameMode;
 import connect4.controller.menu.MenuController;
 import connect4.view.MyFrame;
 import connect4.view.TablePanel;
+import connect4.view.multiplayer.HostGamePanel;
 
 /**
  * Represents game menu panel which visualize all menu items.
@@ -39,6 +42,7 @@ public class MenuPanel extends JPanel {
 	 * Stores the current menu items to be presented.
 	 */
 	private JButton[] currMenuItems;
+	private JButton[] previousMenuItems;
 	/**
 	 * Stores reference to the menu controller.
 	 */
@@ -62,7 +66,17 @@ public class MenuPanel extends JPanel {
 	private void initMenuItems() {
 		currMenuItems = new JButton[MenuItem.MENU_ITEMS_NUMBER];
 		for (int i = 0; i < currMenuItems.length; i++) {
-			currMenuItems[i] = new JButton(ITEMS[i].toString());
+			currMenuItems[i] = new JButton((ITEMS[i]).toString());
+			currMenuItems[i]
+					.addActionListener(new ItemActionListener(ITEMS[i]));
+			this.add(currMenuItems[i]);
+		}
+	}
+	
+	//TODO Fix the problem with back item.
+	private void constructPreviousMenuItems(){
+		currMenuItems = previousMenuItems;
+		for (int i = 0; i < currMenuItems.length; i++) {
 			currMenuItems[i]
 					.addActionListener(new ItemActionListener(ITEMS[i]));
 			this.add(currMenuItems[i]);
@@ -112,12 +126,14 @@ public class MenuPanel extends JPanel {
 		private void addAcitonToItem(MenuItem item) {
 			switch (item) {
 			case SINGLE_PLAYER:
-				menuController.addContentToContainer(new TablePanel(500, 500, 11));
+				menuController.addContentToContainer(new TablePanel(500, 500, 11, Color.BLUE, Color.RED));
 				break;
 			case MULTI_PLAYER:
+				previousMenuItems = currMenuItems;
 				selectItem();
 				break;
 			case OPTIONS: {
+				previousMenuItems = currMenuItems;
 				selectItem();
 				break;
 			}
@@ -127,13 +143,21 @@ public class MenuPanel extends JPanel {
 				menuController.setContent(new ConfigurationPanel());
 				break;
 			}
+			case TCP_CONNECTION:{
+				previousMenuItems = currMenuItems;
+				selectItem();break;
+			}
+			case HOST_GAME:{
+				menuController.setContent(new HostGamePanel());
+				break;
+			}
 			case EXIT:
 				System.exit(0);
 				break;
 			case BACK: {
 				removeAll();
 				menuController.clearContent();
-				initMenuItems();
+				constructPreviousMenuItems();
 				updateUI();
 				break;
 			}
@@ -146,7 +170,6 @@ public class MenuPanel extends JPanel {
 		 */
 		private void selectItem() {
 			removeAll();
-			updateUI();
 			currMenuItems = new JButton[item.getSubMenu().length];
 			for (int i = 0; i < currMenuItems.length; i++) {
 				currMenuItems[i] = new JButton(ITEMS[item.getSubMenu()[i]]
@@ -155,6 +178,7 @@ public class MenuPanel extends JPanel {
 						ITEMS[item.getSubMenu()[i]]));
 				add(currMenuItems[i]);
 			}
+			updateUI();
 		}
 	}
 
