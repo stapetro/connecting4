@@ -186,9 +186,6 @@ public class TablePanel extends JPanel {
 						break;
 					}
 
-					System.out.println(acqurePosition());
-					System.out.println(acquireDirection());
-
 					// new Thread(new Runnable() {
 					// @Override
 					// public void run() {
@@ -226,9 +223,6 @@ public class TablePanel extends JPanel {
 						arrowMoveUp();
 						break;
 					}
-
-					System.out.println(acqurePosition());
-					System.out.println(acquireDirection());
 
 					// new Thread(new Runnable() {
 					// @Override
