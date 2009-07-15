@@ -1,14 +1,16 @@
 package connect4.view;
 
-import connect4.controller.Direction;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.lang.annotation.Documented;
 
 import javax.swing.JPanel;
+
+import connect4.controller.Direction;
 
 @SuppressWarnings("serial")
 public class TablePanel extends JPanel {
@@ -17,8 +19,8 @@ public class TablePanel extends JPanel {
 	private int arrowPos;
 
 	private DrawMan[][] men;
-	private int sidewaysBuffer;
-	private int upDownBuffer;
+	private int square_x_upLeftPoint;
+	private int square_y_upLeftPoint;
 	private int tableSize;
 	private RotatableSquare square;
 
@@ -35,14 +37,15 @@ public class TablePanel extends JPanel {
 		player1Color = player1;
 		player2Color = player2;
 
-		sidewaysBuffer = (wid - ((1 + tableSize) * DrawMan.SIZE)) / 2;
-		upDownBuffer = (hei - ((2 + tableSize) * DrawMan.SIZE)) / 2;
+		square_x_upLeftPoint = (wid - ((1 + tableSize) * DrawMan.SIZE)) / 2;
+		square_y_upLeftPoint = (hei - ((2 + tableSize) * DrawMan.SIZE)) / 2;
 
-		square = new RotatableSquare(sidewaysBuffer, upDownBuffer, tableSize
-				* DrawMan.SIZE + 3);
+		square = new RotatableSquare(square_x_upLeftPoint,
+				square_y_upLeftPoint, tableSize * DrawMan.SIZE + 3);
 
-		this.arrow = new Arrow(DrawMan.SIZE, sidewaysBuffer + DrawMan.SIZE
-				* tableSize / 2, upDownBuffer - 3 * DrawMan.SIZE / 2);
+		this.arrow = new Arrow(DrawMan.SIZE, square_x_upLeftPoint
+				+ DrawMan.SIZE * tableSize / 2, square_y_upLeftPoint - 3
+				* DrawMan.SIZE / 2);
 
 		arrowPos = tableSize / 2;
 
@@ -53,8 +56,8 @@ public class TablePanel extends JPanel {
 		men = new DrawMan[tableSize][tableSize];
 		for (int i = 0; i < tableSize; i++) {
 			for (int j = 0; j < tableSize; j++) {
-				men[i][j] = new DrawMan(sidewaysBuffer + j * DrawMan.SIZE + 3,
-						upDownBuffer + i * DrawMan.SIZE + 3);
+				men[i][j] = new DrawMan(square_x_upLeftPoint + j * DrawMan.SIZE
+						+ 3, square_y_upLeftPoint + i * DrawMan.SIZE + 3);
 
 				// marks the MIDDLE man
 				if (i == j && j == (tableSize / 2)) {
@@ -70,8 +73,22 @@ public class TablePanel extends JPanel {
 	 * listens for hitting the LEFT, RIGHT, UP, DOWN and ENTER keys will replace
 	 * the addMyMouseListener when implemented
 	 */
+	
+	// NE RABOTI V MOMENTA - SPECIALNO ZA KRASI
 	private void addMyKeyboardListener() {
+		class KeyPressedHandler extends KeyAdapter {
 
+			public void keyPressed(KeyEvent event) {
+				System.out.println("bla");
+				String keyName = event.getKeyText(event.getKeyCode());
+
+				if (keyName.equalsIgnoreCase("Up")) {
+					System.out.println("bla2");
+				}
+			}
+		}
+
+		this.addKeyListener(new KeyPressedHandler());
 	}
 
 	/**
@@ -210,13 +227,14 @@ public class TablePanel extends JPanel {
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
 				arrowPos = tableSize - 1;
-				arrow.setStartPoint(new Point(sidewaysBuffer - 3 * DrawMan.SIZE
-						/ 2, upDownBuffer + DrawMan.SIZE / 2));
+				arrow.setStartPoint(new Point(square_x_upLeftPoint - 3
+						* DrawMan.SIZE / 2, square_y_upLeftPoint + DrawMan.SIZE
+						/ 2));
 			} else {
 				arrowPos = 0;
-				arrow.setStartPoint(new Point(sidewaysBuffer - 3 * DrawMan.SIZE
-						/ 2, upDownBuffer + (tableSize - 1) * DrawMan.SIZE
-						+ DrawMan.SIZE / 2));
+				arrow.setStartPoint(new Point(square_x_upLeftPoint - 3
+						* DrawMan.SIZE / 2, square_y_upLeftPoint
+						+ (tableSize - 1) * DrawMan.SIZE + DrawMan.SIZE / 2));
 			}
 			arrow.setDirection(Direction.HORIZONTAL_RIGHT);
 			return;
@@ -233,14 +251,15 @@ public class TablePanel extends JPanel {
 		if (arrowPos == tableSize - 1) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
 				arrowPos = tableSize - 1;
-				arrow.setStartPoint(new Point(sidewaysBuffer + DrawMan.SIZE
-						* tableSize + DrawMan.SIZE * 3 / 2, upDownBuffer
-						+ DrawMan.SIZE / 2));
+				arrow.setStartPoint(new Point(square_x_upLeftPoint
+						+ DrawMan.SIZE * tableSize + DrawMan.SIZE * 3 / 2,
+						square_y_upLeftPoint + DrawMan.SIZE / 2));
 			} else {
 				arrowPos = 0;
-				arrow.setStartPoint(new Point(sidewaysBuffer + DrawMan.SIZE
-						* tableSize + DrawMan.SIZE * 3 / 2, upDownBuffer
-						+ (tableSize - 1) * DrawMan.SIZE + DrawMan.SIZE / 2));
+				arrow.setStartPoint(new Point(square_x_upLeftPoint
+						+ DrawMan.SIZE * tableSize + DrawMan.SIZE * 3 / 2,
+						square_y_upLeftPoint + (tableSize - 1) * DrawMan.SIZE
+								+ DrawMan.SIZE / 2));
 			}
 			arrow.setDirection(Direction.HORIZONTAL_LEFT);
 			return;
@@ -257,14 +276,14 @@ public class TablePanel extends JPanel {
 		if (arrowPos == tableSize - 1) {
 			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
 				arrowPos = tableSize - 1;
-				arrow.setStartPoint(new Point(sidewaysBuffer + (tableSize - 1)
-						* DrawMan.SIZE + DrawMan.SIZE / 2, upDownBuffer - 3
-						* DrawMan.SIZE / 2));
+				arrow.setStartPoint(new Point(square_x_upLeftPoint
+						+ (tableSize - 1) * DrawMan.SIZE + DrawMan.SIZE / 2,
+						square_y_upLeftPoint - 3 * DrawMan.SIZE / 2));
 			} else {
 				arrowPos = 0;
-				arrow.setStartPoint(new Point(
-						sidewaysBuffer + DrawMan.SIZE / 2, upDownBuffer - 3
-								* DrawMan.SIZE / 2));
+				arrow.setStartPoint(new Point(square_x_upLeftPoint
+						+ DrawMan.SIZE / 2, square_y_upLeftPoint - 3
+						* DrawMan.SIZE / 2));
 			}
 			arrow.setDirection(Direction.VERTICAL_DOWN);
 			return;
@@ -282,15 +301,15 @@ public class TablePanel extends JPanel {
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
 				arrowPos = tableSize - 1;
-				arrow.setStartPoint(new Point(sidewaysBuffer + (tableSize)
-						* DrawMan.SIZE - DrawMan.SIZE / 2, upDownBuffer
-						+ (tableSize) * DrawMan.SIZE + 3 * DrawMan.SIZE / 2));
+				arrow.setStartPoint(new Point(square_x_upLeftPoint
+						+ (tableSize) * DrawMan.SIZE - DrawMan.SIZE / 2,
+						square_y_upLeftPoint + (tableSize) * DrawMan.SIZE + 3
+								* DrawMan.SIZE / 2));
 			} else {
 				arrowPos = 0;
-				arrow.setStartPoint(new Point(
-						sidewaysBuffer + DrawMan.SIZE / 2, upDownBuffer
-								+ (tableSize) * DrawMan.SIZE + 3 * DrawMan.SIZE
-								/ 2));
+				arrow.setStartPoint(new Point(square_x_upLeftPoint
+						+ DrawMan.SIZE / 2, square_y_upLeftPoint + (tableSize)
+						* DrawMan.SIZE + 3 * DrawMan.SIZE / 2));
 			}
 			arrow.setDirection(Direction.VERTICAL_UP);
 			return;
@@ -527,6 +546,9 @@ public class TablePanel extends JPanel {
 		rotate(true, step);
 	}
 
+	/**
+	 * paints the square, the arrow and all MEN if they are visible
+	 */
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
