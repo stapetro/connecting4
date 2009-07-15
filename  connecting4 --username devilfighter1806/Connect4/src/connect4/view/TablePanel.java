@@ -185,7 +185,6 @@ public class TablePanel extends JPanel {
 						arrowMoveDown();
 						break;
 					}
-
 					// new Thread(new Runnable() {
 					// @Override
 					// public void run() {
