@@ -129,10 +129,7 @@ public class TablePanel extends JPanel {
 				} catch (InterruptedException e1) {
 					e1.printStackTrace();
 				}
-				System.out.println(arrowPos);
-
 			}
-
 		});
 
 		this.tableSize = tableSize;
