@@ -1,5 +1,6 @@
 package connect4.view;
 
+import connect4.controller.Direction;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -60,13 +61,13 @@ public class TablePanel extends JPanel {
 
 					Direction dir = arrow.getDirection();
 					switch (dir) {
-					case UP:
-					case DOWN:
+					case VERTICAL_DOWN:
+					case VERTICAL_UP:
 						arrowMoveLeft();
 						break;
 
-					case LEFT:
-					case RIGHT:
+					case HORIZONTAL_LEFT:
+					case HORIZONTAL_RIGHT:
 						arrowMoveDown();
 						break;
 					}
@@ -93,13 +94,13 @@ public class TablePanel extends JPanel {
 
 					Direction dir = arrow.getDirection();
 					switch (dir) {
-					case UP:
-					case DOWN:
+					case VERTICAL_DOWN:
+					case VERTICAL_UP:
 						arrowMoveRight();
 						break;
 
-					case LEFT:
-					case RIGHT:
+					case HORIZONTAL_LEFT:
+					case HORIZONTAL_RIGHT:
 						arrowMoveUp();
 						break;
 					}
@@ -174,12 +175,12 @@ public class TablePanel extends JPanel {
 
 	private void arrowMoveLeft() {
 		if (arrowPos == 0) {
-			if (arrow.getDirection() == Direction.DOWN) {
+			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
 				arrowPos = tableSize;
 			} else {
 				arrowPos = 0;
 			}
-			arrow.setDirection(Direction.RIGHT);
+			arrow.setDirection(Direction.HORIZONTAL_RIGHT);
 			return;
 		}
 		arrowPos--;
@@ -189,12 +190,12 @@ public class TablePanel extends JPanel {
 
 	private void arrowMoveRight() {
 		if (arrowPos == tableSize) {
-			if (arrow.getDirection() == Direction.DOWN) {
+			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
 				arrowPos = tableSize;
 			} else {
 				arrowPos = 0;
 			}
-			arrow.setDirection(Direction.LEFT);
+			arrow.setDirection(Direction.HORIZONTAL_LEFT);
 			return;
 		}
 		arrowPos++;
@@ -204,12 +205,12 @@ public class TablePanel extends JPanel {
 
 	private void arrowMoveUp() {
 		if (arrowPos == tableSize) {
-			if (arrow.getDirection() == Direction.LEFT) {
+			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
 				arrowPos = tableSize;
 			} else {
 				arrowPos = 0;
 			}
-			arrow.setDirection(Direction.DOWN);
+			arrow.setDirection(Direction.VERTICAL_DOWN);
 			return;
 		}
 		arrowPos++;
@@ -220,12 +221,12 @@ public class TablePanel extends JPanel {
 
 	private void arrowMoveDown() {
 		if (arrowPos == 0) {
-			if (arrow.getDirection() == Direction.LEFT) {
+			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
 				arrowPos = tableSize;
 			} else {
 				arrowPos = 0;
 			}
-			arrow.setDirection(Direction.UP);
+			arrow.setDirection(Direction.VERTICAL_UP);
 			return;
 		}
 		arrowPos--;
