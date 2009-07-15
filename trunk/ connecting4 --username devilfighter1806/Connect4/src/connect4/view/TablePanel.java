@@ -15,7 +15,6 @@ public class TablePanel extends JPanel {
 	private int h;
 
 	private Arrow arrow;
-	private boolean[][] arrowPosition;
 	private int arrowPos;
 
 	private DrawMan[][] men;
@@ -160,25 +159,22 @@ public class TablePanel extends JPanel {
 		}
 
 		this.arrow = new Arrow(DrawMan.SIZE, sidewaysBuffer + DrawMan.SIZE
-				* tableSize / 2, upDownBuffer - DrawMan.SIZE);
+				* tableSize / 2, upDownBuffer - 3 * DrawMan.SIZE / 2);
 
-		// 0 - upper row
-		// 1 - lower row
-		// 2 - left collumn
-		// 3 - right collumn
-		for (int i = 0; i < 4; i++) {
-			arrowPosition = new boolean[i][tableSize];
-		}
-		arrowPosition[0][tableSize / 2 + 1] = true;
-		arrowPos = tableSize / 2 + 1;
+		arrowPos = tableSize / 2;
 	}
 
 	private void arrowMoveLeft() {
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
-				arrowPos = tableSize;
+				arrowPos = tableSize - 1;
+				arrow.setStartPoint(new Point(sidewaysBuffer - 3 * DrawMan.SIZE
+						/ 2, upDownBuffer + DrawMan.SIZE / 2));
 			} else {
 				arrowPos = 0;
+				arrow.setStartPoint(new Point(sidewaysBuffer - 3 * DrawMan.SIZE
+						/ 2, upDownBuffer + (tableSize - 1) * DrawMan.SIZE
+						+ DrawMan.SIZE / 2));
 			}
 			arrow.setDirection(Direction.HORIZONTAL_RIGHT);
 			return;
@@ -189,11 +185,17 @@ public class TablePanel extends JPanel {
 	}
 
 	private void arrowMoveRight() {
-		if (arrowPos == tableSize) {
+		if (arrowPos == tableSize - 1) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
-				arrowPos = tableSize;
+				arrowPos = tableSize - 1;
+				arrow.setStartPoint(new Point(sidewaysBuffer + DrawMan.SIZE
+						* tableSize + DrawMan.SIZE * 3 / 2, upDownBuffer
+						+ DrawMan.SIZE / 2));
 			} else {
 				arrowPos = 0;
+				arrow.setStartPoint(new Point(sidewaysBuffer + DrawMan.SIZE
+						* tableSize + DrawMan.SIZE * 3 / 2, upDownBuffer
+						+ (tableSize - 1) * DrawMan.SIZE + DrawMan.SIZE / 2));
 			}
 			arrow.setDirection(Direction.HORIZONTAL_LEFT);
 			return;
@@ -204,11 +206,17 @@ public class TablePanel extends JPanel {
 	}
 
 	private void arrowMoveUp() {
-		if (arrowPos == tableSize) {
+		if (arrowPos == tableSize - 1) {
 			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
-				arrowPos = tableSize;
+				arrowPos = tableSize - 1;
+				arrow.setStartPoint(new Point(sidewaysBuffer + (tableSize - 1)
+						* DrawMan.SIZE + DrawMan.SIZE / 2, upDownBuffer - 3
+						* DrawMan.SIZE / 2));
 			} else {
 				arrowPos = 0;
+				arrow.setStartPoint(new Point(
+						sidewaysBuffer + DrawMan.SIZE / 2, upDownBuffer - 3
+								* DrawMan.SIZE / 2));
 			}
 			arrow.setDirection(Direction.VERTICAL_DOWN);
 			return;
@@ -222,9 +230,16 @@ public class TablePanel extends JPanel {
 	private void arrowMoveDown() {
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
-				arrowPos = tableSize;
+				arrowPos = tableSize - 1;
+				arrow.setStartPoint(new Point(sidewaysBuffer + (tableSize)
+						* DrawMan.SIZE - DrawMan.SIZE / 2, upDownBuffer
+						+ (tableSize) * DrawMan.SIZE + 3 * DrawMan.SIZE / 2));
 			} else {
 				arrowPos = 0;
+				arrow.setStartPoint(new Point(
+						sidewaysBuffer + DrawMan.SIZE / 2, upDownBuffer
+								+ (tableSize) * DrawMan.SIZE + 3 * DrawMan.SIZE
+								/ 2));
 			}
 			arrow.setDirection(Direction.VERTICAL_UP);
 			return;
