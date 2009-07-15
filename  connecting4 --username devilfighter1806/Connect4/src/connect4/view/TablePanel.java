@@ -70,25 +70,66 @@ public class TablePanel extends JPanel {
 	}
 
 	/**
+	 * return position of arrow
+	 * 
+	 * @return int position the position in a grid that starts with 0,0
+	 */
+	public int acqurePosition() {
+		if (arrow.getDirection() == Direction.HORIZONTAL_LEFT
+				|| arrow.getDirection() == Direction.HORIZONTAL_RIGHT) {
+			return tableSize - arrowPos - 1;
+		} else {
+			return arrowPos;
+		}
+	}
+
+	/**
+	 * returns transformed direction left -> right right -> left up -> down down
+	 * ->up
+	 * 
+	 * UNSAFE if the direction of arrow is not one of the following (hard to
+	 * happend but may be possible)
+	 * 
+	 * @return Direction direction of arrow
+	 */
+	public Direction acquireDirection() {
+		switch (arrow.getDirection()) {
+		case HORIZONTAL_LEFT:
+			return Direction.HORIZONTAL_RIGHT;
+		case HORIZONTAL_RIGHT:
+			return Direction.HORIZONTAL_LEFT;
+		case VERTICAL_DOWN:
+			return Direction.VERTICAL_UP;
+		case VERTICAL_UP:
+			return Direction.VERTICAL_DOWN;
+		default:
+			// unsafe
+			return arrow.getDirection();
+		}
+	}
+
+	/**
 	 * listens for hitting the LEFT, RIGHT, UP, DOWN and ENTER keys will replace
 	 * the addMyMouseListener when implemented
 	 */
-	
+
 	// NE RABOTI V MOMENTA - SPECIALNO ZA KRASI
 	private void addMyKeyboardListener() {
-		class KeyPressedHandler extends KeyAdapter {
-
-			public void keyPressed(KeyEvent event) {
-				System.out.println("bla");
-				String keyName = event.getKeyText(event.getKeyCode());
-
-				if (keyName.equalsIgnoreCase("Up")) {
-					System.out.println("bla2");
-				}
-			}
-		}
 
 		this.addKeyListener(new KeyPressedHandler());
+	}
+
+	private class KeyPressedHandler extends KeyAdapter {
+
+		@Override
+		public void keyPressed(KeyEvent event) {
+			System.out.println("bla");
+			String keyName = event.getKeyText(event.getKeyCode());
+
+			if (keyName.equalsIgnoreCase("Up")) {
+				System.out.println("bla2");
+			}
+		}
 	}
 
 	/**
@@ -145,6 +186,8 @@ public class TablePanel extends JPanel {
 						break;
 					}
 
+					System.out.println(acqurePosition());
+
 					// new Thread(new Runnable() {
 					// @Override
 					// public void run() {
@@ -182,6 +225,8 @@ public class TablePanel extends JPanel {
 						arrowMoveUp();
 						break;
 					}
+
+					System.out.println(acqurePosition());
 
 					// new Thread(new Runnable() {
 					// @Override
@@ -318,6 +363,27 @@ public class TablePanel extends JPanel {
 		arrow.setStartPoint(new Point(arrow.getStartPoint().x, arrow
 				.getStartPoint().y
 				+ DrawMan.SIZE));
+	}
+
+	/**
+	 * paints the square, the arrow and all MEN if they are visible
+	 */
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		square.paint(g);
+		arrow.paint(g);
+
+		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+
+		for (DrawMan[] manRow : men) {
+			for (DrawMan man : manRow) {
+				if (man.isVisible()) {
+					man.drawMan(g);
+				}
+			}
+		}
 	}
 
 	@Deprecated
@@ -546,24 +612,4 @@ public class TablePanel extends JPanel {
 		rotate(true, step);
 	}
 
-	/**
-	 * paints the square, the arrow and all MEN if they are visible
-	 */
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		square.paint(g);
-		arrow.paint(g);
-
-		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-
-		for (DrawMan[] manRow : men) {
-			for (DrawMan man : manRow) {
-				if (man.isVisible()) {
-					man.drawMan(g);
-				}
-			}
-		}
-	}
 }

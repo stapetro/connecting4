@@ -4,10 +4,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
+/**
+ * A square that rotates. 4 steps of animation. Remembers at what part of the
+ * animation it is.
+ * 
+ * Currently the animation is UNUSED.
+ * 
+ * @author Leni
+ * 
+ */
 public class RotatableSquare {
 
 	private Point upLeft;
 	public Point tempUpLeft;
+
 	private Position position;
 	private int size;
 
@@ -21,10 +31,12 @@ public class RotatableSquare {
 		keyPositions = new Point[4];
 	}
 
+	@Deprecated
 	public void rotateLeft() {
 		position.i = (position.i + 1) % 4;
 	}
 
+	@Deprecated
 	public void rotateRight() {
 		position.i = (position.i - 1) % 4;
 		if (position.i < 0) {
@@ -59,11 +71,11 @@ public class RotatableSquare {
 
 		// 0
 		case 0:
-			System.out.println("case 0");
+			// System.out.println("case 0");
 			tempUpLeft.x = 0;
 			tempUpLeft.y = 0;
 
-			g.drawString("case 0", 20, 20);
+			// g.drawString("case 0", 20, 20);
 
 			g.setColor(Color.BLACK);
 			g.drawLine(x + sqr2, y, x, y + sqr2);
@@ -78,9 +90,9 @@ public class RotatableSquare {
 		// 22
 		case 1:
 
-			g.drawString("case 1", 20, 20);
+			// g.drawString("case 1", 20, 20);
 
-			System.out.println("case 1");
+			// System.out.println("case 1");
 			// tempUpLeft.x = upLeft.x + (int) (sqr2) / 2;
 			// tempUpLeft.y = upLeft.y - (int) (sqr2) / 2;
 			tempUpLeft.x = x - sin;
@@ -96,12 +108,16 @@ public class RotatableSquare {
 			g.drawLine(x + cos, y - sin, x + sin, y + cos);
 			break;
 
+		/**
+		 * normal position - only this is used
+		 * 
+		 */
 		// 45
 		case 2:
 
-//			g.drawString("case 2", 20, 20);
+			// g.drawString("case 2", 20, 20);
 
-//			System.out.println("case 2");
+			// System.out.println("case 2");
 			tempUpLeft.x = x - sin;
 			tempUpLeft.y = y - cos;
 
@@ -111,7 +127,7 @@ public class RotatableSquare {
 		// 77
 		case 3:
 
-			System.out.println("case 3");
+			// System.out.println("case 3");
 
 			tempUpLeft.x = upLeft.x - (int) (sqr2) / 2;
 			tempUpLeft.y = upLeft.y + (int) (sqr2) / 2;

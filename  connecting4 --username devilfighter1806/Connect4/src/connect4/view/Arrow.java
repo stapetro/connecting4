@@ -4,6 +4,13 @@ import connect4.controller.Direction;
 import java.awt.Graphics;
 import java.awt.Point;
 
+/**
+ * An 2D-arrow pointing at all directions Has states - defining the pointing
+ * direction.
+ * 
+ * @author Leni
+ * 
+ */
 public class Arrow {
 
 	private Direction myDirection;
@@ -19,9 +26,8 @@ public class Arrow {
 	public void paint(Graphics g) {
 		int x = startPoint.x;
 		int y = startPoint.y;
-		
-		
-		//points at 
+
+		// points at
 		switch (myDirection) {
 		case VERTICAL_DOWN:
 			g.drawLine(x, y, x, y + size);
