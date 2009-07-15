@@ -7,10 +7,11 @@ package connect4.view.menu;
  */
 public enum MenuItem {
 
-	SINGLE_PLAYER(0, null), MULTI_PLAYER(1, new int[] { 7, 8, 9 }), OPTIONS(2,
-			new int[] { 5, 6, 9 }), CREDITS(3, null), EXIT(4, null), CONFIGURE_GAME(
-			5, null), CONTROLS(6, null), HOT_SEED(7, null), TCP_CONNECTION(8,
-			null), BACK(9, null);
+	SINGLE_PLAYER(0, null), MULTI_PLAYER(
+			1, new int[] { 7,8, 11 }), OPTIONS(2, new int[] { 5, 6, 11 }), CREDITS(
+			3, null), EXIT(4, null), CONFIGURE_GAME(5, null), CONTROLS(6, null), HOT_SEED(
+			7, null), TCP_CONNECTION(8, new int[] { 9, 10, 11 }), HOST_GAME(9,
+			null), JOIN_GAME(10, null), BACK(11, null);
 
 	/**
 	 * Stores the number of parent menu items.
@@ -21,6 +22,10 @@ public enum MenuItem {
 	 */
 	private final int index;
 	/**
+	 * Stores the parent idnex of the current item index.
+	 */
+	private int parentIndex;
+	/**
 	 * Stores all sub menu item indices for the current menu item.
 	 */
 	private final int[] subMenuItem;
@@ -28,6 +33,14 @@ public enum MenuItem {
 	MenuItem(int index, int[] subMenuItems) {
 		this.index = index;
 		this.subMenuItem = subMenuItems;
+	}
+
+	public void setParentIndex(int parentInd) {
+		this.parentIndex = parentInd;
+	}
+
+	public int getParentIdnex() {
+		return this.parentIndex;
 	}
 
 	/**

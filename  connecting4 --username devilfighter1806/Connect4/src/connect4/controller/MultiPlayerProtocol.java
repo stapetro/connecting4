@@ -24,13 +24,13 @@ public class MultiPlayerProtocol implements Serializable {
 	 */
 	private int col;
 	/**
-	 * Stores the position of player when he drops a men on the board.
+	 * Stores the direction of player when he drops a men on the board.
 	 */
-	private int position;
+	private int direction;
 	/**
 	 * Stores row/column number from which player moves a man.
 	 */
-	private int rowColNum;
+	private int position;
 	/**
 	 * Stores whether player wins the game, or not.
 	 */
@@ -80,20 +80,20 @@ public class MultiPlayerProtocol implements Serializable {
 		this.col = col;
 	}
 
+	public int getDirection() {
+		return direction;
+	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
+	}
+
 	public int getPosition() {
 		return position;
 	}
 
 	public void setPosition(int position) {
 		this.position = position;
-	}
-
-	public int getRowColNum() {
-		return rowColNum;
-	}
-
-	public void setRowColNum(int rowColNum) {
-		this.rowColNum = rowColNum;
 	}
 
 	public String toString() {
