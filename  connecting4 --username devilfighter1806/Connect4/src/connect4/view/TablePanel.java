@@ -187,6 +187,7 @@ public class TablePanel extends JPanel {
 					}
 
 					System.out.println(acqurePosition());
+					System.out.println(acquireDirection());
 
 					// new Thread(new Runnable() {
 					// @Override
@@ -227,6 +228,7 @@ public class TablePanel extends JPanel {
 					}
 
 					System.out.println(acqurePosition());
+					System.out.println(acquireDirection());
 
 					// new Thread(new Runnable() {
 					// @Override
