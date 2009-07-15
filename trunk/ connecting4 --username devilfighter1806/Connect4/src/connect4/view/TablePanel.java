@@ -6,13 +6,12 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.lang.annotation.Documented;
+
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
 public class TablePanel extends JPanel {
-
-	private int w;
-	private int h;
 
 	private Arrow arrow;
 	private int arrowPos;
@@ -23,7 +22,65 @@ public class TablePanel extends JPanel {
 	private int tableSize;
 	private RotatableSquare square;
 
-	public TablePanel(int wid, int hei, int tableSize) {
+	private Color player1Color;
+	private Color player2Color;
+
+	public TablePanel(int wid, int hei, int tableSize, Color player1,
+			Color player2) {
+
+		addMyMouseListener();
+		addMyKeyboardListener();
+
+		this.tableSize = tableSize;
+		player1Color = player1;
+		player2Color = player2;
+
+		sidewaysBuffer = (wid - ((1 + tableSize) * DrawMan.SIZE)) / 2;
+		upDownBuffer = (hei - ((2 + tableSize) * DrawMan.SIZE)) / 2;
+
+		square = new RotatableSquare(sidewaysBuffer, upDownBuffer, tableSize
+				* DrawMan.SIZE + 3);
+
+		this.arrow = new Arrow(DrawMan.SIZE, sidewaysBuffer + DrawMan.SIZE
+				* tableSize / 2, upDownBuffer - 3 * DrawMan.SIZE / 2);
+
+		arrowPos = tableSize / 2;
+
+		/**
+		 * creating men for all positions initially they are all invisible but
+		 * the middle one
+		 */
+		men = new DrawMan[tableSize][tableSize];
+		for (int i = 0; i < tableSize; i++) {
+			for (int j = 0; j < tableSize; j++) {
+				men[i][j] = new DrawMan(sidewaysBuffer + j * DrawMan.SIZE + 3,
+						upDownBuffer + i * DrawMan.SIZE + 3);
+
+				// marks the MIDDLE man
+				if (i == j && j == (tableSize / 2)) {
+					DrawMan man = men[i][j];
+					man.setColor(player1Color);
+					man.setVisible(true);
+				}
+			}
+		}
+	}
+
+	/**
+	 * listens for hitting the LEFT, RIGHT, UP, DOWN and ENTER keys will replace
+	 * the addMyMouseListener when implemented
+	 */
+	private void addMyKeyboardListener() {
+
+	}
+
+	/**
+	 * the panel reacts to LEFT and RIGHT click left click moves the arrow to
+	 * the LEFT or DOWN right click moves the arrow to the RIGHT or UP
+	 * (depending on the position
+	 */
+	private void addMyMouseListener() {
+
 		addMouseListener(new MouseListener() {
 
 			private boolean animating;
@@ -84,6 +141,11 @@ public class TablePanel extends JPanel {
 					// ex.printStackTrace();
 					// }
 					// }
+
+					try {
+						Thread.sleep(50);
+					} catch (Exception ex) {
+					}
 					animating = false;
 					// }
 					// }).start();
@@ -118,7 +180,13 @@ public class TablePanel extends JPanel {
 					// }
 					// }
 					//
+
+					try {
+						Thread.sleep(50);
+					} catch (Exception ex) {
+					}
 					animating = false;
+
 					// }
 					// }).start();
 				}
@@ -131,39 +199,13 @@ public class TablePanel extends JPanel {
 				}
 			}
 		});
-
-		this.tableSize = tableSize;
-
-		w = wid;
-		h = hei;
-
-		men = new DrawMan[tableSize][tableSize];
-		sidewaysBuffer = (w - ((1 + tableSize) * DrawMan.SIZE)) / 2;
-		upDownBuffer = (h - ((2 + tableSize) * DrawMan.SIZE)) / 2;
-
-		square = new RotatableSquare(sidewaysBuffer, upDownBuffer, tableSize
-				* DrawMan.SIZE + 3);
-
-		for (int i = 0; i < tableSize; i++) {
-			for (int j = 0; j < tableSize; j++) {
-				men[i][j] = new DrawMan(sidewaysBuffer + j * DrawMan.SIZE + 3,
-						upDownBuffer + i * DrawMan.SIZE + 3);
-
-				// marks the MIDDLE man
-				if (i == j && j == (tableSize / 2)) {
-					DrawMan man = men[i][j];
-					man.setColor(Color.BLACK);
-					man.setVisible(true);
-				}
-			}
-		}
-
-		this.arrow = new Arrow(DrawMan.SIZE, sidewaysBuffer + DrawMan.SIZE
-				* tableSize / 2, upDownBuffer - 3 * DrawMan.SIZE / 2);
-
-		arrowPos = tableSize / 2;
 	}
 
+	/**
+	 * moves arrow to the left if it reaches the END - it changes position
+	 * recalculates position based on the beginning of the grid with MEN and the
+	 * size of a MAN
+	 */
 	private void arrowMoveLeft() {
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
@@ -184,6 +226,9 @@ public class TablePanel extends JPanel {
 				arrow.getStartPoint().y));
 	}
 
+	/**
+	 * moves arrow to the right the same as arrowMoveLeft
+	 */
 	private void arrowMoveRight() {
 		if (arrowPos == tableSize - 1) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
@@ -205,6 +250,9 @@ public class TablePanel extends JPanel {
 				arrow.getStartPoint().y));
 	}
 
+	/**
+	 * moves the arrow UP
+	 */
 	private void arrowMoveUp() {
 		if (arrowPos == tableSize - 1) {
 			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
@@ -227,6 +275,9 @@ public class TablePanel extends JPanel {
 				- DrawMan.SIZE));
 	}
 
+	/**
+	 * moves the arrow DOWN
+	 */
 	private void arrowMoveDown() {
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
@@ -250,6 +301,7 @@ public class TablePanel extends JPanel {
 				+ DrawMan.SIZE));
 	}
 
+	@Deprecated
 	private void rotate(boolean right, int step) {
 		if (right) {
 
@@ -286,6 +338,7 @@ public class TablePanel extends JPanel {
 		}
 	}
 
+	@Deprecated
 	private void rotate0(boolean right) {
 		double sqr2 = Math.sqrt(2);
 
@@ -338,8 +391,8 @@ public class TablePanel extends JPanel {
 	}
 
 	// OSTAVA POSLEDNATA POZICIQ // parvi problemi - leko razminavane v
-	// aglite na zavartane... // ne se vijda pri visoka skorost na animaciq, no
-	// bavno - da
+
+	@Deprecated
 	private void rotate22(boolean right) {
 		Point temp = new Point(square.tempUpLeft);
 
@@ -387,6 +440,7 @@ public class TablePanel extends JPanel {
 	}
 
 	// final position of men (NORMAL position
+	@Deprecated
 	private void rotate45(boolean right) {
 		Color[][] colors = new Color[tableSize][tableSize];
 		boolean[][] visibility = new boolean[tableSize][tableSize];
@@ -413,6 +467,7 @@ public class TablePanel extends JPanel {
 		}
 	}
 
+	@Deprecated
 	private void rotate77(boolean right) {
 		Point temp = new Point(square.tempUpLeft);
 
@@ -462,10 +517,12 @@ public class TablePanel extends JPanel {
 		}
 	}
 
+	@Deprecated
 	private void rotateBoardLeft(int step) {
 		rotate(false, step);
 	}
 
+	@Deprecated
 	private void rotateBoardRight(int step) {
 		rotate(true, step);
 	}
@@ -478,10 +535,6 @@ public class TablePanel extends JPanel {
 		arrow.paint(g);
 
 		g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-		// g.drawRect(sidewaysBuffer, upDownBuffer, tableSize * DrawMan.SIZE +
-		// 5,
-		// tableSize * DrawMan.SIZE + 5);
-		g.setColor(new Color(0, 150, 100));
 
 		for (DrawMan[] manRow : men) {
 			for (DrawMan man : manRow) {

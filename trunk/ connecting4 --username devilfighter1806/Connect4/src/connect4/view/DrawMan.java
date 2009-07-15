@@ -13,16 +13,16 @@ public class DrawMan {
 	private Color color;
 	private boolean visible;
 
-	public DrawMan(int x, int y) {
+	public DrawMan(int x, int y, Color color) {
+		this.color = color;
 		upLeft = new Point(x, y);
 		paintPoint = new Point(upLeft);
+	}
 
-		if (System.nanoTime() % 2 == 0) {
-			color = Color.RED;
-		}
-		if (System.nanoTime() % 2 == 0) {
-			visible = true;
-		}
+	public DrawMan(int x, int y) {
+		color = color.BLACK;
+		upLeft = new Point(x, y);
+		paintPoint = new Point(upLeft);
 	}
 
 	public void drawMan(Graphics g) {
