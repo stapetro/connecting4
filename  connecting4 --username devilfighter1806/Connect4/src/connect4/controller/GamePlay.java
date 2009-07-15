@@ -26,11 +26,17 @@ public class GamePlay extends Thread {
 	 */
 	private Connect4Solver connect4;
 	/**
-	 * Reads from standard input.
+	 * Stores multi player reference.
 	 */
-	private Scanner stdin;
 	private MultiPlayer mp;
+	/**
+	 * Stores multi player protocol reference.
+	 */
 	private MultiPlayerProtocol protocol;
+	/**
+	 * Stores whether player is win or not, flag for finishing the game loop.
+	 */
+	private boolean isPlayerWin;
 	/**
 	 * Stores reference to input stream for client/server communication.
 	 */
@@ -39,9 +45,25 @@ public class GamePlay extends Thread {
 	 * Stores reference to output stream for client/srever communication.
 	 */
 	private ObjectOutputStream output;
+	/**
+	 * Stores the server IP address.
+	 */
 	private String serverAddress;
+	/**
+	 * Reads from standard input.
+	 */
+	private Scanner stdin;
 
+	/**
+	 * Constructs the game play.
+	 * 
+	 * @param gameMode
+	 *            Game mode to be set.
+	 * @param boardSize
+	 *            Size of the board.
+	 */
 	public GamePlay(GameMode gameMode, int boardSize) {
+		isPlayerWin = false;
 		stdin = new Scanner(System.in);
 		this.gameMode = gameMode;
 		connect4 = new Connect4Solver(gameMode, boardSize);
@@ -94,6 +116,65 @@ public class GamePlay extends Thread {
 	}
 
 	/**
+	 * Creates connection between client and server, and the communication
+	 * protocol. Gets streams from the client socket.
+	 */
+	private void createConnection() {
+		if (serverAddress == null) {
+			mp = new MultiPlayer(true, null);
+		} else {
+			mp = new MultiPlayer(false, serverAddress);
+		}
+		input = mp.getInputStream();
+		output = mp.getOutputStream();
+		protocol = new MultiPlayerProtocol(currentPlayer, 0, 0);
+	}
+
+	/**
+	 * Sends data through the protocol. The information contains - player who
+	 * made the last move, filled sqaure's coordinates on the board, if player
+	 * wins and the win path.
+	 */
+	private void sendData() {
+		Point p = connect4.getLastMove(currentPlayer);
+		MultiPlayerProtocol prot1 = new MultiPlayerProtocol(currentPlayer, p.x,
+				p.y);
+		prot1.setPlayerWin(isPlayerWin);
+		prot1.setWinPath(connect4.getWinPath());
+		try {
+			output.writeObject(prot1);
+			output.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Receives data through the protocol. The information contains - player who
+	 * made the last move, filled sqaure's coordinates on the board, if player
+	 * wins and the win path.
+	 * 
+	 * @return Player who sends the data.
+	 */
+	private char receiveData() {
+		Object obj = null;
+		while (obj == null) {
+			try {
+				obj = input.readObject();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		protocol = (MultiPlayerProtocol) obj;
+		isPlayerWin = protocol.isPlayerWin();
+		connect4.setSquare(protocol.getPlayer(), protocol.getRow(), protocol
+				.getCol());
+		return protocol.getPlayer();
+	}
+
+	/**
 	 * Configures new game.
 	 * 
 	 * @param boardSize
@@ -132,6 +213,22 @@ public class GamePlay extends Thread {
 	public void setPlayer(char player) {
 		this.currentPlayer = player;
 	}
+	
+	/**
+	 * Gets the server IP address.
+	 * @return The server IP address.
+	 */
+	public String getServerAddress() {
+		return serverAddress;
+	}
+
+	/**
+	 * Sets the server IP address.
+	 * @param serverAddress Server's IP address to be set.
+	 */
+	public void setServerAddress(String serverAddress) {
+		this.serverAddress = serverAddress;
+	}
 
 	/**
 	 * Determines the game mode and loops the relevant game play.
@@ -158,35 +255,31 @@ public class GamePlay extends Thread {
 	 */
 	public void playSinglePlayer() {
 		int position, num;
-		boolean validMove = true;
 		connect4.printBoard();
 		if (currentPlayer == Connect4Solver.BLACK) {
 			connect4.nextBotMove();
 			connect4.printBoard();
 		}
-		while (true) {
-			System.out.println("Current player is: " + currentPlayer);
-			System.out.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
-			position = stdin.nextInt();
-			num = stdin.nextInt();
-			if (position == -1 && num == -1)
-				break;
-			validMove = moveMan(currentPlayer, position, num);
+		while (!isPlayerWin) {
+			do {
+				System.out.println("Current player is: " + currentPlayer);
+				System.out
+						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
+				position = stdin.nextInt();
+				num = stdin.nextInt();
+			} while (!(moveMan(currentPlayer, position, num)));
 			connect4.printBoard();
 			System.out.println("Bot move..........");
-			if (connect4.nextBotMove()) {
+			if ((isPlayerWin = connect4.nextBotMove())) {
 				connect4.printBoard();
 				connect4.printWinPaths();
-				break;
 			}
-			connect4.printBoard();
-			if (!validMove)
-				System.out.println("Invalid move!");
-			else if (connect4.isPlayerWin(currentPlayer)) {
+			if (!isPlayerWin
+					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
-				break;
 			}
+			connect4.printBoard();
 		}
 	}
 
@@ -196,80 +289,32 @@ public class GamePlay extends Thread {
 	 */
 	public void playHotSeed() {
 		int position, num;
-		boolean validMove = true;
 		connect4.printBoard();
 		switchPlayer();
-		while (true) {
-			System.out.println("Current player is: " + currentPlayer);
-			System.out.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
-			position = stdin.nextInt();
-			num = stdin.nextInt();
-			if (position == -1 && num == -1)
-				break;
-			validMove = moveMan(currentPlayer, position, num);
-			connect4.printBoard();
-			if (!validMove)
-				System.out.println("Invalid move!");
-			else if (connect4.isPlayerWin(currentPlayer)) {
+		while (!isPlayerWin) {
+			do {
+				System.out.println("Current player is: " + currentPlayer);
+				System.out
+						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
+				position = stdin.nextInt();
+				num = stdin.nextInt();
+			} while (!(moveMan(currentPlayer, position, num)));
+			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
-				break;
 			}
+			connect4.printBoard();
 			switchPlayer();
 		}
-	}
-
-	private void createConnection() {
-		if (serverAddress == null) {
-			mp = new MultiPlayer(true, null);
-		} else {
-			mp = new MultiPlayer(false, serverAddress);
-		}
-		input = mp.getInputStream();
-		output = mp.getOutputStream();
-		protocol = new MultiPlayerProtocol(currentPlayer, 0, 0);
-	}
-
-	private void sendData() {
-		Point p = connect4.getLastMove(currentPlayer);
-		MultiPlayerProtocol prot1 = new MultiPlayerProtocol(currentPlayer, p.x,
-				p.y);
-		try {
-			output.writeObject(prot1);
-			output.flush();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private char receiveData() {
-		Object obj = null;
-		while (obj == null) {
-			try {
-				obj = input.readObject();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		protocol = (MultiPlayerProtocol) obj;
-		connect4.setSquare(protocol.getPlayer(), protocol.getRow(), protocol
-				.getCol());
-		return protocol.getPlayer();
 	}
 
 	/**
 	 * Controls the game play in multi player game mode over the network.
 	 */
-	// TODO To be implemented.
 	public void playClientServer() {
 		createConnection();
+		char player;
 		int position = 0, num = 0;
-		boolean validMove = true;
 		connect4.printBoard();
 		connect4.printBoard();
 		if (currentPlayer == 'o') {
@@ -279,47 +324,43 @@ public class GamePlay extends Thread {
 						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
 				position = stdin.nextInt();
 				num = stdin.nextInt();
-			} while (!(validMove = moveMan(currentPlayer, position, num)));
+			} while (!(moveMan(currentPlayer, position, num)));
 			connect4.printBoard();
 			sendData();
 		}
-		while (true) {
-			if (connect4.isPlayerWin(receiveData())) {
-				System.out.println("WIN!!!");
-				connect4.printWinPaths();
+		while (!isPlayerWin) {
+			player = receiveData();
+			connect4.printBoard();
+			if (isPlayerWin) {
+				System.out.println("Player : " +  player + " WIN!");
+				for (int i = 0; i < protocol.getWinPath().length; i++) {
+					System.out.print("(" + protocol.getWinPath()[i].x + ", "
+							+ protocol.getWinPath()[i].y + "), ");
+				}
 				break;
 			}
-			connect4.printBoard();
 			do {
 				System.out.println("Current player is: " + currentPlayer);
 				System.out
 						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
 				position = stdin.nextInt();
 				num = stdin.nextInt();
-			} while (!(validMove = moveMan(currentPlayer, position, num)));
+			} while (!(moveMan(currentPlayer, position, num)));
 			connect4.printBoard();
-			sendData();
-			if (!validMove)
-				System.out.println("Invalid move!");
-			else if (connect4.isPlayerWin(currentPlayer)) {
+			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
-				break;
 			}
+			sendData();
 		}
 	}
 
+	/**
+	 * Runs the game loop.
+	 */
 	@Override
 	public void run() {
 		loopGame();
-	}
-
-	public String getServerAddress() {
-		return serverAddress;
-	}
-
-	public void setServerAddress(String serverAddress) {
-		this.serverAddress = serverAddress;
 	}
 
 	/**

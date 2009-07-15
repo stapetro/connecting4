@@ -1,5 +1,6 @@
 package connect4.controller;
 
+import java.awt.Point;
 import java.io.Serializable;
 
 /**
@@ -30,9 +31,25 @@ public class MultiPlayerProtocol implements Serializable {
 	 * Stores row/column number from which player moves a man.
 	 */
 	private int rowColNum;
-	
+	/**
+	 * Stores whether player wins the game, or not.
+	 */
 	private boolean isPlayerWin;
+	/**
+	 * Stores wining path with 4 squares' coordinates.
+	 */
+	private Point[] winPath;
 
+	/**
+	 * Constructs the multi player protocol.
+	 * 
+	 * @param player
+	 *            Player which is currently moved a man.
+	 * @param row
+	 *            Row number of the board.
+	 * @param col
+	 *            Column number of the board.
+	 */
 	public MultiPlayerProtocol(char player, int row, int col) {
 		this.player = player;
 		this.row = row;
@@ -79,15 +96,23 @@ public class MultiPlayerProtocol implements Serializable {
 		this.rowColNum = rowColNum;
 	}
 
-	public String toString(){
-		return player + " " +  row + " " + col;
+	public String toString() {
+		return player + " " + row + " " + col;
 	}
-	
-	public void setPlayerWin(boolean win){
+
+	public void setPlayerWin(boolean win) {
 		this.isPlayerWin = win;
 	}
-	
-	public boolean isPlayerWin(){
+
+	public boolean isPlayerWin() {
 		return this.isPlayerWin;
+	}
+
+	public Point[] getWinPath() {
+		return winPath;
+	}
+
+	public void setWinPath(Point[] winPath) {
+		this.winPath = winPath;
 	}
 }
