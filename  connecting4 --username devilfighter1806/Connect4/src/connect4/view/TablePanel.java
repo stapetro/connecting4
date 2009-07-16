@@ -24,6 +24,14 @@ public class TablePanel extends JPanel {
 	private int tableSize;
 	private RotatableSquare square;
 
+	private int size = DrawMan.SIZE;
+
+	// arrow positions - initiated in constructor
+	private Point mostleftUP;
+	private Point mostleftDOWN;
+	private Point mostupLEFT;
+	private Point mostupRIGHT;
+
 	private Color player1Color;
 	private Color player2Color;
 
@@ -66,6 +74,112 @@ public class TablePanel extends JPanel {
 					man.setVisible(true);
 				}
 			}
+		}
+
+		// arrows positions
+		mostleftUP = new Point(square_x_upLeftPoint + size / 2,
+				square_y_upLeftPoint - 3 * size / 2);
+		mostleftDOWN = new Point(mostleftUP.x, mostleftUP.y + size
+				* (tableSize + 3));
+
+		mostupLEFT = new Point(square_x_upLeftPoint - 3 * size / 2,
+				square_y_upLeftPoint + size / 2);
+		mostupRIGHT = new Point(mostupLEFT.x + size * (tableSize + 3),
+				mostupLEFT.y);
+	}
+
+	/**
+	 * This method makes the MAN that is located in the position pointed with
+	 * the ManCombo object with the color specified. The Direction is used for
+	 * the relocation of the arrow so that the next user sees where it was last
+	 * played. The MAN becomes visible. 
+	 * 
+	 * WARNING: No check for already VISIBLE man - the user must check that himself.
+	 * 
+	 * @param manCombo
+	 *            - contains the position of the newly positioned man
+	 * @param direction
+	 *            - the direction from where the man came. The arrow is
+	 *            relocated due to this parameter.
+	 * @param color
+	 *            - the man will be painted in this color.
+	 */
+	public void moveManTo(ManCombo manCombo, Direction direction, Color color) {
+		men[manCombo.getPositionX()][manCombo.getPositionY()].setColor(color);
+		men[manCombo.getPositionX()][manCombo.getPositionY()].setVisible(true);
+
+		int position = -1;
+
+		switch (direction) {
+		case HORIZONTAL_LEFT:
+		case HORIZONTAL_RIGHT:
+			position = manCombo.getPositionY();
+			break;
+		case VERTICAL_DOWN:
+		case VERTICAL_UP:
+			position = manCombo.getPositionX();
+			break;
+		}
+
+		moveArrowTo(direction, position);
+	}
+
+	/**
+	 * 
+	 * Replaces the arrow to the new location. Position is index in array and
+	 * the direction defines one of the four arrays.
+	 * 
+	 * @param direction
+	 *            - on which side the arrow is
+	 * @param position
+	 *            - the exact position of the arrow
+	 */
+	private void moveArrowTo(Direction direction, int position) {
+		if (position == -1) {
+			System.out.println("BOOOOOM!");
+		}
+
+		switch (direction) {
+		case HORIZONTAL_LEFT:
+			arrowPos = tableSize - 1 - position;
+			arrow.setStartPoint(new Point(mostupLEFT.x, mostupLEFT.y + size
+					* position));
+			arrow.setDirection(Direction.HORIZONTAL_RIGHT);
+			break;
+		case HORIZONTAL_RIGHT:
+			arrowPos = tableSize - 1 - position;
+			arrow.setStartPoint(new Point(mostupRIGHT.x, mostupRIGHT.y + size
+					* position));
+			arrow.setDirection(Direction.HORIZONTAL_LEFT);
+			break;
+
+		case VERTICAL_DOWN:
+			arrowPos = position;
+			arrow.setStartPoint(new Point(mostleftDOWN.x + size * position,
+					mostleftDOWN.y));
+			arrow.setDirection(Direction.VERTICAL_UP);
+			break;
+		case VERTICAL_UP:
+			arrowPos = position;
+			arrow.setStartPoint(new Point(mostleftUP.x + size * position,
+					mostleftUP.y));
+			arrow.setDirection(Direction.VERTICAL_DOWN);
+			break;
+		}
+	}
+
+	/**
+	 * Method which shows the winning 4 consecutive MEN painting them in another
+	 * color - different from the player1 and player2 colors.
+	 * 
+	 * @param winningMen
+	 *            - combo of x and y coordinates of each winning MAN
+	 * @param color
+	 *            - the winning men will be painted in this color
+	 */
+	public void displayWinningCombination(ManCombo[] winningMen, Color color) {
+		for (ManCombo comb : winningMen) {
+			men[comb.getPositionX()][comb.getPositionY()].setColor(color);
 		}
 	}
 
@@ -113,7 +227,7 @@ public class TablePanel extends JPanel {
 	 * the addMyMouseListener when implemented
 	 */
 
-	// NE RABOTI V MOMENTA - SPECIALNO ZA KRASI
+	// NE RABOTI V MOMENTA
 	private void addMyKeyboardListener() {
 
 		this.addKeyListener(new KeyPressedHandler());
@@ -210,18 +324,23 @@ public class TablePanel extends JPanel {
 				} else if (e.getButton() == MouseEvent.BUTTON3) {
 					getGraphics().drawString("right button!", 10, 10);
 
-					Direction dir = arrow.getDirection();
-					switch (dir) {
-					case VERTICAL_DOWN:
-					case VERTICAL_UP:
-						arrowMoveRight();
-						break;
+					// moveArrowTo(Direction.HORIZONTAL_RIGHT, 2);
 
-					case HORIZONTAL_LEFT:
-					case HORIZONTAL_RIGHT:
-						arrowMoveUp();
-						break;
-					}
+					moveManTo(new ManCombo(3, 3), Direction.VERTICAL_DOWN,
+							Color.PINK);
+
+					// Direction dir = arrow.getDirection();
+					// switch (dir) {
+					// case VERTICAL_DOWN:
+					// case VERTICAL_UP:
+					// arrowMoveRight();
+					// break;
+					//
+					// case HORIZONTAL_LEFT:
+					// case HORIZONTAL_RIGHT:
+					// arrowMoveUp();
+					// break;
+					// }
 
 					// new Thread(new Runnable() {
 					// @Override
@@ -264,6 +383,7 @@ public class TablePanel extends JPanel {
 	 * size of a MAN
 	 */
 	private void arrowMoveLeft() {
+
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
 				arrowPos = tableSize - 1;
@@ -470,7 +590,7 @@ public class TablePanel extends JPanel {
 		}
 	}
 
-	// OSTAVA POSLEDNATA POZICIQ // parvi problemi - leko razminavane v
+	// OSTAVA POSLEDNATA POZICIQ // parvi problemi - leko razminavane
 
 	@Deprecated
 	private void rotate22(boolean right) {
