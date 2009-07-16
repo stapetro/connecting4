@@ -7,11 +7,12 @@ package connect4.view.menu;
  */
 public enum MenuItem {
 
-	SINGLE_PLAYER(0, null), MULTI_PLAYER(
-			1, new int[] { 7,8, 11 }), OPTIONS(2, new int[] { 5, 6, 11 }), CREDITS(
-			3, null), EXIT(4, null), CONFIGURE_GAME(5, null), CONTROLS(6, null), HOT_SEAT(
-			7, null), TCP_CONNECTION(8, new int[] { 9, 10, 11 }), HOST_GAME(9,
-			null), JOIN_GAME(10, null), BACK(11, null);
+	SINGLE_PLAYER(0, null), MULTI_PLAYER(1, new int[] { 7, 8, 13 }), OPTIONS(2,
+			new int[] { 5, 6, 13 }), CREDITS(3, null), EXIT(4, null), CONFIGURE_GAME(
+			5, null), CONTROLS(6, null), HOT_SEAT(7, null), TCP_CONNECTION(8,
+			new int[] { 9, 10, 13 }), HOST_GAME(9, new int[] { 11, 13 }), JOIN_GAME(
+			10, new int[] { 12, 13 }), HOST(11, null), JOIN(12, null), BACK(13,
+			null);
 
 	/**
 	 * Stores the number of parent menu items.

@@ -737,4 +737,13 @@ public class Connect4Solver {
 				System.out.print(", ");
 		}
 	}
+
+	/**
+	 * Gets the bot player value.
+	 * 
+	 * @return The bot player value.
+	 */
+	public char getBot() {
+		return this.botPlayer;
+	}
 }

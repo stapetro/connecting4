@@ -4,13 +4,14 @@ import java.awt.Color;
 
 /**
  * Represents players properties.
+ * 
  * @author Stanislav Petrov
- *
+ * 
  */
 public enum GamePlayers {
 
-	FIRST_PLAYER('x', Color.BLUE, "1st player"), SECOND_PLAYER('o', Color.RED,
-			"2nd player"), EMPTY('-', Color.GRAY, null);
+	FIRST_PLAYER('x', Color.BLUE, 1), SECOND_PLAYER('o', Color.RED, 2), EMPTY(
+			'-', Color.GRAY, 0);
 
 	/**
 	 * Stores player's value in the board in the working logic.
@@ -23,12 +24,12 @@ public enum GamePlayers {
 	/**
 	 * Stores the player's description.
 	 */
-	private final String description;
+	private final int number;
 
-	private GamePlayers(char player, Color c, String desc) {
+	private GamePlayers(char player, Color c, int num) {
 		this.player = player;
 		this.color = c;
-		this.description = desc;
+		this.number = num;
 	}
 
 	public char getPlayer() {
@@ -43,7 +44,7 @@ public enum GamePlayers {
 		return this.color;
 	}
 
-	public String getDescription() {
-		return this.description;
+	public int getNumber() {
+		return this.number;
 	}
 }
