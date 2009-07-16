@@ -3,13 +3,17 @@ package connect4.view;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Desktop.Action;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Random;
 
+import javax.swing.AbstractAction;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 
 import connect4.controller.Direction;
 
@@ -40,7 +44,6 @@ public class TablePanel extends JPanel {
 			Color player2) {
 
 		addMyMouseListener();
-		addMyKeyboardListener();
 
 		this.tableSize = tableSize;
 		player1Color = player1;
@@ -87,6 +90,45 @@ public class TablePanel extends JPanel {
 				square_y_upLeftPoint + size / 2);
 		mostupRIGHT = new Point(mostupLEFT.x + size * (tableSize + 3),
 				mostupLEFT.y);
+
+		addKeyHandler();
+	}
+
+	/**
+	 * Singleton for handling key strokes! WARNING: Needed keyboard focus on the
+	 * JComponent to work.
+	 * 
+	 * @author Leni
+	 * 
+	 */
+	private static class MyAbstractAction extends AbstractAction {
+
+		private static final MyAbstractAction ref = new MyAbstractAction();
+
+		public static MyAbstractAction getInstance() {
+			return ref;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+			System.out.println(e.getActionCommand());
+		}
+
+	}
+
+	/**
+	 * key strokes events handling
+	 *
+	 * WARNING: not working properly even with focus
+	 */
+
+	private void addKeyHandler() {
+		this.getInputMap().put(KeyStroke.getKeyStroke("UP"), "doUP");
+		this.getActionMap().put("doUP", MyAbstractAction.getInstance());
+
+		this.getInputMap().put(KeyStroke.getKeyStroke("DOWN"), "doDOWN");
+		this.getActionMap().put("doDOWN", MyAbstractAction.getInstance());
 	}
 
 	/**
@@ -230,23 +272,23 @@ public class TablePanel extends JPanel {
 	 */
 
 	// NE RABOTI V MOMENTA
-	private void addMyKeyboardListener() {
+	// private void addMyKeyboardListener() {
+	//
+	// this.addKeyListener(new KeyPressedHandler());
+	// }
 
-		this.addKeyListener(new KeyPressedHandler());
-	}
-
-	private class KeyPressedHandler extends KeyAdapter {
-
-		@Override
-		public void keyPressed(KeyEvent event) {
-			System.out.println("bla");
-			String keyName = event.getKeyText(event.getKeyCode());
-
-			if (keyName.equalsIgnoreCase("Up")) {
-				System.out.println("bla2");
-			}
-		}
-	}
+	// private class KeyPressedHandler extends KeyAdapter {
+	//
+	// @Override
+	// public void keyPressed(KeyEvent event) {
+	// System.out.println("bla");
+	// String keyName = event.getKeyText(event.getKeyCode());
+	//
+	// if (keyName.equalsIgnoreCase("Up")) {
+	// System.out.println("bla2");
+	// }
+	// }
+	// }
 
 	/**
 	 * the panel reacts to LEFT and RIGHT click left click moves the arrow to
@@ -330,7 +372,7 @@ public class TablePanel extends JPanel {
 
 					Random g = new Random(System.nanoTime());
 					moveManTo(new ManCombo(g.nextInt(tableSize), g
-							.nextInt(tableSize)), Direction.HORIZONTAL_RIGHT,
+							.nextInt(tableSize)), acquireDirection(),
 							Color.PINK);
 
 					// Direction dir = arrow.getDirection();
@@ -346,20 +388,22 @@ public class TablePanel extends JPanel {
 					// break;
 					// }
 
-					// new Thread(new Runnable() {
-					// @Override
-					// public void run() {
-					// for (int i = 0; i < 4; i++) {
-					// square.rotateLeft();
-					// rotateBoardLeft(i);
-					// repaint();
-					// try {
-					// Thread.sleep(1000);
-					// } catch (InterruptedException e) {
-					// e.printStackTrace();
-					// }
-					// }
-					//
+					//					
+					//					
+					// // new Thread(new Runnable() {
+					// // @Override
+					// //// public void run() {
+					// // for (int i = 0; i < 4; i++) {
+					// // square.rotateLeft();
+					// // rotateBoardLeft(i);
+					// // repaint();
+					// // try {
+					// // Thread.sleep(1000);
+					// // } catch (InterruptedException e) {
+					// // e.printStackTrace();
+					// // }
+					// // }
+					// //
 
 					try {
 						Thread.sleep(50);
