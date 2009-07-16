@@ -7,6 +7,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Random;
 
 import javax.swing.JPanel;
 
@@ -92,9 +93,10 @@ public class TablePanel extends JPanel {
 	 * This method makes the MAN that is located in the position pointed with
 	 * the ManCombo object with the color specified. The Direction is used for
 	 * the relocation of the arrow so that the next user sees where it was last
-	 * played. The MAN becomes visible. 
+	 * played. The MAN becomes visible.
 	 * 
-	 * WARNING: No check for already VISIBLE man - the user must check that himself.
+	 * WARNING: No check for already VISIBLE man - the user must check that
+	 * himself.
 	 * 
 	 * @param manCombo
 	 *            - contains the position of the newly positioned man
@@ -113,11 +115,11 @@ public class TablePanel extends JPanel {
 		switch (direction) {
 		case HORIZONTAL_LEFT:
 		case HORIZONTAL_RIGHT:
-			position = manCombo.getPositionY();
+			position = manCombo.getPositionX();
 			break;
 		case VERTICAL_DOWN:
 		case VERTICAL_UP:
-			position = manCombo.getPositionX();
+			position = manCombo.getPositionY();
 			break;
 		}
 
@@ -326,7 +328,9 @@ public class TablePanel extends JPanel {
 
 					// moveArrowTo(Direction.HORIZONTAL_RIGHT, 2);
 
-					moveManTo(new ManCombo(3, 3), Direction.VERTICAL_DOWN,
+					Random g = new Random(System.nanoTime());
+					moveManTo(new ManCombo(g.nextInt(tableSize), g
+							.nextInt(tableSize)), Direction.HORIZONTAL_RIGHT,
 							Color.PINK);
 
 					// Direction dir = arrow.getDirection();
