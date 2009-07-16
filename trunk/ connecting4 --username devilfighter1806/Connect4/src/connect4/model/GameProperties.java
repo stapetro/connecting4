@@ -20,6 +20,10 @@ public enum GameProperties {
 		this.nameId = nameId;
 	}
 	
+	public int getSize(){
+		return this.size;
+	}
+	
 	public String getName(){
 		return this.SIZES[this.nameId];
 	}

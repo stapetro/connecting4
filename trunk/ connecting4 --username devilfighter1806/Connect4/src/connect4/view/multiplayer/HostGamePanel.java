@@ -10,22 +10,26 @@ import java.awt.Dimension;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 
+import connect4.controller.GamePlay;
+import connect4.model.GamePlayers;
 import connect4.model.GameProperties;
+import connect4.view.TablePanel;
+import connect4.view.menu.MenuContentPanel;
 
 public class HostGamePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	private GamePlay gamePlay;
 	private JLabel gameNameLbl = null;
 	private JTextField gameNameTxt = null;
 	private JLabel jLabel = null;
-	private JComboBox playersComboBox = null;
-	private JButton hostGameBtn = null;
-
+	private JComboBox playerComboBox = null;
 	/**
 	 * This is the default constructor
 	 */
-	public HostGamePanel() {
+	public HostGamePanel(GamePlay gamePlay) {
 		super();
+		this.gamePlay = gamePlay;
 		initialize();
 	}
 
@@ -52,13 +56,12 @@ public class HostGamePanel extends JPanel {
 		this.add(getGameNameTxt(), null);
 		this.add(jLabel, null);
 		this.add(getPlayersComboBox(), null);
-		this.add(getHostGameBtn(), null);
 	}
 
 	/**
-	 * This method initializes gameNameTxt	
-	 * 	
-	 * @return javax.swing.JTextField	
+	 * This method initializes gameNameTxt
+	 * 
+	 * @return javax.swing.JTextField
 	 */
 	private JTextField getGameNameTxt() {
 		if (gameNameTxt == null) {
@@ -70,30 +73,20 @@ public class HostGamePanel extends JPanel {
 	}
 
 	/**
-	 * This method initializes playersComboBox	
-	 * 	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes playersComboBox
+	 * 
+	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getPlayersComboBox() {
-		if (playersComboBox == null) {
-			playersComboBox = new JComboBox(GameProperties.PLAYERS);
-			playersComboBox.setPreferredSize(new Dimension(150, 30));
+		if (playerComboBox == null) {
+			playerComboBox = new JComboBox(GameProperties.PLAYERS);
+			playerComboBox.setPreferredSize(new Dimension(150, 30));
 		}
-		return playersComboBox;
+		return playerComboBox;
 	}
 
-	/**
-	 * This method initializes hostGameBtn	
-	 * 	
-	 * @return javax.swing.JButton	
-	 */
-	private JButton getHostGameBtn() {
-		if (hostGameBtn == null) {
-			hostGameBtn = new JButton();
-			hostGameBtn.setPreferredSize(new Dimension(100, 30));
-			hostGameBtn.setText("host game");
-		}
-		return hostGameBtn;
+	public int getPlayerComboBoxSelectedIndex(){
+		return this.playerComboBox.getSelectedIndex();
 	}
 
-}  //  @jve:decl-index=0:visual-constraint="7,46"
+} // @jve:decl-index=0:visual-constraint="7,46"

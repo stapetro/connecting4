@@ -10,6 +10,8 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import javax.swing.JComboBox;
 
+import connect4.controller.GamePlay;
+import connect4.model.GamePlayers;
 import connect4.model.GameProperties;
 
 import java.awt.Color;
@@ -24,8 +26,9 @@ import javax.swing.JButton;
 
 /**
  * Represents interface for game configuration.
+ * 
  * @author Stanislav Petrov
- *
+ * 
  */
 public class ConfigurationPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
@@ -37,17 +40,24 @@ public class ConfigurationPanel extends JPanel {
 	/**
 	 * Stores board sizes constants.
 	 */
-	private GameProperties[] BOARD_SIZES;
+	private final GameProperties[] BOARD_SIZES;
 	private JLabel styleLbl = null;
 	private JColorChooser colorChooser;
 	private JButton colorChooseBtn = null;
 	private JComboBox playersComboBox = null;
+	private int boardSize;
+	/**
+	 * Stores all entered data from the configuration panel.
+	 */
+	private GamePlay gamePlay;
 
 	/**
 	 * This is the default constructor
 	 */
-	public ConfigurationPanel() {
+	public ConfigurationPanel(GamePlay gamePlay) {
 		super();
+		BOARD_SIZES = GameProperties.values();
+		this.gamePlay = gamePlay;
 		initialize();
 	}
 
@@ -79,33 +89,44 @@ public class ConfigurationPanel extends JPanel {
 	}
 
 	/**
-	 * This method initializes boardSizeComboBox	
-	 * 	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes boardSizeComboBox
+	 * 
+	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getBoardSizeComboBox() {
 		if (boardSizeComboBox == null) {
 			boardSizeComboBox = new JComboBox(GameProperties.SIZES);
 			boardSizeComboBox.setPreferredSize(new Dimension(300, 24));
+			boardSizeComboBox
+					.addItemListener(new java.awt.event.ItemListener() {
+						public void itemStateChanged(java.awt.event.ItemEvent e) {
+							if (e.getStateChange() == 1) {
+								boardSize = BOARD_SIZES[boardSizeComboBox
+										.getSelectedIndex()].getSize();
+
+							}
+						}
+					});
 		}
 		return boardSizeComboBox;
 	}
 
 	/**
-	 * This method initializes colorChooseBtn	
-	 * 	
-	 * @return javax.swing.JButton	
+	 * This method initializes colorChooseBtn
+	 * 
+	 * @return javax.swing.JButton
 	 */
 	private JButton getColorChooseBtn() {
 		if (colorChooseBtn == null) {
 			colorChooseBtn = new JButton();
 			colorChooseBtn.setPreferredSize(new Dimension(90, 30));
 			colorChooseBtn.setText("Colors");
-			colorChooseBtn.addActionListener(new ActionListener(){
-			
+			colorChooseBtn.addActionListener(new ActionListener() {
+
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					JColorChooser.showDialog(ConfigurationPanel.this, "Choose color for player", Color.blue);
+					JColorChooser.showDialog(ConfigurationPanel.this,
+							"Choose color for player", Color.blue);
 				}
 			});
 		}
@@ -113,14 +134,21 @@ public class ConfigurationPanel extends JPanel {
 	}
 
 	/**
-	 * This method initializes playersComboBox	
-	 * 	
-	 * @return javax.swing.JComboBox	
+	 * This method initializes playersComboBox
+	 * 
+	 * @return javax.swing.JComboBox
 	 */
 	private JComboBox getPlayersComboBox() {
 		if (playersComboBox == null) {
 			playersComboBox = new JComboBox(GameProperties.PLAYERS);
 			playersComboBox.setPreferredSize(new Dimension(100, 25));
+			playersComboBox.addItemListener(new java.awt.event.ItemListener() {
+				public void itemStateChanged(java.awt.event.ItemEvent e) {
+					if(e.getStateChange() == 1){
+						gamePlay.setPlayer(GamePlayers.values()[playersComboBox.getSelectedIndex()].getPlayer());
+					}
+				}
+			});
 		}
 		return playersComboBox;
 	}

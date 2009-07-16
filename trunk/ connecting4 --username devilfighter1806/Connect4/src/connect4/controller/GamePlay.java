@@ -1,10 +1,14 @@
 package connect4.controller;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
+
+import connect4.view.ManCombo;
+import connect4.view.TablePanel;
 
 /**
  * Controls game play.
@@ -17,6 +21,8 @@ public class GamePlay extends Thread {
 	 * Stores game mode - single|multi player.
 	 */
 	private GameMode gameMode;
+	private String gameName;
+
 	/**
 	 * Stores which is current player.
 	 */
@@ -53,6 +59,10 @@ public class GamePlay extends Thread {
 	 * Reads from standard input.
 	 */
 	private Scanner stdin;
+	/**
+	 * Stores reference to the table panel.
+	 */
+	private TablePanel tablePnl;
 
 	/**
 	 * Constructs the game play.
@@ -171,6 +181,7 @@ public class GamePlay extends Thread {
 		isPlayerWin = protocol.isPlayerWin();
 		connect4.setSquare(protocol.getPlayer(), protocol.getRow(), protocol
 				.getCol());
+		fillSquare(new Point(protocol.getRow(), protocol.getCol()), protocol.getPlayer());
 		return protocol.getPlayer();
 	}
 
@@ -196,6 +207,14 @@ public class GamePlay extends Thread {
 		this.gameMode = gameMode;
 	}
 
+	public String getGameName() {
+		return gameName;
+	}
+
+	public void setGameName(String gameName) {
+		this.gameName = gameName;
+	}
+
 	/**
 	 * User chooses which player to be and current player becomes oponent.
 	 */
@@ -212,10 +231,12 @@ public class GamePlay extends Thread {
 	 */
 	public void setPlayer(char player) {
 		this.currentPlayer = player;
+		connect4.setPlayer(currentPlayer);
 	}
-	
+
 	/**
 	 * Gets the server IP address.
+	 * 
 	 * @return The server IP address.
 	 */
 	public String getServerAddress() {
@@ -224,7 +245,9 @@ public class GamePlay extends Thread {
 
 	/**
 	 * Sets the server IP address.
-	 * @param serverAddress Server's IP address to be set.
+	 * 
+	 * @param serverAddress
+	 *            Server's IP address to be set.
 	 */
 	public void setServerAddress(String serverAddress) {
 		this.serverAddress = serverAddress;
@@ -250,6 +273,11 @@ public class GamePlay extends Thread {
 		}
 	}
 
+	private void fillSquare(Point p, char player) {
+		tablePnl.moveManTo(new ManCombo(p.x, p.y), tablePnl.acquireDirection(),
+				player == 'x' ? Color.BLUE : Color.RED);
+	}
+
 	/**
 	 * Controls the game play in single player mode.
 	 */
@@ -268,12 +296,14 @@ public class GamePlay extends Thread {
 				position = stdin.nextInt();
 				num = stdin.nextInt();
 			} while (!(moveMan(currentPlayer, position, num)));
+			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
 			connect4.printBoard();
 			System.out.println("Bot move..........");
 			if ((isPlayerWin = connect4.nextBotMove())) {
 				connect4.printBoard();
 				connect4.printWinPaths();
 			}
+			fillSquare(connect4.getLastMove(connect4.getBot()), connect4.getBot());
 			if (!isPlayerWin
 					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
@@ -299,6 +329,7 @@ public class GamePlay extends Thread {
 				position = stdin.nextInt();
 				num = stdin.nextInt();
 			} while (!(moveMan(currentPlayer, position, num)));
+			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
@@ -325,6 +356,7 @@ public class GamePlay extends Thread {
 				position = stdin.nextInt();
 				num = stdin.nextInt();
 			} while (!(moveMan(currentPlayer, position, num)));
+			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
 			connect4.printBoard();
 			sendData();
 		}
@@ -332,7 +364,7 @@ public class GamePlay extends Thread {
 			player = receiveData();
 			connect4.printBoard();
 			if (isPlayerWin) {
-				System.out.println("Player : " +  player + " WIN!");
+				System.out.println("Player : " + player + " WIN!");
 				for (int i = 0; i < protocol.getWinPath().length; i++) {
 					System.out.print("(" + protocol.getWinPath()[i].x + ", "
 							+ protocol.getWinPath()[i].y + "), ");
@@ -346,6 +378,7 @@ public class GamePlay extends Thread {
 				position = stdin.nextInt();
 				num = stdin.nextInt();
 			} while (!(moveMan(currentPlayer, position, num)));
+			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
 			connect4.printBoard();
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
@@ -361,6 +394,16 @@ public class GamePlay extends Thread {
 	@Override
 	public void run() {
 		loopGame();
+	}
+
+	/**
+	 * Sets table panel reference. Used for visualizing the players' moves.
+	 * 
+	 * @param tablePnl
+	 *            Table panel object.
+	 */
+	public void setTablePanel(TablePanel tablePnl) {
+		this.tablePnl = tablePnl;
 	}
 
 	/**
