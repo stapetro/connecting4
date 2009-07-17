@@ -71,7 +71,7 @@ public enum Direction {
 	}
 
 	/**
-	 * Direction position getter only for horizontal/vertical directions.
+	 * Direction2 position getter only for horizontal/vertical directions.
 	 * 
 	 * @return Row or column of the relevant position.
 	 */
@@ -82,7 +82,7 @@ public enum Direction {
 	/**
 	 * Gets sequenatial number of direction.
 	 * 
-	 * @return Direction number used for indexing in arrays.
+	 * @return Direction2 number used for indexing in arrays.
 	 */
 	public int getIndex() {
 		return this.number;
