@@ -43,28 +43,28 @@ public class TablePanel extends JPanel {
 
 	private Color player1Color;
 
-	//
-	private HashSet<MyAbstractAction> abstractActions;
-
 	public TablePanel(int wid, int hei, int tableSize, Color player1,
 			Color player2) {
 
 		addMyMouseListener();
 
 		this.tableSize = tableSize;
-		player1Color = player1;
+		this.player1Color = player1;
+		
+		square_x_upLeftPoint = (wid - ((1 + tableSize) * size)) / 2;
+		square_y_upLeftPoint = (hei - ((2 + tableSize) * size)) / 2;
 
-		this.abstractActions = new HashSet<MyAbstractAction>();
+		initVariables();
+		initPoints();
+	}
 
-		square_x_upLeftPoint = (wid - ((1 + tableSize) * DrawMan.SIZE)) / 2;
-		square_y_upLeftPoint = (hei - ((2 + tableSize) * DrawMan.SIZE)) / 2;
-
-		square = new RotatableSquare(square_x_upLeftPoint,
-				square_y_upLeftPoint, tableSize * DrawMan.SIZE + 3);
-
+	private void initVariables() {
 		this.arrow = new Arrow(DrawMan.SIZE, square_x_upLeftPoint
 				+ DrawMan.SIZE * tableSize / 2, square_y_upLeftPoint - 3
 				* DrawMan.SIZE / 2);
+
+		square = new RotatableSquare(square_x_upLeftPoint,
+				square_y_upLeftPoint, tableSize * size + 3);
 
 		arrowPos = tableSize / 2;
 
@@ -75,8 +75,8 @@ public class TablePanel extends JPanel {
 		men = new DrawMan[tableSize][tableSize];
 		for (int i = 0; i < tableSize; i++) {
 			for (int j = 0; j < tableSize; j++) {
-				men[i][j] = new DrawMan(square_x_upLeftPoint + j * DrawMan.SIZE
-						+ 3, square_y_upLeftPoint + i * DrawMan.SIZE + 3);
+				men[i][j] = new DrawMan(square_x_upLeftPoint + j * size + 3,
+						square_y_upLeftPoint + i * size + 3);
 
 				// marks the MIDDLE man
 				if (i == j && j == (tableSize / 2)) {
@@ -86,8 +86,6 @@ public class TablePanel extends JPanel {
 				}
 			}
 		}
-
-		initPoints();
 	}
 
 	private void initPoints() {
@@ -111,7 +109,7 @@ public class TablePanel extends JPanel {
 	 * WARNING: No check for already VISIBLE man - the user must check that
 	 * himself.
 	 * 
-	 * @param manCombo
+	 * @param manPoint
 	 *            - contains the position of the newly positioned man
 	 * @param direction
 	 *            - the direction from where the man came. The arrow is
@@ -119,20 +117,20 @@ public class TablePanel extends JPanel {
 	 * @param color
 	 *            - the man will be painted in this color.
 	 */
-	public void moveManTo(ManCombo manCombo, Direction direction, Color color) {
-		men[manCombo.getPositionX()][manCombo.getPositionY()].setColor(color);
-		men[manCombo.getPositionX()][manCombo.getPositionY()].setVisible(true);
+	public void moveManTo(Point manPoint, Direction direction, Color color) {
+		men[manPoint.x][manPoint.y].setColor(color);
+		men[manPoint.x][manPoint.y].setVisible(true);
 
 		int position = -1;
 
 		switch (direction) {
 		case HORIZONTAL_LEFT:
 		case HORIZONTAL_RIGHT:
-			position = manCombo.getPositionX();
+			position = manPoint.x;
 			break;
 		case VERTICAL_DOWN:
 		case VERTICAL_UP:
-			position = manCombo.getPositionY();
+			position = manPoint.y;
 			break;
 		}
 
@@ -191,14 +189,14 @@ public class TablePanel extends JPanel {
 	 * Method which shows the winning 4 consecutive MEN painting them in another
 	 * color - different from the player1 and player2 colors.
 	 * 
-	 * @param winningMen
-	 *            - combo of x and y coordinates of each winning MAN
+	 * @param winningMenPositions
+	 *            - combo of x and y coordinates of each winning MAN. Uses Point.
 	 * @param color
 	 *            - the winning men will be painted in this color
 	 */
-	public void displayWinningCombination(ManCombo[] winningMen, Color color) {
-		for (ManCombo comb : winningMen) {
-			men[comb.getPositionX()][comb.getPositionY()].setColor(color);
+	public void displayWinningCombination(Point[] winningMenPositions, Color color) {
+		for (Point manPoint : winningMenPositions) {
+			men[manPoint.x][manPoint.y].setColor(color);
 		}
 	}
 
@@ -323,7 +321,7 @@ public class TablePanel extends JPanel {
 					// moveArrowTo(Direction.HORIZONTAL_RIGHT, 2);
 
 					Random g = new Random(System.nanoTime());
-					moveManTo(new ManCombo(g.nextInt(tableSize), g
+					moveManTo(new Point(g.nextInt(tableSize), g
 							.nextInt(tableSize)), acquireDirection(),
 							Color.PINK);
 
