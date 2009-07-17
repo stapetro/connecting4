@@ -5,6 +5,12 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+/**
+ * test class
+ * 
+ * @author Leni
+ * 
+ */
 public class MyFrame extends JFrame {
 
 	public int hei;
@@ -13,10 +19,10 @@ public class MyFrame extends JFrame {
 	private StatusBarPanel statusBar;
 
 	public MyFrame(int w, int h) {
-		statusBar = new StatusBarPanel(getWidth(), getHeight() / 5);
+		statusBar = new StatusBarPanel(getWidth(), getHeight() / 3);
 		hei = h;
 		wid = w;
-		drawPanel = new TablePanel(wid, hei, 13, Color.RED, Color.BLUE);
+		drawPanel = new TablePanel(wid, hei, 13, Color.RED);
 		init();
 	}
 
