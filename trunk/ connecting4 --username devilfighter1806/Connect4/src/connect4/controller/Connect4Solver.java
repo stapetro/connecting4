@@ -560,6 +560,9 @@ public class Connect4Solver {
 	 */
 	public void setBoardSize(int boardSize) {
 		this.boardSize = boardSize;
+		initializeBoard();
+		initialiazeMoves();
+		initBotProperties();
 	}
 
 	/**
@@ -592,7 +595,7 @@ public class Connect4Solver {
 	 *            Current player.
 	 * @param direction
 	 *            Direction from which user drop a man.
-	 * @param y
+	 * @param position
 	 *            Row|Column of current direction.
 	 * @return True - if move is valid, false - otherwise.
 	 */

@@ -16,16 +16,29 @@ import connect4.model.GameProperties;
 import connect4.view.TablePanel;
 import connect4.view.menu.MenuContentPanel;
 
+/**
+ * Represents the host game panel with which player hosts game for multi player.
+ * 
+ * @author Stanislav Petrov
+ * 
+ */
 public class HostGamePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * Stores configuration information from the host game panel.
+	 */
 	private GamePlay gamePlay;
 	private JLabel gameNameLbl = null;
 	private JTextField gameNameTxt = null;
 	private JLabel jLabel = null;
 	private JComboBox playerComboBox = null;
+
 	/**
-	 * This is the default constructor
+	 * General purpose constructor.
+	 * 
+	 * @param gamePlay
+	 *            Game play reference to be set.
 	 */
 	public HostGamePanel(GamePlay gamePlay) {
 		super();
@@ -34,9 +47,7 @@ public class HostGamePanel extends JPanel {
 	}
 
 	/**
-	 * This method initializes this
-	 * 
-	 * @return void
+	 * Intializes all components.
 	 */
 	private void initialize() {
 		FlowLayout flowLayout = new FlowLayout();
@@ -85,7 +96,7 @@ public class HostGamePanel extends JPanel {
 		return playerComboBox;
 	}
 
-	public int getPlayerComboBoxSelectedIndex(){
+	public int getPlayerComboBoxSelectedIndex() {
 		return this.playerComboBox.getSelectedIndex();
 	}
 
