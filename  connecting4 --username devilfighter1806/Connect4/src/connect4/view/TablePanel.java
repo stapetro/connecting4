@@ -44,7 +44,8 @@ public class TablePanel extends JPanel {
 	//
 	private HashSet<MyAbstractAction> abstractActions;
 
-	public TablePanel(int wid, int hei, int tableSize, Color player1,Color player2) {
+	public TablePanel(int wid, int hei, int tableSize, Color player1,
+			Color player2) {
 
 		addMyMouseListener();
 
@@ -111,7 +112,7 @@ public class TablePanel extends JPanel {
 		String doKey;
 
 		for (MyKeyStrokes key : MyKeyStrokes.values()) {
-			temp = new MyAbstractAction(key);
+			temp = new MyAbstractAction(key, this);
 			abstractActions.add(temp);
 
 			doKey = "do" + key.toString();
@@ -157,8 +158,7 @@ public class TablePanel extends JPanel {
 		}
 
 		moveArrowTo(direction, position);
-	
-		//WARNING: to be tested the RE
+
 		repaint();
 	}
 
@@ -172,7 +172,7 @@ public class TablePanel extends JPanel {
 	 * @param position
 	 *            - the exact position of the arrow
 	 */
-	private void moveArrowTo(Direction direction, int position) {
+	public void moveArrowTo(Direction direction, int position) {
 		if (position == -1) {
 			System.out.println("BOOOOOM!");
 		}
@@ -204,6 +204,8 @@ public class TablePanel extends JPanel {
 			arrow.setDirection(Direction.VERTICAL_DOWN);
 			break;
 		}
+
+		repaint();
 	}
 
 	/**
@@ -425,7 +427,7 @@ public class TablePanel extends JPanel {
 	 * recalculates position based on the beginning of the grid with MEN and the
 	 * size of a MAN
 	 */
-	private void arrowMoveLeft() {
+	public void arrowMoveLeft() {
 
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
@@ -450,7 +452,7 @@ public class TablePanel extends JPanel {
 	/**
 	 * moves arrow to the right the same as arrowMoveLeft
 	 */
-	private void arrowMoveRight() {
+	public void arrowMoveRight() {
 		if (arrowPos == tableSize - 1) {
 			if (arrow.getDirection() == Direction.VERTICAL_DOWN) {
 				arrowPos = tableSize - 1;
@@ -475,7 +477,7 @@ public class TablePanel extends JPanel {
 	/**
 	 * moves the arrow UP
 	 */
-	private void arrowMoveUp() {
+	public void arrowMoveUp() {
 		if (arrowPos == tableSize - 1) {
 			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
 				arrowPos = tableSize - 1;
@@ -500,7 +502,7 @@ public class TablePanel extends JPanel {
 	/**
 	 * moves the arrow DOWN
 	 */
-	private void arrowMoveDown() {
+	public void arrowMoveDown() {
 		if (arrowPos == 0) {
 			if (arrow.getDirection() == Direction.HORIZONTAL_LEFT) {
 				arrowPos = tableSize - 1;
@@ -521,6 +523,10 @@ public class TablePanel extends JPanel {
 		arrow.setStartPoint(new Point(arrow.getStartPoint().x, arrow
 				.getStartPoint().y
 				+ DrawMan.SIZE));
+	}
+
+	public Arrow getArrow() {
+		return arrow;
 	}
 
 	/**
