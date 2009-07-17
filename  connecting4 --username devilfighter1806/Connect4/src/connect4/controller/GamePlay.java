@@ -337,6 +337,7 @@ public class GamePlay extends Thread {
 			if (isPlayerWin) {
 				tablePnl.displayWinningCombination(connect4.getWinPath(),
 						Color.YELLOW);
+				break;
 			}
 			if (!isPlayerWin
 					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
@@ -344,6 +345,7 @@ public class GamePlay extends Thread {
 				connect4.printWinPaths();
 				tablePnl.displayWinningCombination(connect4.getWinPath(),
 						Color.YELLOW);
+				break;
 			}
 			connect4.printBoard();
 		}
