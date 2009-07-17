@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import javax.swing.KeyStroke;
 
+import connect4.model.GamePlayers;
 import connect4.view.MyAbstractAction;
 import connect4.view.MyKeyStrokes;
 import connect4.view.TablePanel;
@@ -171,8 +172,8 @@ public class GamePlay extends Thread {
 		isPlayerWin = protocol.isPlayerWin();
 		connect4.setSquare(protocol.getPlayer(), protocol.getRow(), protocol
 				.getCol());
-		fillSquare(new Point(protocol.getRow(), protocol.getCol()),protocol.getDirection(), protocol
-				.getPlayer());
+		fillSquare(new Point(protocol.getRow(), protocol.getCol()), protocol
+				.getDirection(), protocol.getPlayer());
 		return protocol.getPlayer();
 	}
 
@@ -253,8 +254,8 @@ public class GamePlay extends Thread {
 			playSinglePlayer();
 			break;
 		}
-		case HOT_SEED: {
-			playHotSeed();
+		case HOT_SEAT: {
+			playHotSeat();
 			break;
 		}
 		case TCP_CONNECTION: {
@@ -264,21 +265,53 @@ public class GamePlay extends Thread {
 		}
 	}
 
+	/**
+	 * 
+	 * Adds keyBindings for all keys in MyKeyStrokes.
+	 */
+	private void addKeyHandler() {
+
+		MyAbstractAction temp;
+		String doKey;
+		for (MyKeyStrokes key : MyKeyStrokes.values()) {
+			temp = new MyAbstractAction(key, tablePnl);
+			abstractActions.add(temp);
+
+			doKey = "do" + key.toString();
+
+			tablePnl.getInputMap().put(KeyStroke.getKeyStroke(key.toString()),
+					doKey);
+			tablePnl.getActionMap().put(doKey, temp);
+		}
+	}
+
+	/**
+	 * Fills square in the table panel with the specified color.
+	 * 
+	 * @param p
+	 *            Position of the square to be filled in the board.
+	 * @param direction
+	 *            Direction of the move according to the board.
+	 * @param player
+	 *            Player who moved the man.
+	 */
 	private void fillSquare(Point p, Direction direction, char player) {
-		tablePnl.moveManTo(p, direction,
-				player == 'x' ? Color.BLUE : Color.RED);
+		tablePnl.moveManTo(p, direction, player == GamePlayers.FIRST_PLAYER
+				.getPlayer() ? Color.BLUE : Color.RED);
 	}
 
 	/**
 	 * Controls the game play in single player mode.
 	 */
 	public void playSinglePlayer() {
-		Direction direction; 
+		Direction direction;
 		int position;
 		connect4.printBoard();
 		if (currentPlayer == Connect4Solver.BLACK) {
 			connect4.nextBotMove();
 			connect4.printBoard();
+			fillSquare(connect4.getLastMove(connect4.getBot()), tablePnl
+					.acquireDirection(), connect4.getBot());
 		}
 		while (!isPlayerWin) {
 			do {
@@ -287,27 +320,30 @@ public class GamePlay extends Thread {
 						tablePnl.wait();
 					} catch (InterruptedException e) {
 						e.printStackTrace();
-					}	
+					}
 				}
 				direction = tablePnl.acquireDirection();
 				position = tablePnl.acqurePosition();
 			} while (!(moveMan(currentPlayer, direction, position)));
-			fillSquare(connect4.getLastMove(currentPlayer), tablePnl.acquireDirection(), currentPlayer);
+			fillSquare(connect4.getLastMove(currentPlayer), tablePnl
+					.acquireDirection(), currentPlayer);
 			connect4.printBoard();
 			if ((isPlayerWin = connect4.nextBotMove())) {
 				connect4.printBoard();
 				connect4.printWinPaths();
 			}
-			fillSquare(connect4.getLastMove(connect4.getBot()),tablePnl.acquireDirection(),  connect4
-					.getBot());
-			if(isPlayerWin){
-				tablePnl.displayWinningCombination(connect4.getWinPath(), Color.YELLOW);
+			fillSquare(connect4.getLastMove(connect4.getBot()), tablePnl
+					.acquireDirection(), connect4.getBot());
+			if (isPlayerWin) {
+				tablePnl.displayWinningCombination(connect4.getWinPath(),
+						Color.YELLOW);
 			}
 			if (!isPlayerWin
 					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
-				tablePnl.displayWinningCombination(connect4.getWinPath(), Color.YELLOW);
+				tablePnl.displayWinningCombination(connect4.getWinPath(),
+						Color.YELLOW);
 			}
 			connect4.printBoard();
 		}
@@ -317,7 +353,7 @@ public class GamePlay extends Thread {
 	 * Controls the game play in multiplayer hot seed mode, i.e. two players
 	 * play on a single computer.
 	 */
-	public void playHotSeed() {
+	public void playHotSeat() {
 		Direction direction;
 		int position;
 		connect4.printBoard();
@@ -330,15 +366,18 @@ public class GamePlay extends Thread {
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}	
+					}
 				}
 				direction = tablePnl.acquireDirection();
 				position = tablePnl.acqurePosition();
 			} while (!(moveMan(currentPlayer, direction, position)));
-			fillSquare(connect4.getLastMove(currentPlayer),tablePnl.acquireDirection(),currentPlayer);
+			fillSquare(connect4.getLastMove(currentPlayer), tablePnl
+					.acquireDirection(), currentPlayer);
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
+				tablePnl.displayWinningCombination(connect4.getWinPath(),
+						Color.YELLOW);
 			}
 			connect4.printBoard();
 			switchPlayer();
@@ -355,7 +394,7 @@ public class GamePlay extends Thread {
 		int position = 0;
 		connect4.printBoard();
 		connect4.printBoard();
-		if (currentPlayer == 'o') {
+		if (currentPlayer == GamePlayers.SECOND_PLAYER.getPlayer()) {
 			do {
 				synchronized (tablePnl) {
 					try {
@@ -363,12 +402,13 @@ public class GamePlay extends Thread {
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}	
+					}
 				}
 				direction = tablePnl.acquireDirection();
 				position = tablePnl.acqurePosition();
 			} while (!(moveMan(currentPlayer, direction, position)));
-			fillSquare(connect4.getLastMove(currentPlayer), tablePnl.acquireDirection(), currentPlayer);
+			fillSquare(connect4.getLastMove(currentPlayer), tablePnl
+					.acquireDirection(), currentPlayer);
 			connect4.printBoard();
 			sendData();
 		}
@@ -381,7 +421,8 @@ public class GamePlay extends Thread {
 					System.out.print("(" + protocol.getWinPath()[i].x + ", "
 							+ protocol.getWinPath()[i].y + "), ");
 				}
-				tablePnl.displayWinningCombination(protocol.getWinPath(), Color.YELLOW);
+				tablePnl.displayWinningCombination(protocol.getWinPath(),
+						Color.YELLOW);
 				break;
 			}
 			do {
@@ -391,17 +432,19 @@ public class GamePlay extends Thread {
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}	
+					}
 				}
 				direction = tablePnl.acquireDirection();
 				position = tablePnl.acqurePosition();
 			} while (!(moveMan(currentPlayer, direction, position)));
-			fillSquare(connect4.getLastMove(currentPlayer),direction, currentPlayer);
+			fillSquare(connect4.getLastMove(currentPlayer), direction,
+					currentPlayer);
 			connect4.printBoard();
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
-				tablePnl.displayWinningCombination(connect4.getWinPath(), Color.YELLOW);
+				tablePnl.displayWinningCombination(connect4.getWinPath(),
+						Color.YELLOW);
 			}
 			sendData();
 		}
@@ -427,8 +470,8 @@ public class GamePlay extends Thread {
 	public void setBoardSize(int size) {
 		connect4.setBoardSize(size);
 	}
-	
-	public int getBoardSize(){
+
+	public int getBoardSize() {
 		return connect4.getBoardSize();
 	}
 
@@ -438,29 +481,6 @@ public class GamePlay extends Thread {
 	@Override
 	public void run() {
 		loopGame();
-	}
-	
-	/**
-	 * 
-	 * Adds keyBindings for all keys in MyKeyStrokes.
-	 * 
-	 * WARNING: not working properly even with focus
-	 */
-
-	private void addKeyHandler() {
-
-		MyAbstractAction temp;
-		String doKey;
-		for (MyKeyStrokes key : MyKeyStrokes.values()) {
-			temp = new MyAbstractAction(key, tablePnl);
-			abstractActions.add(temp);
-
-			doKey = "do" + key.toString();
-
-			tablePnl.getInputMap().put(KeyStroke.getKeyStroke(key.toString()),
-					doKey);
-			tablePnl.getActionMap().put(doKey, temp);
-		}
 	}
 
 	/**

@@ -45,6 +45,9 @@ public class ConfigurationPanel extends JPanel {
 	private JColorChooser colorChooser;
 	private JButton colorChooseBtn = null;
 	private JComboBox playersComboBox = null;
+	/**
+	 * Stores the chosen size of the board.
+	 */
 	private int boardSize;
 	/**
 	 * Stores all entered data from the configuration panel.
@@ -142,15 +145,16 @@ public class ConfigurationPanel extends JPanel {
 		if (playersComboBox == null) {
 			playersComboBox = new JComboBox(GameProperties.PLAYERS);
 			playersComboBox.setPreferredSize(new Dimension(100, 25));
-			playersComboBox.addItemListener(new java.awt.event.ItemListener() {
-				public void itemStateChanged(java.awt.event.ItemEvent e) {
-					if(e.getStateChange() == 1){
-						gamePlay.setPlayer(GamePlayers.values()[playersComboBox.getSelectedIndex()].getPlayer());
-					}
-				}
-			});
 		}
 		return playersComboBox;
 	}
 
+	/**
+	 * Gets selected index from the players combo box.
+	 * 
+	 * @return The selected index from the players' combo box.
+	 */
+	public int getPlayerComboBoxSelectedIndex() {
+		return this.playersComboBox.getSelectedIndex();
+	}
 }
