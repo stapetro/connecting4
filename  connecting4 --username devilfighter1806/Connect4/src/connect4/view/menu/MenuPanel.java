@@ -206,11 +206,13 @@ public class MenuPanel extends JPanel {
 				break;
 			}
 			case HOST: {
+				gamePlay.setGameMode(GameMode.TCP_CONNECTION);
 				gamePlay.setPlayer(GamePlayers.values()[hostGamePnl
 						.getPlayerComboBoxSelectedIndex()].getPlayer());
 				break;
 			}
 			case JOIN: {
+				gamePlay.setGameMode(GameMode.TCP_CONNECTION);
 				gamePlay.setPlayer(GamePlayers.values()[joinGamePnl
 						.getPlayerComboBoxSelectedIndex()].getPlayer());
 				break;
