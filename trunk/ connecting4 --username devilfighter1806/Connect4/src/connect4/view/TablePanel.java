@@ -198,6 +198,7 @@ public class TablePanel extends JPanel {
 		for (Point manPoint : winningMenPositions) {
 			men[manPoint.x][manPoint.y].setColor(color);
 		}
+		repaint();
 	}
 
 	/**
