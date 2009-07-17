@@ -50,7 +50,7 @@ public class TablePanel extends JPanel {
 
 		this.tableSize = tableSize;
 		this.player1Color = player1;
-		
+
 		square_x_upLeftPoint = (wid - ((1 + tableSize) * size)) / 2;
 		square_y_upLeftPoint = (hei - ((2 + tableSize) * size)) / 2;
 
@@ -190,14 +190,20 @@ public class TablePanel extends JPanel {
 	 * color - different from the player1 and player2 colors.
 	 * 
 	 * @param winningMenPositions
-	 *            - combo of x and y coordinates of each winning MAN. Uses Point.
+	 *            - combo of x and y coordinates of each winning MAN. Uses
+	 *            Point.
 	 * @param color
 	 *            - the winning men will be painted in this color
 	 */
-	public void displayWinningCombination(Point[] winningMenPositions, Color color) {
+	public void displayWinningCombination(Point[] winningMenPositions,
+			Color color) {
+		System.out.println("<><><><><><><>");
 		for (Point manPoint : winningMenPositions) {
+			System.out.println(manPoint);
 			men[manPoint.x][manPoint.y].setColor(color);
 		}
+		System.out.println("<><><><><><><>");
+
 		repaint();
 	}
 
