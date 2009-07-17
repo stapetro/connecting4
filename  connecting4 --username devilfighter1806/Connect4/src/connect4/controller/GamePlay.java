@@ -411,6 +411,7 @@ public class GamePlay extends Thread {
 	 */
 	public void setTablePanel(TablePanel tablePnl) {
 		this.tablePnl = tablePnl;
+		addKeyHandler();
 	}
 
 	/**
@@ -446,7 +447,6 @@ public class GamePlay extends Thread {
 
 		MyAbstractAction temp;
 		String doKey;
-
 		for (MyKeyStrokes key : MyKeyStrokes.values()) {
 			temp = new MyAbstractAction(key, tablePnl);
 			abstractActions.add(temp);
