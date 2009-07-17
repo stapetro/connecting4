@@ -85,7 +85,14 @@ public class TablePanel extends JPanel {
 			}
 		}
 
+		initPoints();
+
 		// arrows positions
+
+		addKeyHandler();
+	}
+
+	private void initPoints() {
 		mostleftUP = new Point(square_x_upLeftPoint + size / 2,
 				square_y_upLeftPoint - 3 * size / 2);
 		mostleftDOWN = new Point(mostleftUP.x, mostleftUP.y + size
@@ -95,8 +102,6 @@ public class TablePanel extends JPanel {
 				square_y_upLeftPoint + size / 2);
 		mostupRIGHT = new Point(mostupLEFT.x + size * (tableSize + 3),
 				mostupLEFT.y);
-
-		addKeyHandler();
 	}
 
 	/**
@@ -523,10 +528,6 @@ public class TablePanel extends JPanel {
 		arrow.setStartPoint(new Point(arrow.getStartPoint().x, arrow
 				.getStartPoint().y
 				+ DrawMan.SIZE));
-	}
-
-	public Arrow getArrow() {
-		return arrow;
 	}
 
 	/**
