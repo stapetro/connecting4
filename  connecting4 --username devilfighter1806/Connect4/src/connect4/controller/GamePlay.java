@@ -328,6 +328,14 @@ public class GamePlay extends Thread {
 			fillSquare(connect4.getLastMove(currentPlayer), tablePnl
 					.acquireDirection(), currentPlayer);
 			connect4.printBoard();
+			if (!isPlayerWin
+					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
+				System.out.println("WIN!!!");
+				connect4.printWinPaths();
+				tablePnl.displayWinningCombination(connect4.getWinPath(),
+						Color.YELLOW);
+				break;
+			}
 			if ((isPlayerWin = connect4.nextBotMove())) {
 				connect4.printBoard();
 				connect4.printWinPaths();
@@ -335,14 +343,6 @@ public class GamePlay extends Thread {
 			fillSquare(connect4.getLastMove(connect4.getBot()), tablePnl
 					.acquireDirection(), connect4.getBot());
 			if (isPlayerWin) {
-				tablePnl.displayWinningCombination(connect4.getWinPath(),
-						Color.YELLOW);
-				break;
-			}
-			if (!isPlayerWin
-					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
-				System.out.println("WIN!!!");
-				connect4.printWinPaths();
 				tablePnl.displayWinningCombination(connect4.getWinPath(),
 						Color.YELLOW);
 				break;
