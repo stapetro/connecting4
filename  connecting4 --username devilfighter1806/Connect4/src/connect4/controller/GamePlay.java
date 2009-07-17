@@ -381,7 +381,7 @@ public class GamePlay extends Thread {
 					System.out.print("(" + protocol.getWinPath()[i].x + ", "
 							+ protocol.getWinPath()[i].y + "), ");
 				}
-				tablePnl.displayWinningCombination(connect4.getWinPath(), Color.YELLOW);
+				tablePnl.displayWinningCombination(protocol.getWinPath(), Color.YELLOW);
 				break;
 			}
 			do {
