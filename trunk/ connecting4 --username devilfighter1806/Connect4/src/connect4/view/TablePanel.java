@@ -88,10 +88,6 @@ public class TablePanel extends JPanel {
 		}
 
 		initPoints();
-
-		// arrows positions
-
-		addKeyHandler();
 	}
 
 	private void initPoints() {
@@ -104,30 +100,6 @@ public class TablePanel extends JPanel {
 				square_y_upLeftPoint + size / 2);
 		mostupRIGHT = new Point(mostupLEFT.x + size * (tableSize + 3),
 				mostupLEFT.y);
-	}
-
-	/**
-	 * 
-	 * Adds keyBindings for all keys in MyKeyStrokes.
-	 * 
-	 * WARNING: not working properly even with focus
-	 */
-
-	private void addKeyHandler() {
-
-		MyAbstractAction temp;
-		String doKey;
-
-		for (MyKeyStrokes key : MyKeyStrokes.values()) {
-			temp = new MyAbstractAction(key, this);
-			abstractActions.add(temp);
-
-			doKey = "do" + key.toString();
-
-			this.getInputMap().put(KeyStroke.getKeyStroke(key.toString()),
-					doKey);
-			this.getActionMap().put(doKey, temp);
-		}
 	}
 
 	/**
