@@ -8,6 +8,16 @@ import javax.swing.JOptionPane;
 
 import connect4.controller.Direction;
 
+/**
+ * This class can create objects that can handle KeyBindings events and can be
+ * used with the ActionMap.put method.
+ * 
+ * Here it's used to catch keyPressings of the keys defined in MyKeyStrokes.
+ * 
+ * 
+ * @author Leni
+ * 
+ */
 public class MyAbstractAction extends AbstractAction {
 
 	private MyKeyStrokes keyStroke;
@@ -37,20 +47,24 @@ public class MyAbstractAction extends AbstractAction {
 			processEnter();
 			break;
 		case ESCAPE:
-			// leaveToMenu
+			// leaveToMenu or other operation
 			break;
 		}
 		panel.repaint();
 		System.out.println(keyStroke);
 	}
 
+	/**
+	 * What happens if the UP button is pressed. The action depends on the
+	 * direction
+	 */
 	private void processUp() {
 		switch (panel.acquireDirection()) {
+		case VERTICAL_UP:
+			return;
 		case VERTICAL_DOWN:
 			panel.moveArrowTo(Direction.VERTICAL_UP, panel.acqurePosition());
 			break;
-		case VERTICAL_UP:
-			return;
 		case HORIZONTAL_LEFT:
 		case HORIZONTAL_RIGHT:
 			panel.arrowMoveUp();
@@ -58,8 +72,14 @@ public class MyAbstractAction extends AbstractAction {
 		}
 	}
 
+	/**
+	 * What happens if the DOWN button is pressed. The action depends on the
+	 * direction
+	 */
 	private void processDown() {
 		switch (panel.acquireDirection()) {
+		case VERTICAL_DOWN:
+			return;
 		case VERTICAL_UP:
 			panel.moveArrowTo(Direction.VERTICAL_DOWN, panel.acqurePosition());
 			break;
@@ -67,19 +87,19 @@ public class MyAbstractAction extends AbstractAction {
 		case HORIZONTAL_RIGHT:
 			panel.arrowMoveDown();
 			break;
-		case VERTICAL_DOWN:
-			return;
 		}
 	}
 
+	/**
+	 * What happens if the LEFT button is pressed. The action depends on the
+	 * direction
+	 */
 	private void processLeft() {
 		switch (panel.acquireDirection()) {
 		case HORIZONTAL_LEFT:
 			return;
 		case HORIZONTAL_RIGHT:
-			panel
-					.moveArrowTo(Direction.HORIZONTAL_LEFT, panel
-							.acqurePosition());
+			panel.moveArrowTo(Direction.HORIZONTAL_LEFT, panel.acqurePosition());
 			break;
 		case VERTICAL_DOWN:
 		case VERTICAL_UP:
@@ -88,13 +108,16 @@ public class MyAbstractAction extends AbstractAction {
 		}
 	}
 
+	/**
+	 * What happens if the RIGHT button is pressed. The action depends on the
+	 * direction
+	 */
 	private void processRight() {
 		switch (panel.acquireDirection()) {
 		case HORIZONTAL_RIGHT:
 			return;
 		case HORIZONTAL_LEFT:
-			panel.moveArrowTo(Direction.HORIZONTAL_RIGHT, panel
-					.acqurePosition());
+			panel.moveArrowTo(Direction.HORIZONTAL_RIGHT, panel.acqurePosition());
 			break;
 		case VERTICAL_DOWN:
 		case VERTICAL_UP:
@@ -102,6 +125,12 @@ public class MyAbstractAction extends AbstractAction {
 			break;
 		}
 	}
+
+	/**
+	 * What happens if the ENTER button is pressed. The synchronization for
+	 * processing the new MOVE. Another thread is notified and taking care of
+	 * acquiring the needed information for continuing the game/calculations.
+	 */
 
 	private void processEnter() {
 		synchronized (panel) {

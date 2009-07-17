@@ -4,20 +4,28 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
+/**
+ * Class that represents a MAN that is to be displayed. The MAN is unique with
+ * it's position defined by a POINT. The MAN has a color and boolean variable
+ * visible that should be checked when displayed.
+ * 
+ * @author Leni
+ * 
+ */
 public class DrawMan {
 
 	public static int SIZE = 25;
 
+	/**
+	 * stores secure and original position of MAN
+	 */
 	private Point upLeft;
+	/**
+	 * paintPoint is working copy of upLeft point
+	 */
 	public Point paintPoint;
 	private Color color;
 	private boolean visible;
-
-	public DrawMan(int x, int y, Color color) {
-		this.color = color;
-		upLeft = new Point(x, y);
-		paintPoint = new Point(upLeft);
-	}
 
 	public DrawMan(int x, int y) {
 		color = color.BLACK;
@@ -25,11 +33,17 @@ public class DrawMan {
 		paintPoint = new Point(upLeft);
 	}
 
+	/**
+	 * Draws the MAN in component
+	 * @param g - graphics object used for painting the man
+	 */
 	public void drawMan(Graphics g) {
-		Color lastColor = g.getColor();
-		g.setColor(color);
-		g.fillOval(paintPoint.x, paintPoint.y, SIZE, SIZE);
-		g.setColor(lastColor);
+		if (visible) {
+			Color lastColor = g.getColor();
+			g.setColor(color);
+			g.fillOval(paintPoint.x, paintPoint.y, SIZE, SIZE);
+			g.setColor(lastColor);
+		}
 	}
 
 	public boolean isVisible() {
@@ -52,6 +66,11 @@ public class DrawMan {
 		return upLeft;
 	}
 
+	/**
+	 * restores the point of the MAN
+	 * with the originally defined point
+	 * RECOVERY METHOD - old value of POINT is lost!
+	 */
 	public void restorePoint() {
 		paintPoint.x = upLeft.x;
 		paintPoint.y = upLeft.y;

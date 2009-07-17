@@ -43,10 +43,7 @@ public class TablePanel extends JPanel {
 
 	private Color player1Color;
 
-	public TablePanel(int wid, int hei, int tableSize, Color player1,
-			Color player2) {
-
-		addMyMouseListener();
+	public TablePanel(int wid, int hei, int tableSize, Color player1) {
 
 		this.tableSize = tableSize;
 		this.player1Color = player1;
@@ -56,6 +53,7 @@ public class TablePanel extends JPanel {
 
 		initVariables();
 		initPoints();
+		addMyMouseListener();
 	}
 
 	private void initVariables() {
@@ -181,7 +179,6 @@ public class TablePanel extends JPanel {
 			arrow.setDirection(Direction.VERTICAL_DOWN);
 			break;
 		}
-
 		repaint();
 	}
 
@@ -478,7 +475,7 @@ public class TablePanel extends JPanel {
 	}
 
 	/**
-	 * paints the square, the arrow and all MEN if they are visible
+	 * paints the square, the arrow and all MEN
 	 */
 	@Override
 	public void paintComponent(Graphics g) {
@@ -489,9 +486,7 @@ public class TablePanel extends JPanel {
 
 		for (DrawMan[] manRow : men) {
 			for (DrawMan man : manRow) {
-				if (man.isVisible()) {
-					man.drawMan(g);
-				}
+				man.drawMan(g);
 			}
 		}
 	}

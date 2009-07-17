@@ -13,6 +13,9 @@ import java.awt.Point;
  */
 public class Arrow {
 
+	/**
+	 * myDirection - the direction the arrow points at
+	 */
 	private Direction myDirection;
 	private Point startPoint;
 	private int size;
@@ -56,6 +59,11 @@ public class Arrow {
 
 	}
 
+	/**
+	 * Reset new start point for the arrow . That way the arrow moves across the 
+	 * field.
+	 * @param point
+	 */
 	public void setStartPoint(Point point) {
 		startPoint.x = point.x;
 		startPoint.y = point.y;
@@ -65,6 +73,11 @@ public class Arrow {
 		return startPoint;
 	}
 
+	/**
+	 * Change the direction the arrow points at.
+	 * Important for the paint method
+	 * @param dir
+	 */
 	public void setDirection(Direction dir) {
 		myDirection = dir;
 	}
