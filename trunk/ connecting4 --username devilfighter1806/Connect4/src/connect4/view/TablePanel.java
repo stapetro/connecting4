@@ -197,16 +197,9 @@ public class TablePanel extends JPanel {
 	 */
 	public void displayWinningCombination(Point[] winningMenPositions,
 			Color color) {
-		System.out.println("<><><><><><><>");
 		for (Point manPoint : winningMenPositions) {
-			System.out.println("painting " + manPoint + " in "
-					+ color.toString());
 			men[manPoint.x][manPoint.y].setColor(color);
-			System.out.println("men with color"
-					+ men[manPoint.x][manPoint.y].getColor().toString());
 		}
-		System.out.println("<><><><><>repainting<><>");
-
 		repaint();
 	}
 
