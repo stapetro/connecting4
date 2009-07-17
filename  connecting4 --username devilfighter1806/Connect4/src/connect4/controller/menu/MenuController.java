@@ -73,8 +73,8 @@ public class MenuController {
 	 */
 	public void addContentToContainer(JComponent component) {
 		containerPnl.removeAll();
-		component.setFocusable(true);
 		containerPnl.add(component);
+		component.requestFocusInWindow();
 		containerPnl.updateUI();
 	}
 }

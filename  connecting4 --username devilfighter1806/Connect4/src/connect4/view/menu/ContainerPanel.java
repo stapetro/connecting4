@@ -37,6 +37,7 @@ public class ContainerPanel extends JPanel {
 	private void initialize() {
 		this.setSize(500, 500);
 		this.setLayout(new BorderLayout());
+		this.setFocusable(false);
 		menuContentPanel = new MenuContentPanel();
 		menuPanel = new MenuPanel(menuContentPanel, this);
 		this.add(menuPanel, BorderLayout.WEST);
