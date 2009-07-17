@@ -10,7 +10,6 @@ import java.util.Scanner;
 
 import javax.swing.KeyStroke;
 
-import connect4.view.ManCombo;
 import connect4.view.MyAbstractAction;
 import connect4.view.MyKeyStrokes;
 import connect4.view.TablePanel;
@@ -266,7 +265,7 @@ public class GamePlay extends Thread {
 	}
 
 	private void fillSquare(Point p, Direction direction, char player) {
-		tablePnl.moveManTo(new ManCombo(p.x, p.y), direction,
+		tablePnl.moveManTo(p, direction,
 				player == 'x' ? Color.BLUE : Color.RED);
 	}
 
@@ -287,7 +286,6 @@ public class GamePlay extends Thread {
 					try {
 						tablePnl.wait();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}	
 				}
@@ -302,10 +300,14 @@ public class GamePlay extends Thread {
 			}
 			fillSquare(connect4.getLastMove(connect4.getBot()),tablePnl.acquireDirection(),  connect4
 					.getBot());
+			if(isPlayerWin){
+				tablePnl.displayWinningCombination(connect4.getWinPath(), Color.YELLOW);
+			}
 			if (!isPlayerWin
 					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
+				tablePnl.displayWinningCombination(connect4.getWinPath(), Color.YELLOW);
 			}
 			connect4.printBoard();
 		}
@@ -379,6 +381,7 @@ public class GamePlay extends Thread {
 					System.out.print("(" + protocol.getWinPath()[i].x + ", "
 							+ protocol.getWinPath()[i].y + "), ");
 				}
+				tablePnl.displayWinningCombination(connect4.getWinPath(), Color.YELLOW);
 				break;
 			}
 			do {
@@ -398,6 +401,7 @@ public class GamePlay extends Thread {
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
+				tablePnl.displayWinningCombination(connect4.getWinPath(), Color.YELLOW);
 			}
 			sendData();
 		}
