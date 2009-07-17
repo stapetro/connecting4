@@ -34,16 +34,14 @@ public class MyAbstractAction extends AbstractAction {
 			processRight();
 			break;
 		case ENTER:
-			// placeMAN
+			processEnter();
 			break;
 		case ESCAPE:
 			// leaveToMenu
 			break;
-		default:
-			// do nothing
 		}
 		panel.repaint();
-		System.out.println(e.getActionCommand());
+		System.out.println(keyStroke);
 	}
 
 	private void processUp() {
@@ -105,7 +103,9 @@ public class MyAbstractAction extends AbstractAction {
 		}
 	}
 
-	private void processEnter(){
-		//unimplemented
+	private void processEnter() {
+		synchronized (panel) {
+			panel.notify();
+		}
 	}
 }
