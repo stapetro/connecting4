@@ -53,7 +53,7 @@ public class TablePanel extends JPanel {
 
 		initVariables();
 		initPoints();
-		addMyMouseListener();
+//		addMyMouseListener();
 	}
 
 	private void initVariables() {
