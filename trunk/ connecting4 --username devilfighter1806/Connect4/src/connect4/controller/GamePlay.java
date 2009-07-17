@@ -141,6 +141,7 @@ public class GamePlay extends Thread {
 				p.y);
 		prot1.setPlayerWin(isPlayerWin);
 		prot1.setWinPath(connect4.getWinPath());
+		prot1.setDirection(tablePnl.acquireDirection());
 		try {
 			output.writeObject(prot1);
 			output.flush();
@@ -171,7 +172,7 @@ public class GamePlay extends Thread {
 		isPlayerWin = protocol.isPlayerWin();
 		connect4.setSquare(protocol.getPlayer(), protocol.getRow(), protocol
 				.getCol());
-		fillSquare(new Point(protocol.getRow(), protocol.getCol()), protocol
+		fillSquare(new Point(protocol.getRow(), protocol.getCol()),protocol.getDirection(), protocol
 				.getPlayer());
 		return protocol.getPlayer();
 	}
@@ -264,8 +265,8 @@ public class GamePlay extends Thread {
 		}
 	}
 
-	private void fillSquare(Point p, char player) {
-		tablePnl.moveManTo(new ManCombo(p.x, p.y), tablePnl.acquireDirection(),
+	private void fillSquare(Point p, Direction direction, char player) {
+		tablePnl.moveManTo(new ManCombo(p.x, p.y), direction,
 				player == 'x' ? Color.BLUE : Color.RED);
 	}
 
@@ -293,13 +294,13 @@ public class GamePlay extends Thread {
 				direction = tablePnl.acquireDirection();
 				position = tablePnl.acqurePosition();
 			} while (!(moveMan(currentPlayer, direction, position)));
-			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
+			fillSquare(connect4.getLastMove(currentPlayer), tablePnl.acquireDirection(), currentPlayer);
 			connect4.printBoard();
 			if ((isPlayerWin = connect4.nextBotMove())) {
 				connect4.printBoard();
 				connect4.printWinPaths();
 			}
-			fillSquare(connect4.getLastMove(connect4.getBot()), connect4
+			fillSquare(connect4.getLastMove(connect4.getBot()),tablePnl.acquireDirection(),  connect4
 					.getBot());
 			if (!isPlayerWin
 					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
@@ -332,7 +333,7 @@ public class GamePlay extends Thread {
 				direction = tablePnl.acquireDirection();
 				position = tablePnl.acqurePosition();
 			} while (!(moveMan(currentPlayer, direction, position)));
-			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
+			fillSquare(connect4.getLastMove(currentPlayer),tablePnl.acquireDirection(),currentPlayer);
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
 				connect4.printWinPaths();
@@ -365,7 +366,7 @@ public class GamePlay extends Thread {
 				direction = tablePnl.acquireDirection();
 				position = tablePnl.acqurePosition();
 			} while (!(moveMan(currentPlayer, direction, position)));
-			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
+			fillSquare(connect4.getLastMove(currentPlayer), tablePnl.acquireDirection(), currentPlayer);
 			connect4.printBoard();
 			sendData();
 		}
@@ -392,7 +393,7 @@ public class GamePlay extends Thread {
 				direction = tablePnl.acquireDirection();
 				position = tablePnl.acqurePosition();
 			} while (!(moveMan(currentPlayer, direction, position)));
-			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
+			fillSquare(connect4.getLastMove(currentPlayer),direction, currentPlayer);
 			connect4.printBoard();
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");

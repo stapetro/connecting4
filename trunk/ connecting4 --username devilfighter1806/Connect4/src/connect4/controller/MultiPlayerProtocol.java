@@ -26,7 +26,7 @@ public class MultiPlayerProtocol implements Serializable {
 	/**
 	 * Stores the direction of player when he drops a men on the board.
 	 */
-	private int direction;
+	private Direction direction;
 	/**
 	 * Stores row/column number from which player moves a man.
 	 */
@@ -80,11 +80,11 @@ public class MultiPlayerProtocol implements Serializable {
 		this.col = col;
 	}
 
-	public int getDirection() {
+	public Direction getDirection() {
 		return direction;
 	}
 
-	public void setDirection(int direction) {
+	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
 
