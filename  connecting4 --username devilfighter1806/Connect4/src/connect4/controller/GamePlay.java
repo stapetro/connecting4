@@ -5,9 +5,14 @@ import java.awt.Point;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashSet;
 import java.util.Scanner;
 
+import javax.swing.KeyStroke;
+
 import connect4.view.ManCombo;
+import connect4.view.MyAbstractAction;
+import connect4.view.MyKeyStrokes;
 import connect4.view.TablePanel;
 
 /**
@@ -63,6 +68,7 @@ public class GamePlay extends Thread {
 	 * Stores reference to the table panel.
 	 */
 	private TablePanel tablePnl;
+	private HashSet<MyAbstractAction> abstractActions;
 
 	/**
 	 * Constructs the game play.
@@ -77,6 +83,7 @@ public class GamePlay extends Thread {
 		stdin = new Scanner(System.in);
 		this.gameMode = gameMode;
 		connect4 = new Connect4Solver(gameMode, boardSize);
+		this.abstractActions = new HashSet<MyAbstractAction>();
 	}
 
 	/**
@@ -98,31 +105,14 @@ public class GamePlay extends Thread {
 	/**
 	 * Moves man from the specified position and row/column number.
 	 * 
-	 * @param position
+	 * @param direction
 	 *            Position from which user drops a man.
-	 * @param num
+	 * @param position
 	 *            Row/column number in the board.
 	 * @return True - if the move is valid, false - otherwise.
 	 */
-	private boolean moveMan(char player, int position, int num) {
-		boolean validMove = false;
-		switch (position) {
-		case 1:
-			validMove = connect4.moveMan(player, Direction.VERTICAL_UP, num);
-			break;
-		case 2:
-			validMove = connect4.moveMan(player, Direction.VERTICAL_DOWN, num);
-			break;
-		case 3:
-			validMove = connect4
-					.moveMan(player, Direction.HORIZONTAL_LEFT, num);
-			break;
-		case 4:
-			validMove = connect4.moveMan(player, Direction.HORIZONTAL_RIGHT,
-					num);
-			break;
-		}
-		return validMove;
+	private boolean moveMan(char player, Direction direction, int position) {
+		return connect4.moveMan(player, direction, position);
 	}
 
 	/**
@@ -181,7 +171,8 @@ public class GamePlay extends Thread {
 		isPlayerWin = protocol.isPlayerWin();
 		connect4.setSquare(protocol.getPlayer(), protocol.getRow(), protocol
 				.getCol());
-		fillSquare(new Point(protocol.getRow(), protocol.getCol()), protocol.getPlayer());
+		fillSquare(new Point(protocol.getRow(), protocol.getCol()), protocol
+				.getPlayer());
 		return protocol.getPlayer();
 	}
 
@@ -282,7 +273,8 @@ public class GamePlay extends Thread {
 	 * Controls the game play in single player mode.
 	 */
 	public void playSinglePlayer() {
-		int position, num;
+		Direction direction; 
+		int position;
 		connect4.printBoard();
 		if (currentPlayer == Connect4Solver.BLACK) {
 			connect4.nextBotMove();
@@ -290,20 +282,25 @@ public class GamePlay extends Thread {
 		}
 		while (!isPlayerWin) {
 			do {
-				System.out.println("Current player is: " + currentPlayer);
-				System.out
-						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
-				position = stdin.nextInt();
-				num = stdin.nextInt();
-			} while (!(moveMan(currentPlayer, position, num)));
+				synchronized (tablePnl) {
+					try {
+						tablePnl.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+				direction = tablePnl.acquireDirection();
+				position = tablePnl.acqurePosition();
+			} while (!(moveMan(currentPlayer, direction, position)));
 			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
 			connect4.printBoard();
-			System.out.println("Bot move..........");
 			if ((isPlayerWin = connect4.nextBotMove())) {
 				connect4.printBoard();
 				connect4.printWinPaths();
 			}
-			fillSquare(connect4.getLastMove(connect4.getBot()), connect4.getBot());
+			fillSquare(connect4.getLastMove(connect4.getBot()), connect4
+					.getBot());
 			if (!isPlayerWin
 					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
@@ -318,17 +315,23 @@ public class GamePlay extends Thread {
 	 * play on a single computer.
 	 */
 	public void playHotSeed() {
-		int position, num;
+		Direction direction;
+		int position;
 		connect4.printBoard();
 		switchPlayer();
 		while (!isPlayerWin) {
 			do {
-				System.out.println("Current player is: " + currentPlayer);
-				System.out
-						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
-				position = stdin.nextInt();
-				num = stdin.nextInt();
-			} while (!(moveMan(currentPlayer, position, num)));
+				synchronized (tablePnl) {
+					try {
+						tablePnl.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+				direction = tablePnl.acquireDirection();
+				position = tablePnl.acqurePosition();
+			} while (!(moveMan(currentPlayer, direction, position)));
 			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
 				System.out.println("WIN!!!");
@@ -345,17 +348,23 @@ public class GamePlay extends Thread {
 	public void playClientServer() {
 		createConnection();
 		char player;
-		int position = 0, num = 0;
+		Direction direction;
+		int position = 0;
 		connect4.printBoard();
 		connect4.printBoard();
 		if (currentPlayer == 'o') {
 			do {
-				System.out.println("Current player is: " + currentPlayer);
-				System.out
-						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
-				position = stdin.nextInt();
-				num = stdin.nextInt();
-			} while (!(moveMan(currentPlayer, position, num)));
+				synchronized (tablePnl) {
+					try {
+						tablePnl.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+				direction = tablePnl.acquireDirection();
+				position = tablePnl.acqurePosition();
+			} while (!(moveMan(currentPlayer, direction, position)));
 			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
 			connect4.printBoard();
 			sendData();
@@ -372,12 +381,17 @@ public class GamePlay extends Thread {
 				break;
 			}
 			do {
-				System.out.println("Current player is: " + currentPlayer);
-				System.out
-						.println("Position(1-Top, 2-Bottom, 3-Left, 4-Right:");
-				position = stdin.nextInt();
-				num = stdin.nextInt();
-			} while (!(moveMan(currentPlayer, position, num)));
+				synchronized (tablePnl) {
+					try {
+						tablePnl.wait();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+				direction = tablePnl.acquireDirection();
+				position = tablePnl.acqurePosition();
+			} while (!(moveMan(currentPlayer, direction, position)));
 			fillSquare(connect4.getLastMove(currentPlayer), currentPlayer);
 			connect4.printBoard();
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
@@ -389,14 +403,6 @@ public class GamePlay extends Thread {
 	}
 
 	/**
-	 * Runs the game loop.
-	 */
-	@Override
-	public void run() {
-		loopGame();
-	}
-
-	/**
 	 * Sets table panel reference. Used for visualizing the players' moves.
 	 * 
 	 * @param tablePnl
@@ -404,6 +410,52 @@ public class GamePlay extends Thread {
 	 */
 	public void setTablePanel(TablePanel tablePnl) {
 		this.tablePnl = tablePnl;
+	}
+
+	/**
+	 * Sets the size of the board.
+	 * 
+	 * @param size
+	 *            Board size to be set.
+	 */
+	public void setBoardSize(int size) {
+		connect4.setBoardSize(size);
+	}
+	
+	public int getBoardSize(){
+		return connect4.getBoardSize();
+	}
+
+	/**
+	 * Runs the game loop.
+	 */
+	@Override
+	public void run() {
+		loopGame();
+	}
+	
+	/**
+	 * 
+	 * Adds keyBindings for all keys in MyKeyStrokes.
+	 * 
+	 * WARNING: not working properly even with focus
+	 */
+
+	private void addKeyHandler() {
+
+		MyAbstractAction temp;
+		String doKey;
+
+		for (MyKeyStrokes key : MyKeyStrokes.values()) {
+			temp = new MyAbstractAction(key, tablePnl);
+			abstractActions.add(temp);
+
+			doKey = "do" + key.toString();
+
+			tablePnl.getInputMap().put(KeyStroke.getKeyStroke(key.toString()),
+					doKey);
+			tablePnl.getActionMap().put(doKey, temp);
+		}
 	}
 
 	/**

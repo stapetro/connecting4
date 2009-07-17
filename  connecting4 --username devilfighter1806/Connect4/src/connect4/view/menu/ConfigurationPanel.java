@@ -103,7 +103,7 @@ public class ConfigurationPanel extends JPanel {
 							if (e.getStateChange() == 1) {
 								boardSize = BOARD_SIZES[boardSizeComboBox
 										.getSelectedIndex()].getSize();
-
+								gamePlay.setBoardSize(boardSize);
 							}
 						}
 					});

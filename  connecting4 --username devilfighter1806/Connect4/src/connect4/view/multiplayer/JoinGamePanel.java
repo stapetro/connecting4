@@ -14,14 +14,22 @@ import connect4.controller.GamePlay;
 import connect4.model.GamePlayers;
 import connect4.model.GameProperties;
 
+/**
+ * Represents the join game panel with which player connects to the host game.
+ * @author Stanislav Petrov
+ *
+ */
 public class JoinGamePanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * Stores configuration information from the host game panel.
+	 */
 	private GamePlay gamePlay;
 	private JLabel ipAddrLbl = null;
 	private JTextField ipAddrTxt = null;
 	private JLabel choosePlayerLbl = null;
-	private  JComboBox playerComboBox = null;
+	private JComboBox playerComboBox = null;
 
 	/**
 	 * This is the default constructor
@@ -85,12 +93,12 @@ public class JoinGamePanel extends JPanel {
 		}
 		return playerComboBox;
 	}
-	
-	public String getIPAddress(){
+
+	public String getIPAddress() {
 		return ipAddrTxt.getText();
 	}
-	
-	public int getPlayerComboBoxSelectedIndex(){
+
+	public int getPlayerComboBoxSelectedIndex() {
 		return this.playerComboBox.getSelectedIndex();
 	}
 

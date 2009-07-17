@@ -28,6 +28,9 @@ import connect4.view.multiplayer.JoinGamePanel;
 public class MenuPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * Stores configuration information from the menu panel.
+	 */
 	private GamePlay gamePlay;
 	/**
 	 * Stores all menu and sub menu items.
@@ -38,7 +41,6 @@ public class MenuPanel extends JPanel {
 	 * Stores the current menu items to be presented.
 	 */
 	private JButton[] currMenuItems;
-	private JButton[] previousMenuItems;
 	/**
 	 * Stores reference to the menu controller.
 	 */
@@ -71,16 +73,6 @@ public class MenuPanel extends JPanel {
 		currMenuItems = new JButton[MenuItem.MENU_ITEMS_NUMBER];
 		for (int i = 0; i < currMenuItems.length; i++) {
 			currMenuItems[i] = new JButton((ITEMS[i]).toString());
-			currMenuItems[i]
-					.addActionListener(new ItemActionListener(ITEMS[i]));
-			this.add(currMenuItems[i]);
-		}
-	}
-
-	// TODO Fix the problem with back item.
-	private void constructPreviousMenuItems() {
-		currMenuItems = previousMenuItems;
-		for (int i = 0; i < currMenuItems.length; i++) {
 			currMenuItems[i]
 					.addActionListener(new ItemActionListener(ITEMS[i]));
 			this.add(currMenuItems[i]);
@@ -132,18 +124,16 @@ public class MenuPanel extends JPanel {
 			case SINGLE_PLAYER:
 				gamePlay.setGameMode(GameMode.SINGLE_PLAYER);
 				gamePlay.setPlayer(GamePlayers.SECOND_PLAYER.getPlayer());
-				tablePnl = new TablePanel(500, 500, GameProperties.SIZE_9
-						.getSize(), Color.BLUE, Color.RED);
+				tablePnl = new TablePanel(500, 500, gamePlay.getBoardSize(),
+						Color.BLUE, Color.RED);
 				gamePlay.setTablePanel(tablePnl);
 				gamePlay.start();
 				menuController.addContentToContainer(tablePnl);
 				break;
 			case MULTI_PLAYER:
-				// previousMenuItems = currMenuItems;
 				selectItem();
 				break;
 			case OPTIONS: {
-				// previousMenuItems = currMenuItems;
 				selectItem();
 				break;
 			}
@@ -156,7 +146,6 @@ public class MenuPanel extends JPanel {
 				break;
 			}
 			case TCP_CONNECTION: {
-				previousMenuItems = currMenuItems;
 				selectItem();
 				break;
 			}
@@ -170,8 +159,8 @@ public class MenuPanel extends JPanel {
 				gamePlay.setGameMode(GameMode.TCP_CONNECTION);
 				gamePlay.setPlayer(GamePlayers.values()[hostGamePnl
 						.getPlayerComboBoxSelectedIndex()].getPlayer());
-				tablePnl = new TablePanel(500, 500, GameProperties.SIZE_9
-						.getSize(), Color.BLUE, Color.RED);
+				tablePnl = new TablePanel(500, 500, gamePlay.getBoardSize(),
+						Color.BLUE, Color.RED);
 				gamePlay.setTablePanel(tablePnl);
 				gamePlay.start();
 				menuController.addContentToContainer(tablePnl);
@@ -188,8 +177,8 @@ public class MenuPanel extends JPanel {
 				gamePlay.setServerAddress(joinGamePnl.getIPAddress());
 				gamePlay.setPlayer(GamePlayers.values()[joinGamePnl
 						.getPlayerComboBoxSelectedIndex()].getPlayer());
-				tablePnl = new TablePanel(500, 500, GameProperties.SIZE_9
-						.getSize(), Color.BLUE, Color.RED);
+				tablePnl = new TablePanel(500, 500, gamePlay.getBoardSize(),
+						Color.BLUE, Color.RED);
 				gamePlay.setTablePanel(tablePnl);
 				gamePlay.start();
 				menuController.addContentToContainer(tablePnl);
@@ -201,7 +190,6 @@ public class MenuPanel extends JPanel {
 			case BACK: {
 				removeAll();
 				menuController.clearContent();
-				// constructPreviousMenuItems();
 				initMenuItems();
 				updateUI();
 				break;
