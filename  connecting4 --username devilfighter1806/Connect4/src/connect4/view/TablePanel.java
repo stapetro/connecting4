@@ -9,6 +9,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
 
 import javax.swing.AbstractAction;
@@ -38,16 +40,18 @@ public class TablePanel extends JPanel {
 	private Point mostupRIGHT;
 
 	private Color player1Color;
-	private Color player2Color;
 
-	public TablePanel(int wid, int hei, int tableSize, Color player1,
-			Color player2) {
+	//
+	private HashSet<MyAbstractAction> abstractActions;
+
+	public TablePanel(int wid, int hei, int tableSize, Color player1,Color player2) {
 
 		addMyMouseListener();
 
 		this.tableSize = tableSize;
 		player1Color = player1;
-		player2Color = player2;
+
+		this.abstractActions = new HashSet<MyAbstractAction>();
 
 		square_x_upLeftPoint = (wid - ((1 + tableSize) * DrawMan.SIZE)) / 2;
 		square_y_upLeftPoint = (hei - ((2 + tableSize) * DrawMan.SIZE)) / 2;
@@ -95,40 +99,27 @@ public class TablePanel extends JPanel {
 	}
 
 	/**
-	 * Singleton for handling key strokes! WARNING: Needed keyboard focus on the
-	 * JComponent to work.
 	 * 
-	 * @author Leni
+	 * Adds keyBindings for all keys in MyKeyStrokes.
 	 * 
-	 */
-	private static class MyAbstractAction extends AbstractAction {
-
-		private static final MyAbstractAction ref = new MyAbstractAction();
-
-		public static MyAbstractAction getInstance() {
-			return ref;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-
-			System.out.println(e.getActionCommand());
-		}
-
-	}
-
-	/**
-	 * key strokes events handling
-	 *
 	 * WARNING: not working properly even with focus
 	 */
 
 	private void addKeyHandler() {
-		this.getInputMap().put(KeyStroke.getKeyStroke("UP"), "doUP");
-		this.getActionMap().put("doUP", MyAbstractAction.getInstance());
 
-		this.getInputMap().put(KeyStroke.getKeyStroke("DOWN"), "doDOWN");
-		this.getActionMap().put("doDOWN", MyAbstractAction.getInstance());
+		MyAbstractAction temp;
+		String doKey;
+
+		for (MyKeyStrokes key : MyKeyStrokes.values()) {
+			temp = new MyAbstractAction(key);
+			abstractActions.add(temp);
+
+			doKey = "do" + key.toString();
+
+			this.getInputMap().put(KeyStroke.getKeyStroke(key.toString()),
+					doKey);
+			this.getActionMap().put(doKey, temp);
+		}
 	}
 
 	/**
@@ -166,6 +157,9 @@ public class TablePanel extends JPanel {
 		}
 
 		moveArrowTo(direction, position);
+	
+		//WARNING: to be tested the RE
+		repaint();
 	}
 
 	/**
@@ -343,6 +337,7 @@ public class TablePanel extends JPanel {
 						arrowMoveDown();
 						break;
 					}
+
 					// new Thread(new Runnable() {
 					// @Override
 					// public void run() {
