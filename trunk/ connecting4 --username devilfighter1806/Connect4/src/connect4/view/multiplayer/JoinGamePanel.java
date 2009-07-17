@@ -98,6 +98,11 @@ public class JoinGamePanel extends JPanel {
 		return ipAddrTxt.getText();
 	}
 
+	/**
+	 * Gets selected index from the players combo box.
+	 * 
+	 * @return The selected index from the players' combo box.
+	 */
 	public int getPlayerComboBoxSelectedIndex() {
 		return this.playerComboBox.getSelectedIndex();
 	}

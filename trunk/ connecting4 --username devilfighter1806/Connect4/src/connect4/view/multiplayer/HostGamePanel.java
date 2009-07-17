@@ -96,6 +96,11 @@ public class HostGamePanel extends JPanel {
 		return playerComboBox;
 	}
 
+	/**
+	 * Gets selected index from the players combo box.
+	 * 
+	 * @return The selected index from the players' combo box.
+	 */
 	public int getPlayerComboBoxSelectedIndex() {
 		return this.playerComboBox.getSelectedIndex();
 	}

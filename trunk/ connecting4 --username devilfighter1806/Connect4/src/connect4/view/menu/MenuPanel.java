@@ -2,6 +2,7 @@ package connect4.view.menu;
 
 import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.Menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -122,14 +123,12 @@ public class MenuPanel extends JPanel {
 		private void addAcitonToItem(MenuItem item) {
 			switch (item) {
 			case SINGLE_PLAYER:
-				gamePlay.setGameMode(GameMode.SINGLE_PLAYER);
-				gamePlay.setPlayer(GamePlayers.SECOND_PLAYER.getPlayer());
-				tablePnl = new TablePanel(500, 500, gamePlay.getBoardSize(),
-						Color.BLUE, Color.RED);
-				gamePlay.setTablePanel(tablePnl);
-				gamePlay.start();
-				menuController.addContentToContainer(tablePnl);
+				startGame(GameMode.SINGLE_PLAYER, item);
 				break;
+			case HOT_SEAT: {
+				startGame(GameMode.HOT_SEAT, item);
+				break;
+			}
 			case MULTI_PLAYER:
 				selectItem();
 				break;
@@ -156,14 +155,7 @@ public class MenuPanel extends JPanel {
 				break;
 			}
 			case HOST: {
-				gamePlay.setGameMode(GameMode.TCP_CONNECTION);
-				gamePlay.setPlayer(GamePlayers.values()[hostGamePnl
-						.getPlayerComboBoxSelectedIndex()].getPlayer());
-				tablePnl = new TablePanel(500, 500, gamePlay.getBoardSize(),
-						Color.BLUE, Color.RED);
-				gamePlay.setTablePanel(tablePnl);
-				gamePlay.start();
-				menuController.addContentToContainer(tablePnl);
+				startGame(GameMode.TCP_CONNECTION, item);
 				break;
 			}
 			case JOIN_GAME: {
@@ -173,15 +165,7 @@ public class MenuPanel extends JPanel {
 				break;
 			}
 			case JOIN: {
-				gamePlay.setGameMode(GameMode.TCP_CONNECTION);
-				gamePlay.setServerAddress(joinGamePnl.getIPAddress());
-				gamePlay.setPlayer(GamePlayers.values()[joinGamePnl
-						.getPlayerComboBoxSelectedIndex()].getPlayer());
-				tablePnl = new TablePanel(500, 500, gamePlay.getBoardSize(),
-						Color.BLUE, Color.RED);
-				gamePlay.setTablePanel(tablePnl);
-				gamePlay.start();
-				menuController.addContentToContainer(tablePnl);
+				startGame(GameMode.TCP_CONNECTION, item);
 				break;
 			}
 			case EXIT:
@@ -195,6 +179,48 @@ public class MenuPanel extends JPanel {
 				break;
 			}
 			}
+		}
+
+		/**
+		 * Starts game in the specified game mode from the specified menu item.
+		 * 
+		 * @param gameMode
+		 *            Game mode to be specified.
+		 * @param item
+		 *            Menu item to be chosen.
+		 */
+		private void startGame(GameMode gameMode, MenuItem item) {
+			gamePlay.setGameMode(gameMode);
+			switch (item) {
+			case SINGLE_PLAYER: {
+				if (configurationPnl != null) {
+					gamePlay.setPlayer(GamePlayers.values()[configurationPnl
+							.getPlayerComboBoxSelectedIndex()].getPlayer());
+				} else {
+					gamePlay.setPlayer(GamePlayers.SECOND_PLAYER.getPlayer());
+				}
+				break;
+			}
+			case HOT_SEAT: {
+				gamePlay.setPlayer(GamePlayers.FIRST_PLAYER.getPlayer());
+				break;
+			}
+			case HOST: {
+				gamePlay.setPlayer(GamePlayers.values()[hostGamePnl
+						.getPlayerComboBoxSelectedIndex()].getPlayer());
+				break;
+			}
+			case JOIN: {
+				gamePlay.setPlayer(GamePlayers.values()[joinGamePnl
+						.getPlayerComboBoxSelectedIndex()].getPlayer());
+				break;
+			}
+			}
+			tablePnl = new TablePanel(500, 500, gamePlay.getBoardSize(),
+					Color.BLUE);
+			gamePlay.setTablePanel(tablePnl);
+			gamePlay.start();
+			menuController.addContentToContainer(tablePnl);
 		}
 
 		/**
