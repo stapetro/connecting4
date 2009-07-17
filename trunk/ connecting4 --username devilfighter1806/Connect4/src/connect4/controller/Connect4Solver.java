@@ -594,7 +594,7 @@ public class Connect4Solver {
 	 * @param player
 	 *            Current player.
 	 * @param direction
-	 *            Direction from which user drop a man.
+	 *            Direction2 from which user drop a man.
 	 * @param position
 	 *            Row|Column of current direction.
 	 * @return True - if move is valid, false - otherwise.
