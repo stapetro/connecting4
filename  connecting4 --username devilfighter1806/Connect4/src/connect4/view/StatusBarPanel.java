@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 public class StatusBarPanel extends JPanel {
 
 	private String message;
+	private Color color;
 
 	public StatusBarPanel(int x, int y) {
 		setMinimumSize(new Dimension(x, y));
@@ -26,7 +27,7 @@ public class StatusBarPanel extends JPanel {
 	 * Sets new 
 	 * @param newMessage
 	 */
-	public void showStatus(String newMessage) {
+	public void showStatus(String newMessage,Color color) {
 		message = newMessage;
 		repaint();
 	}
@@ -36,7 +37,7 @@ public class StatusBarPanel extends JPanel {
 		super.paintComponents(g);
 
 		g.drawLine(0, 0, getWidth(), 0);
-		g.setColor(Color.RED);
+		g.setColor(color);
 		g.drawString(message, getWidth() / 2 - message.length() * 2, 10);
 	}
 }
