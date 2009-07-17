@@ -199,10 +199,10 @@ public class TablePanel extends JPanel {
 			Color color) {
 		System.out.println("<><><><><><><>");
 		for (Point manPoint : winningMenPositions) {
-			System.out.println(manPoint);
+			System.out.println("painting "+ manPoint+" in "+ color.toString());
 			men[manPoint.x][manPoint.y].setColor(color);
 		}
-		System.out.println("<><><><><><><>");
+		System.out.println("<><><><><>repainting<><>");
 
 		repaint();
 	}
