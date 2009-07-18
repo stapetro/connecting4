@@ -42,6 +42,7 @@ public class TablePanel extends JPanel {
 	private Point mostupRIGHT;
 
 	private Color player1Color;
+	private DrawMan[] winningMen;
 
 	public TablePanel(int wid, int hei, int tableSize, Color player1) {
 
@@ -183,7 +184,7 @@ public class TablePanel extends JPanel {
 
 	/**
 	 * Method which shows the winning 4 consecutive MEN painting them in another
-	 * color - different from the player1 and player2 colors.
+	 * color style - different from the player1 and player2 colors.
 	 * 
 	 * @param winningMenPositions
 	 *            - combo of x and y coordinates of each winning MAN. Uses
@@ -193,8 +194,18 @@ public class TablePanel extends JPanel {
 	 */
 	public void displayWinningCombination(Point[] winningMenPositions,
 			Color color) {
-		for (Point manPoint : winningMenPositions) {
-			men[manPoint.x][manPoint.y].setColor(color);
+		winningMen = new DrawMan[winningMenPositions.length];
+
+		for (int i = 0; i < winningMenPositions.length; i++) {
+
+			winningMen[i] = new DrawMan(
+					men[winningMenPositions[i].x][winningMenPositions[i].y]
+							.getUpLeft().x,
+					men[winningMenPositions[i].x][winningMenPositions[i].y]
+							.getUpLeft().y);
+			winningMen[i].setOffset(4);
+			winningMen[i].setVisible(true);
+			winningMen[i].setColor(color);
 		}
 		repaint();
 	}
@@ -489,11 +500,18 @@ public class TablePanel extends JPanel {
 				man.drawMan(g);
 			}
 		}
+
+		if (winningMen != null) {
+			for (DrawMan man : winningMen) {
+				man.drawMan(g);
+			}
+		}
+
 	}
 
 	/**
-	 * Painting numbers for grid for table. They move away from arrow
-	 * as arrow moves around the table.
+	 * Painting numbers for grid for table. They move away from arrow as arrow
+	 * moves around the table.
 	 * 
 	 * @param g - graphics object to paint the numbers
 	 */

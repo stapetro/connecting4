@@ -27,6 +27,11 @@ public class DrawMan {
 	private Color color;
 	private boolean visible;
 
+	/**
+	 * added value to reduce the radius of the
+	 */
+	private int offset = 0;
+
 	public DrawMan(int x, int y) {
 		color = color.BLACK;
 		upLeft = new Point(x, y);
@@ -35,13 +40,15 @@ public class DrawMan {
 
 	/**
 	 * Draws the MAN in component
-	 * @param g - graphics object used for painting the man
+	 * 
+	 * @param g
+	 *            - graphics object used for painting the man
 	 */
 	public void drawMan(Graphics g) {
 		if (visible) {
 			Color lastColor = g.getColor();
 			g.setColor(color);
-			g.fillOval(paintPoint.x, paintPoint.y, SIZE, SIZE);
+			g.fillOval(paintPoint.x, paintPoint.y, SIZE - offset, SIZE - offset);
 			g.setColor(lastColor);
 		}
 	}
@@ -67,12 +74,22 @@ public class DrawMan {
 	}
 
 	/**
-	 * restores the point of the MAN
-	 * with the originally defined point
-	 * RECOVERY METHOD - old value of POINT is lost!
+	 * restores the point of the MAN with the originally defined point RECOVERY
+	 * METHOD - old value of POINT is lost!
 	 */
 	public void restorePoint() {
 		paintPoint.x = upLeft.x;
 		paintPoint.y = upLeft.y;
+	}
+
+	/**
+	 * Changes the offset that makes the radius smaller for the winning DrawMan.
+	 * 
+	 * @param offset
+	 */
+	public void setOffset(int offset) {
+		this.offset = offset;
+		paintPoint.x += offset / 2;
+		paintPoint.y += offset / 2;
 	}
 }
