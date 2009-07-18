@@ -1,20 +1,22 @@
-package connect4.view.menu;
+package connect4.view;
 
-import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-
-import javax.swing.JPanel;
-import javax.swing.JFrame;
 import java.awt.Dimension;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import connect4.view.menu.ContainerPanel;
+import connect4.view.menu.MenuContentPanel;
+import connect4.view.menu.MenuPanel;
 
 /**
  * Tests the game menu.
  * @author User
  *
  */
-public class TestGameMenu extends JFrame {
+public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel jContentPane = null;
@@ -25,7 +27,7 @@ public class TestGameMenu extends JFrame {
 	/**
 	 * This is the default constructor
 	 */
-	public TestGameMenu() {
+	public MainWindow() {
 		super();
 		initialize();
 	}
@@ -63,10 +65,9 @@ public class TestGameMenu extends JFrame {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				TestGameMenu gameMenuWindow = new TestGameMenu();
+				MainWindow gameMenuWindow = new MainWindow();
 				gameMenuWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				gameMenuWindow.setLocationRelativeTo(null);
 				gameMenuWindow.setVisible(true);
