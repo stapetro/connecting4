@@ -53,7 +53,6 @@ public class TablePanel extends JPanel {
 
 		initVariables();
 		initPoints();
-//		addMyMouseListener();
 	}
 
 	private void initVariables() {
@@ -483,10 +482,36 @@ public class TablePanel extends JPanel {
 
 		square.paint(g);
 		arrow.paint(g);
+		paintNumbers(g);
 
 		for (DrawMan[] manRow : men) {
 			for (DrawMan man : manRow) {
 				man.drawMan(g);
+			}
+		}
+	}
+
+	/**
+	 * Painting numbers for grid for table. They move away from arrow
+	 * as arrow moves around the table.
+	 * 
+	 * @param g - graphics object to paint the numbers
+	 */
+	public void paintNumbers(Graphics g) {
+		for (int i = 0; i < tableSize; i++) {
+			if (arrow.getDirection() != Direction.VERTICAL_DOWN) {
+				g.drawString(String.valueOf(i + 1), mostleftUP.x + i * size,
+						mostleftUP.y);
+			} else {
+				g.drawString(String.valueOf(i + 1), mostleftDOWN.x + i * size,
+						mostleftDOWN.y);
+			}
+			if (arrow.getDirection() != Direction.HORIZONTAL_RIGHT) {
+				g.drawString(String.valueOf(i + 1), mostupLEFT.x, mostupLEFT.y
+						+ i * size);
+			} else {
+				g.drawString(String.valueOf(i + 1), mostupRIGHT.x,
+						mostupRIGHT.y + i * size);
 			}
 		}
 	}
