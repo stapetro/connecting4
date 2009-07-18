@@ -1,0 +1,21 @@
+#labels NewVersion,Phase-Implementation
+= First working release =
+
+This is the first working release.<br>
+link: http://connecting4.googlecode.com/files/NexGenConnect4_18July2009_01.jar <br>
+
+Currently the following features are working:<br>
+-single player<br>
+-hot-seat<br>
+-multi-player through TCP<br>
+-status bar showing appropriate messages<br>
+-key-controlled arrow<br>
+-a few board sizes<br>
+
+Missing features and known problems:<br>
+see issue: http://code.google.com/p/connecting4/issues/detail?id=1 <br>
+
+= Details =
+
+This version was introduced as a project for successfully finishing a 
+Java course.<br>
