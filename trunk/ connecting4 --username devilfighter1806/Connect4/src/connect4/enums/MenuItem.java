@@ -9,7 +9,7 @@ public enum MenuItem {
 
 	SINGLE_PLAYER(0, null), MULTI_PLAYER(1, new int[] { 7, 8, 13 }), OPTIONS(2,
 			new int[] { 5, 6, 13 }), HELP(3, null), EXIT(4, null), CONFIGURE_GAME(
-			5, null), CONTROLS(6, null), HOT_SEAT(7, null), TCP_CONNECTION(8,
+			5, null), CONTROLS(6, null), HOT_SEAT(7, null), INTERNET(8,
 			new int[] { 9, 10, 13 }), HOST_GAME(9, new int[] { 11, 13 }), JOIN_GAME(
 			10, new int[] { 12, 13 }), HOST(11, null), JOIN(12, null), BACK(13,
 			null);

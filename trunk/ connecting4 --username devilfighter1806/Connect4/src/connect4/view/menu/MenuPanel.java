@@ -148,7 +148,7 @@ public class MenuPanel extends JPanel {
 				menuController.setContent(configurationPnl);
 				break;
 			}
-			case TCP_CONNECTION: {
+			case INTERNET: {
 				selectItem();
 				break;
 			}
