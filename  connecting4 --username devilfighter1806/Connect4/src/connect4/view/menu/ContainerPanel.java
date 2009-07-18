@@ -10,7 +10,6 @@ import javax.swing.JPanel;
  * @author Stanislav Petrov
  * 
  */
-// TODO Should be moved to the connect4.view.
 /*
  * Only this panel should be added to the Main window. This panel holds all
  * child panels, i.e. table panel, etc.

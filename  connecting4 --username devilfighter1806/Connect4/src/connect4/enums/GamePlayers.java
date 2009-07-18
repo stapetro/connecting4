@@ -26,6 +26,16 @@ public enum GamePlayers {
 	 */
 	private final int number;
 
+	/**
+	 * Construct game player.
+	 * 
+	 * @param player
+	 *            Player value to be set.
+	 * @param c
+	 *            Color of the player to be set.
+	 * @param num
+	 *            Number identifier of the player(square's state).
+	 */
 	private GamePlayers(char player, Color c, int num) {
 		this.player = player;
 		this.color = c;

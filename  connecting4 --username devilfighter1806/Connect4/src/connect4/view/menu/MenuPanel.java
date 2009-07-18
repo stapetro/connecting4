@@ -36,6 +36,9 @@ public class MenuPanel extends JPanel {
 	 * Stores all menu and sub menu items.
 	 */
 	private final MenuItem[] ITEMS;
+	/**
+	 * Stores supported board sizes.
+	 */
 	private final GameProperties[] BOARD_SIZES;
 	/**
 	 * Stores the current menu items to be presented.

@@ -11,7 +11,6 @@ import javax.swing.JPanel;
  * Represents content associated with the relevant menu item.
  * @author Stanislav Petrov
  */
-//TODO To be impelemented.
 public class MenuContentPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
