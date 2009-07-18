@@ -22,9 +22,11 @@ import javax.swing.border.Border;
 import connect4.enums.Direction;
 
 /**
- * The major 
+ * The major JPanel which offers rich interface for handling the array of men,
+ * grid and arrow to be displayed.
+ * 
  * @author Leni
- *
+ * 
  */
 
 @SuppressWarnings("serial")
@@ -203,8 +205,10 @@ public class TablePanel extends JPanel {
 
 		for (int i = 0; i < winningMenPositions.length; i++) {
 			winningMen[i] = new DrawMan(
-					men[winningMenPositions[i].x][winningMenPositions[i].y].getUpLeft().x,
-					men[winningMenPositions[i].x][winningMenPositions[i].y].getUpLeft().y);
+					men[winningMenPositions[i].x][winningMenPositions[i].y]
+							.getUpLeft().x,
+					men[winningMenPositions[i].x][winningMenPositions[i].y]
+							.getUpLeft().y);
 			winningMen[i].setOffset(4);
 			winningMen[i].setVisible(true);
 			winningMen[i].setColor(color);
