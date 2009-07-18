@@ -1,7 +1,7 @@
 #labels NewVersion,Phase-Implementation
 = First working release =
 
-This is the first working release.<br>
+This is the first working release version - 20090718.1<br>
 link: http://connecting4.googlecode.com/files/NexGenConnect4_18July2009_01.jar <br>
 
 Currently the following features are working:<br>
