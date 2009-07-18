@@ -21,6 +21,12 @@ import javax.swing.border.Border;
 
 import connect4.controller.Direction;
 
+/**
+ * The major 
+ * @author Leni
+ *
+ */
+
 @SuppressWarnings("serial")
 public class TablePanel extends JPanel {
 
@@ -133,7 +139,6 @@ public class TablePanel extends JPanel {
 		}
 
 		moveArrowTo(direction, position);
-
 		repaint();
 	}
 
@@ -197,12 +202,9 @@ public class TablePanel extends JPanel {
 		winningMen = new DrawMan[winningMenPositions.length];
 
 		for (int i = 0; i < winningMenPositions.length; i++) {
-
 			winningMen[i] = new DrawMan(
-					men[winningMenPositions[i].x][winningMenPositions[i].y]
-							.getUpLeft().x,
-					men[winningMenPositions[i].x][winningMenPositions[i].y]
-							.getUpLeft().y);
+					men[winningMenPositions[i].x][winningMenPositions[i].y].getUpLeft().x,
+					men[winningMenPositions[i].x][winningMenPositions[i].y].getUpLeft().y);
 			winningMen[i].setOffset(4);
 			winningMen[i].setVisible(true);
 			winningMen[i].setColor(color);
@@ -349,31 +351,6 @@ public class TablePanel extends JPanel {
 	}
 
 	/**
-	 * paints the square, the arrow and all MEN
-	 */
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		square.paint(g);
-		arrow.paint(g);
-		paintNumbers(g);
-
-		for (DrawMan[] manRow : men) {
-			for (DrawMan man : manRow) {
-				man.drawMan(g);
-			}
-		}
-
-		if (winningMen != null) {
-			for (DrawMan man : winningMen) {
-				man.drawMan(g);
-			}
-		}
-
-	}
-
-	/**
 	 * Painting numbers for grid for table. They move away from arrow as arrow
 	 * moves around the table.
 	 * 
@@ -398,4 +375,30 @@ public class TablePanel extends JPanel {
 			}
 		}
 	}
+
+	/**
+	 * paints the square, the arrow and all MEN
+	 */
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		square.paint(g);
+		arrow.paint(g);
+		paintNumbers(g);
+
+		for (DrawMan[] manRow : men) {
+			for (DrawMan man : manRow) {
+				man.drawMan(g);
+			}
+		}
+
+		if (winningMen != null) {
+			for (DrawMan man : winningMen) {
+				man.drawMan(g);
+			}
+		}
+
+	}
+
 }
