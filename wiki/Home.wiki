@@ -1,6 +1,4 @@
-#summary One-sentence summary of this page.
 #labels home,intro,introduction
-
 = Introduction =
 
 This is the home page for "NextGen Connect4"
