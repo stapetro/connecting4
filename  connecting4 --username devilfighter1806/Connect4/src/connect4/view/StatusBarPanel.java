@@ -2,42 +2,47 @@ package connect4.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
-
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
- * Class that will display messages that will notify the player of the current
- * state of the game.
- * 
- * @author Leni
- * 
+ * Status information.
+ * @author 
  */
 public class StatusBarPanel extends JPanel {
 
-	private String message;
-	private Color color;
+    /**
+     * Represents status information.
+     */
+    private JLabel statusModifyLbl;
 
-	public StatusBarPanel(int x, int y) {
-		setMinimumSize(new Dimension(x, y));
-		message = "";
-	}
+    /**
+     * General purpose constructor. Sets some of the
+     * parameters and values of the used objects
+     */
+    public StatusBarPanel() {
+        super();
+        setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        initComponents();
+    }
 
-	/**
-	 * Sets new 
-	 * @param newMessage
-	 */
-	public void showStatus(String newMessage,Color color) {
-		message = newMessage;
-		repaint();
-	}
+    /**
+     * Initializes componenets in status panel.
+     */
+    private void initComponents() {
+        setPreferredSize(new Dimension(150, 30));
+        statusModifyLbl = new JLabel();
+        statusModifyLbl.setFont(new java.awt.Font("Verdana", 1, 14));
+        add(statusModifyLbl);
+    }
 
-	@Override
-	public void paintComponent(Graphics g) {
-		super.paintComponents(g);
-
-		g.drawLine(0, 0, getWidth(), 0);
-		g.setColor(color);
-		g.drawString(message, getWidth() / 2 - message.length() * 2, 10);
-	}
+    /**
+     * Status setter.
+     * @param text Status text to be set.
+     */
+    public void setStatus(String text,Color color) {
+        statusModifyLbl.setText(text);
+        statusModifyLbl.setForeground(color);
+    }
 }
