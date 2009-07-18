@@ -30,7 +30,7 @@ public class Arrow {
 		int x = startPoint.x;
 		int y = startPoint.y;
 
-		// points at
+		// the arrow points at
 		switch (myDirection) {
 		case VERTICAL_DOWN:
 			g.drawLine(x, y, x, y + size);
@@ -60,8 +60,9 @@ public class Arrow {
 	}
 
 	/**
-	 * Reset new start point for the arrow . That way the arrow moves across the 
+	 * Reset new start point for the arrow . That way the arrow moves across the
 	 * field.
+	 * 
 	 * @param point
 	 */
 	public void setStartPoint(Point point) {
@@ -74,8 +75,8 @@ public class Arrow {
 	}
 
 	/**
-	 * Change the direction the arrow points at.
-	 * Important for the paint method
+	 * Change the direction the arrow points at. Important for the paint method
+	 * 
 	 * @param dir
 	 */
 	public void setDirection(Direction dir) {

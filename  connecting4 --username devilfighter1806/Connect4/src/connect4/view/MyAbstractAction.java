@@ -3,8 +3,6 @@ package connect4.view;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 
 import connect4.controller.Direction;
 
@@ -28,6 +26,10 @@ public class MyAbstractAction extends AbstractAction {
 		this.panel = panel;
 	}
 
+	/**
+	 * Handles the ActionEvent and the event has his own Listener and that's why
+	 * no methods of event 'e' are invoked.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		switch (keyStroke) {
@@ -140,6 +142,10 @@ public class MyAbstractAction extends AbstractAction {
 		}
 	}
 
+	/**
+	 * Shuts down the Java Application when pressed ESCAPE while playing the
+	 * game (not including the menu)
+	 */
 	private void processEscape() {
 		System.exit(0);
 	}

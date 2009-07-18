@@ -23,7 +23,7 @@ public class DrawMan {
 	/**
 	 * paintPoint is working copy of upLeft point
 	 */
-	public Point paintPoint;
+	private Point paintPoint;
 	private Color color;
 	private boolean visible;
 
@@ -33,7 +33,7 @@ public class DrawMan {
 	private int offset = 0;
 
 	public DrawMan(int x, int y) {
-		color = color.BLACK;
+		color = Color.BLACK;
 		upLeft = new Point(x, y);
 		paintPoint = new Point(upLeft);
 	}
@@ -41,8 +41,7 @@ public class DrawMan {
 	/**
 	 * Draws the MAN in component
 	 * 
-	 * @param g
-	 *            - graphics object used for painting the man
+	 * @param g - graphics object used for painting the man
 	 */
 	public void drawMan(Graphics g) {
 		if (visible) {
@@ -71,15 +70,6 @@ public class DrawMan {
 
 	public Point getUpLeft() {
 		return upLeft;
-	}
-
-	/**
-	 * restores the point of the MAN with the originally defined point RECOVERY
-	 * METHOD - old value of POINT is lost!
-	 */
-	public void restorePoint() {
-		paintPoint.x = upLeft.x;
-		paintPoint.y = upLeft.y;
 	}
 
 	/**
