@@ -12,8 +12,8 @@ import connect4.view.menu.MenuContentPanel;
 import connect4.view.menu.MenuPanel;
 
 /**
- * Tests the game menu.
- * @author User
+ * Starts the application.
+ * @author Stanislav Petrov
  *
  */
 public class MainWindow extends JFrame {
