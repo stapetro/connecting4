@@ -47,11 +47,10 @@ public class MyAbstractAction extends AbstractAction {
 			processEnter();
 			break;
 		case ESCAPE:
-			// leaveToMenu or other operation
+			processEscape();
 			break;
 		}
 		panel.repaint();
-		System.out.println(keyStroke);
 	}
 
 	/**
@@ -99,7 +98,9 @@ public class MyAbstractAction extends AbstractAction {
 		case HORIZONTAL_LEFT:
 			return;
 		case HORIZONTAL_RIGHT:
-			panel.moveArrowTo(Direction.HORIZONTAL_LEFT, panel.acqurePosition());
+			panel
+					.moveArrowTo(Direction.HORIZONTAL_LEFT, panel
+							.acqurePosition());
 			break;
 		case VERTICAL_DOWN:
 		case VERTICAL_UP:
@@ -117,7 +118,8 @@ public class MyAbstractAction extends AbstractAction {
 		case HORIZONTAL_RIGHT:
 			return;
 		case HORIZONTAL_LEFT:
-			panel.moveArrowTo(Direction.HORIZONTAL_RIGHT, panel.acqurePosition());
+			panel.moveArrowTo(Direction.HORIZONTAL_RIGHT, panel
+					.acqurePosition());
 			break;
 		case VERTICAL_DOWN:
 		case VERTICAL_UP:
@@ -136,5 +138,9 @@ public class MyAbstractAction extends AbstractAction {
 		synchronized (panel) {
 			panel.notify();
 		}
+	}
+
+	private void processEscape() {
+		System.exit(0);
 	}
 }
