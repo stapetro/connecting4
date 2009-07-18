@@ -1,4 +1,4 @@
-package connect4.view.menu;
+package connect4.enums;
 
 /**
  * Represents and stores game menu items.

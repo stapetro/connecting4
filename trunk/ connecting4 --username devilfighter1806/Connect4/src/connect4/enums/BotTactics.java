@@ -1,4 +1,4 @@
-package connect4.controller;
+package connect4.enums;
 
 /**
  * Represents bot actions during the game. Every bot action has an index, which

@@ -11,8 +11,8 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 
 import connect4.controller.GamePlay;
-import connect4.model.GamePlayers;
-import connect4.model.GameProperties;
+import connect4.enums.GamePlayers;
+import connect4.enums.GameProperties;
 
 /**
  * Represents the join game panel with which player connects to the host game.

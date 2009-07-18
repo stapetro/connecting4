@@ -1,4 +1,4 @@
-package connect4.view;
+package connect4.view.gameplay;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,7 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.border.Border;
 
-import connect4.controller.Direction;
+import connect4.enums.Direction;
 
 /**
  * The major 

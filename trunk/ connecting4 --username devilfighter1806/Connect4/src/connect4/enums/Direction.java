@@ -1,4 +1,4 @@
-package connect4.controller;
+package connect4.enums;
 
 /**
  * Represents directions from which user can move man and directions for

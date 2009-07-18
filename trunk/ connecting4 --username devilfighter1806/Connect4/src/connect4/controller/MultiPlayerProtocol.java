@@ -3,6 +3,8 @@ package connect4.controller;
 import java.awt.Point;
 import java.io.Serializable;
 
+import connect4.enums.Direction;
+
 /**
  * Represents the protocol for communication between client and server.
  * 

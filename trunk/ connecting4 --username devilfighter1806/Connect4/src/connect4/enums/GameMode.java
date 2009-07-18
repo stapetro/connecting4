@@ -1,4 +1,4 @@
-package connect4.controller;
+package connect4.enums;
 
 /**
  * Represents different game modes.

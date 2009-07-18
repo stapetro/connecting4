@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import connect4.enums.BotTactics;
+import connect4.enums.Direction;
+import connect4.enums.GameMode;
+
 /**
  * Connect4 game. Board should be NxN size, where N is odd number. Two players
  * are playing the game - white and black. Each player has (NxN -1)/2 men. Black
@@ -14,7 +18,7 @@ import java.util.Scanner;
  * @author Stanislav Petrov
  * @date 28 June 2009
  */
-public class Connect4Solver {
+public class GameSolver {
 	/**
 	 * Stores number of players in the game.
 	 */
@@ -100,7 +104,7 @@ public class Connect4Solver {
 	 * @param size
 	 *            Board size to be set.
 	 */
-	public Connect4Solver(GameMode gameMode, int size) {
+	public GameSolver(GameMode gameMode, int size) {
 		this.gameMode = gameMode;
 		setBoardSize(size);
 		initializeBoard();

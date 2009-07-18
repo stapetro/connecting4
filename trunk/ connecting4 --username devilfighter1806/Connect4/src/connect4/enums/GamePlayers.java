@@ -1,4 +1,4 @@
-package connect4.model;
+package connect4.enums;
 
 import java.awt.Color;
 
