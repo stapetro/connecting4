@@ -1,7 +1,9 @@
 package connect4.controller;
 
 /**
- * Represents bot actions during the game.
+ * Represents bot actions during the game. Every bot action has an index, which
+ * is used, for storing the specified bot tactic in some data structure during
+ * single play.
  * 
  * @author Stanislav Petrov
  */
@@ -34,6 +36,11 @@ public enum BotTactics {
 	 */
 	private final int index;
 
+	/**
+	 * 
+	 * @param index
+	 *            Bot tactics index, used in data structure.
+	 */
 	BotTactics(int index) {
 		this.index = index;
 	}

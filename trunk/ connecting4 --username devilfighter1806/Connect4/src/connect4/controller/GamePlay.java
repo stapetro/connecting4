@@ -11,8 +11,10 @@ import java.util.Scanner;
 import javax.swing.KeyStroke;
 
 import connect4.model.GamePlayers;
+import connect4.model.StatusMessages;
 import connect4.view.MyAbstractAction;
 import connect4.view.MyKeyStrokes;
+import connect4.view.StatusBarPanel;
 import connect4.view.TablePanel;
 
 /**
@@ -26,8 +28,10 @@ public class GamePlay extends Thread {
 	 * Stores game mode - single|multi player.
 	 */
 	private GameMode gameMode;
+	/**
+	 * Stores name of the game.
+	 */
 	private String gameName;
-
 	/**
 	 * Stores which is current player.
 	 */
@@ -68,6 +72,13 @@ public class GamePlay extends Thread {
 	 * Stores reference to the table panel.
 	 */
 	private TablePanel tablePnl;
+	/**
+	 * Stores status bar reference.
+	 */
+	private StatusBarPanel statusBarPanel;
+	/**
+	 * Stores key handler references, prevents them from garbage collection.
+	 */
 	private HashSet<MyAbstractAction> abstractActions;
 
 	/**
@@ -199,10 +210,22 @@ public class GamePlay extends Thread {
 		this.gameMode = gameMode;
 	}
 
+	/**
+	 * Gets the name of the game, when connection is made in multi player mode
+	 * over the network.
+	 * 
+	 * @return The game name.
+	 */
 	public String getGameName() {
 		return gameName;
 	}
 
+	/**
+	 * Sets the name of the game, when connection is made in multi player mode
+	 * over the network.
+	 * 
+	 * @param gameName
+	 */
 	public void setGameName(String gameName) {
 		this.gameName = gameName;
 	}
@@ -258,7 +281,7 @@ public class GamePlay extends Thread {
 			playHotSeat();
 			break;
 		}
-		case TCP_CONNECTION: {
+		case INTERNET: {
 			playClientServer();
 			break;
 		}
@@ -266,8 +289,8 @@ public class GamePlay extends Thread {
 	}
 
 	/**
-	 * 
-	 * Adds keyBindings for all keys in MyKeyStrokes.
+	 * For every key event in the enum type MyKeyStrokes, adds the relevant key
+	 * handler.
 	 */
 	private void addKeyHandler() {
 
@@ -296,8 +319,19 @@ public class GamePlay extends Thread {
 	 *            Player who moved the man.
 	 */
 	private void fillSquare(Point p, Direction direction, char player) {
-		tablePnl.moveManTo(p, direction, player == GamePlayers.FIRST_PLAYER
-				.getPlayer() ? Color.BLUE : Color.RED);
+		tablePnl.moveManTo(p, direction, getPlayerColor(player));
+	}
+
+	/**
+	 * Gets the relevant color of the specified player.
+	 * 
+	 * @param player
+	 *            Player to be specified.
+	 * @return The player's color.
+	 */
+	private Color getPlayerColor(char player) {
+		return (player == GamePlayers.FIRST_PLAYER.getPlayer()) ? Color.BLUE
+				: Color.RED;
 	}
 
 	/**
@@ -306,12 +340,14 @@ public class GamePlay extends Thread {
 	public void playSinglePlayer() {
 		Direction direction;
 		int position;
-		connect4.printBoard();
 		if (currentPlayer == Connect4Solver.BLACK) {
 			connect4.nextBotMove();
-			connect4.printBoard();
 			fillSquare(connect4.getLastMove(connect4.getBot()), tablePnl
 					.acquireDirection(), connect4.getBot());
+			statusBarPanel.setStatus("Bot moved to ("
+					+ (connect4.getLastMove(connect4.getBot()).x + 1) + ", "
+					+ (connect4.getLastMove(connect4.getBot()).y + 1) + ").",
+					getPlayerColor(connect4.getBot()));
 		}
 		while (!isPlayerWin) {
 			do {
@@ -327,27 +363,32 @@ public class GamePlay extends Thread {
 			} while (!(moveMan(currentPlayer, direction, position)));
 			fillSquare(connect4.getLastMove(currentPlayer), tablePnl
 					.acquireDirection(), currentPlayer);
-			connect4.printBoard();
 			if (!isPlayerWin
 					&& (isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
-				System.out.println("WIN!!!");
-				connect4.printWinPaths();
 				tablePnl.displayWinningCombination(connect4.getWinPath(),
 						Color.YELLOW);
+				statusBarPanel.setStatus(StatusMessages.WIN.toString(),
+						getPlayerColor(currentPlayer));
+				break;
+			}else if(connect4.isGameDraw()){
+				statusBarPanel.setStatus(StatusMessages.DRAW_GAME.toString(),
+						getPlayerColor(currentPlayer));
 				break;
 			}
-			if ((isPlayerWin = connect4.nextBotMove())) {
-				connect4.printBoard();
-				connect4.printWinPaths();
-			}
+			isPlayerWin = connect4.nextBotMove();
 			fillSquare(connect4.getLastMove(connect4.getBot()), tablePnl
 					.acquireDirection(), connect4.getBot());
+			statusBarPanel.setStatus("Bot moved to ("
+					+ (connect4.getLastMove(connect4.getBot()).x + 1) + ", "
+					+ (connect4.getLastMove(connect4.getBot()).y + 1) + ").",
+					getPlayerColor(connect4.getBot()));
 			if (isPlayerWin) {
 				tablePnl.displayWinningCombination(connect4.getWinPath(),
 						Color.YELLOW);
+				statusBarPanel.setStatus(StatusMessages.WIN.toString(),
+						getPlayerColor(connect4.getBot()));
 				break;
 			}
-			connect4.printBoard();
 		}
 	}
 
@@ -358,7 +399,6 @@ public class GamePlay extends Thread {
 	public void playHotSeat() {
 		Direction direction;
 		int position;
-		connect4.printBoard();
 		switchPlayer();
 		while (!isPlayerWin) {
 			do {
@@ -366,7 +406,6 @@ public class GamePlay extends Thread {
 					try {
 						tablePnl.wait();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -376,13 +415,21 @@ public class GamePlay extends Thread {
 			fillSquare(connect4.getLastMove(currentPlayer), tablePnl
 					.acquireDirection(), currentPlayer);
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
-				System.out.println("WIN!!!");
-				connect4.printWinPaths();
 				tablePnl.displayWinningCombination(connect4.getWinPath(),
 						Color.YELLOW);
+			}else if(connect4.isGameDraw()){
+				statusBarPanel.setStatus(StatusMessages.DRAW_GAME.toString(),
+						getPlayerColor(currentPlayer));
+				break;
 			}
-			connect4.printBoard();
-			switchPlayer();
+			if (!isPlayerWin) {
+				switchPlayer();
+				statusBarPanel.setStatus(StatusMessages.TURN.toString(),
+						getPlayerColor(currentPlayer));
+			} else {
+				statusBarPanel.setStatus(StatusMessages.WIN.toString(),
+						getPlayerColor(currentPlayer));
+			}
 		}
 	}
 
@@ -390,19 +437,20 @@ public class GamePlay extends Thread {
 	 * Controls the game play in multi player game mode over the network.
 	 */
 	public void playClientServer() {
+		statusBarPanel.setStatus(StatusMessages.WAITING_CONNECTION.toString(),
+				getPlayerColor(currentPlayer));
 		createConnection();
+		statusBarPanel.setStatus(StatusMessages.CONNECTION_ESTABLISHED
+				.toString(), getPlayerColor(currentPlayer));
 		char player;
 		Direction direction;
 		int position = 0;
-		connect4.printBoard();
-		connect4.printBoard();
 		if (currentPlayer == GamePlayers.SECOND_PLAYER.getPlayer()) {
 			do {
 				synchronized (tablePnl) {
 					try {
 						tablePnl.wait();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -411,20 +459,23 @@ public class GamePlay extends Thread {
 			} while (!(moveMan(currentPlayer, direction, position)));
 			fillSquare(connect4.getLastMove(currentPlayer), tablePnl
 					.acquireDirection(), currentPlayer);
-			connect4.printBoard();
 			sendData();
 		}
 		while (!isPlayerWin) {
+			statusBarPanel.setStatus(StatusMessages.NOT_YOUR_TURN.toString(),
+					getPlayerColor(currentPlayer));
 			player = receiveData();
-			connect4.printBoard();
+			statusBarPanel.setStatus(StatusMessages.TURN.toString(),
+					getPlayerColor(currentPlayer));
 			if (isPlayerWin) {
-				System.out.println("Player : " + player + " WIN!");
-				for (int i = 0; i < protocol.getWinPath().length; i++) {
-					System.out.print("(" + protocol.getWinPath()[i].x + ", "
-							+ protocol.getWinPath()[i].y + "), ");
-				}
 				tablePnl.displayWinningCombination(protocol.getWinPath(),
 						Color.YELLOW);
+				statusBarPanel.setStatus(StatusMessages.WIN.toString(),
+						getPlayerColor(protocol.getPlayer()));
+				break;
+			}else if(connect4.isGameDraw()){
+				statusBarPanel.setStatus(StatusMessages.DRAW_GAME.toString(),
+						getPlayerColor(protocol.getPlayer()));
 				break;
 			}
 			do {
@@ -432,7 +483,6 @@ public class GamePlay extends Thread {
 					try {
 						tablePnl.wait();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -441,15 +491,18 @@ public class GamePlay extends Thread {
 			} while (!(moveMan(currentPlayer, direction, position)));
 			fillSquare(connect4.getLastMove(currentPlayer), direction,
 					currentPlayer);
-			connect4.printBoard();
 			if ((isPlayerWin = connect4.isPlayerWin(currentPlayer))) {
-				System.out.println("WIN!!!");
-				connect4.printWinPaths();
 				tablePnl.displayWinningCombination(connect4.getWinPath(),
 						Color.YELLOW);
+				statusBarPanel.setStatus(StatusMessages.WIN.toString(),
+						getPlayerColor(currentPlayer));
+			}else if(connect4.isGameDraw()){
+				statusBarPanel.setStatus(StatusMessages.DRAW_GAME.toString(),
+						getPlayerColor(currentPlayer));
 			}
 			sendData();
 		}
+		mp.closeConnection();
 	}
 
 	/**
@@ -464,6 +517,17 @@ public class GamePlay extends Thread {
 	}
 
 	/**
+	 * Sets the status bar panel reference for manipulating tha status bar
+	 * messages.
+	 * 
+	 * @param statusBarPanel
+	 *            Status bar panel reference to set.
+	 */
+	public void setStatusBarPanel(StatusBarPanel statusBarPanel) {
+		this.statusBarPanel = statusBarPanel;
+	}
+
+	/**
 	 * Sets the size of the board.
 	 * 
 	 * @param size
@@ -473,6 +537,10 @@ public class GamePlay extends Thread {
 		connect4.setBoardSize(size);
 	}
 
+	/**
+	 * Gets the size of the board.
+	 * @return The board size.
+	 */
 	public int getBoardSize() {
 		return connect4.getBoardSize();
 	}
@@ -483,22 +551,5 @@ public class GamePlay extends Thread {
 	@Override
 	public void run() {
 		loopGame();
-	}
-
-	/**
-	 * Starts game loop.
-	 * 
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// configure new game.
-		GamePlay game = new GamePlay(GameMode.TCP_CONNECTION, 7);
-		// choose which player to be.
-		game.choosePlayer();
-		if (args.length > 0) {
-			game.setServerAddress(args[0]);
-		}
-		// game loop.
-		game.start();
 	}
 }

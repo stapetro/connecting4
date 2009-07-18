@@ -1,8 +1,11 @@
 package connect4.controller.menu;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import connect4.view.StatusBarPanel;
 import connect4.view.menu.ConfigurationPanel;
 import connect4.view.menu.ContainerPanel;
 import connect4.view.menu.MenuContentPanel;
@@ -71,9 +74,10 @@ public class MenuController {
 	 * @param component
 	 *            Component to be added to the whole container panel.
 	 */
-	public void addContentToContainer(JComponent component) {
+	public void addContentToContainer(JComponent component, StatusBarPanel statusBarPanel) {
 		containerPnl.removeAll();
-		containerPnl.add(component);
+		containerPnl.add(component, BorderLayout.CENTER);
+		containerPnl.add(statusBarPanel, BorderLayout.SOUTH);
 		component.requestFocusInWindow();
 		containerPnl.updateUI();
 	}

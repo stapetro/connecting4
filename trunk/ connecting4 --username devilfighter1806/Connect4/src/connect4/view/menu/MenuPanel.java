@@ -2,14 +2,11 @@ package connect4.view.menu;
 
 import java.awt.Color;
 import java.awt.GridLayout;
-import java.awt.Menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import connect4.controller.GameMode;
@@ -17,6 +14,7 @@ import connect4.controller.GamePlay;
 import connect4.controller.menu.MenuController;
 import connect4.model.GamePlayers;
 import connect4.model.GameProperties;
+import connect4.view.StatusBarPanel;
 import connect4.view.TablePanel;
 import connect4.view.multiplayer.HostGamePanel;
 import connect4.view.multiplayer.JoinGamePanel;
@@ -50,6 +48,7 @@ public class MenuPanel extends JPanel {
 	private ConfigurationPanel configurationPnl;
 	private HostGamePanel hostGamePnl;
 	private JoinGamePanel joinGamePnl;
+	private StatusBarPanel statusBarPanel;
 	private int boardSize;
 
 	/**
@@ -84,6 +83,7 @@ public class MenuPanel extends JPanel {
 	 * Initializes game menu panel and its components.
 	 */
 	private void initialize() {
+		statusBarPanel = new StatusBarPanel();
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.setRows(5);
 		this.setLayout(gridLayout);
@@ -95,7 +95,7 @@ public class MenuPanel extends JPanel {
 	 * 
 	 * @author Stanislav Petrov
 	 */
-	public class ItemActionListener implements ActionListener {
+	private class ItemActionListener implements ActionListener {
 
 		/**
 		 * Stores the menu item for which action should be performed.
@@ -111,7 +111,7 @@ public class MenuPanel extends JPanel {
 		 */
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			addAcitonToItem(item);
+			addActionToItem(item);
 		}
 
 		/**
@@ -120,7 +120,7 @@ public class MenuPanel extends JPanel {
 		 * @param item
 		 *            The specified menu item.
 		 */
-		private void addAcitonToItem(MenuItem item) {
+		private void addActionToItem(MenuItem item) {
 			switch (item) {
 			case SINGLE_PLAYER:
 				startGame(GameMode.SINGLE_PLAYER, item);
@@ -136,7 +136,7 @@ public class MenuPanel extends JPanel {
 				selectItem();
 				break;
 			}
-			case CREDITS:
+			case HELP:
 				break;
 			case CONFIGURE_GAME: {
 				gamePlay.setGameMode(GameMode.SINGLE_PLAYER);
@@ -155,7 +155,7 @@ public class MenuPanel extends JPanel {
 				break;
 			}
 			case HOST: {
-				startGame(GameMode.TCP_CONNECTION, item);
+				startGame(GameMode.INTERNET, item);
 				break;
 			}
 			case JOIN_GAME: {
@@ -165,7 +165,7 @@ public class MenuPanel extends JPanel {
 				break;
 			}
 			case JOIN: {
-				startGame(GameMode.TCP_CONNECTION, item);
+				startGame(GameMode.INTERNET, item);
 				break;
 			}
 			case EXIT:
@@ -220,8 +220,9 @@ public class MenuPanel extends JPanel {
 			tablePnl = new TablePanel(500, 500, gamePlay.getBoardSize(),
 					Color.BLUE);
 			gamePlay.setTablePanel(tablePnl);
+			gamePlay.setStatusBarPanel(statusBarPanel);
 			gamePlay.start();
-			menuController.addContentToContainer(tablePnl);
+			menuController.addContentToContainer(tablePnl, statusBarPanel);
 		}
 
 		/**
@@ -239,6 +240,15 @@ public class MenuPanel extends JPanel {
 				add(currMenuItems[i]);
 			}
 			updateUI();
+		}
+
+		/**
+		 * Gets name of the game.
+		 * 
+		 * @return The game name.
+		 */
+		public String getGameName() {
+			return gamePlay.getGameName();
 		}
 	}
 

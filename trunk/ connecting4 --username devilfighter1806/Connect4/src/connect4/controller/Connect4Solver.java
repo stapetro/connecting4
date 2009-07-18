@@ -587,6 +587,15 @@ public class Connect4Solver {
 			botPlayer = (currentPlayer == BLACK) ? WHITE : BLACK;
 		}
 	}
+	
+	/**
+	 * Gets the bot player value.
+	 * 
+	 * @return The bot player value.
+	 */
+	public char getBot() {
+		return this.botPlayer;
+	}
 
 	/**
 	 * Moves next man.
@@ -636,12 +645,26 @@ public class Connect4Solver {
 
 	/**
 	 * Checks whether game is a draw,i.e. if none of both players wins and there
-	 * is no empty men in the playing board.
+	 * is no valid move in the playing board.
 	 * 
 	 * @return True - if game is over with no winner, false - otherwise.
 	 */
 	public boolean isGameDraw() {
-		return (movesCounter == boardSize * boardSize - 1) ? true : false;
+		Point lastMove;
+		Point oldLastMove;
+		Direction[] directions = Direction.values();
+		oldLastMove = new Point(getLastMove(currentPlayer));
+		for (int i = 0; i < Direction.DIRECTIONS_MOVES_NUMBER / 2; i++) {
+			for (int j = 0; j < boardSize; j++) {
+				if (moveMan(currentPlayer, directions[i], j)) {
+					lastMove = getLastMove(currentPlayer);
+					board[lastMove.x][lastMove.y] = EMPTY;
+					this.lastMove[getMovesIndex(currentPlayer)] = oldLastMove;
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -651,13 +674,11 @@ public class Connect4Solver {
 	 */
 	public boolean nextBotMove() {
 		Point move = chooseBotMove();
-		System.out.println("Bot pos: " + move);
 		board[move.x][move.y] = botPlayer;
 		lastMove[getMovesIndex(botPlayer)].x = move.x;
 		lastMove[getMovesIndex(botPlayer)].y = move.y;
 		numberMoves[getMovesIndex(botPlayer)]++;
 		if (isPlayerWin(botPlayer)) {
-			System.out.println("BOT WIN!");
 			return true;
 		}
 		return false;
@@ -739,14 +760,5 @@ public class Connect4Solver {
 			else
 				System.out.print(", ");
 		}
-	}
-
-	/**
-	 * Gets the bot player value.
-	 * 
-	 * @return The bot player value.
-	 */
-	public char getBot() {
-		return this.botPlayer;
 	}
 }

@@ -45,6 +45,10 @@ public class MultiPlayer {
 	 * Stores reference to output stream for client/srever communication.
 	 */
 	private ObjectOutputStream output;
+	/**
+	 * Stores the IP address of the server of the game, i.e. the player who
+	 * hosts the game.
+	 */
 	private String serverAddress;
 	/**
 	 * Stores reference to the communication protocol between client-server.
@@ -60,8 +64,6 @@ public class MultiPlayer {
 	public MultiPlayer(boolean isServer, String serverAddr) {
 		this.isServer = isServer;
 		this.serverAddress = serverAddr;
-//		protocol = new MultiPlayerProtocol();
-//		runMultiPlayer();
 		initMultiPlayer();
 	}
 
@@ -87,10 +89,8 @@ public class MultiPlayer {
 			serverSocket = new ServerSocket(PORT, 1);
 			clientSocket = serverSocket.accept();
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -102,10 +102,8 @@ public class MultiPlayer {
 		try {
 			clientSocket = new Socket(serverAddress, PORT);
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -120,7 +118,6 @@ public class MultiPlayer {
 			input = new ObjectInputStream(clientSocket.getInputStream());
 			System.out.println("Streams gotten");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -137,63 +134,25 @@ public class MultiPlayer {
 				serverSocket.close();
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Runs multi player.
+	 * Gets the input stream from server(host)/client(join).
+	 * 
+	 * @return Associated input stream with the given server/client socket.
 	 */
-	private void runMultiPlayer() {
-		initMultiPlayer();
-		while (true) {
-			if (!isServer) {
-				try {
-					output.writeObject(protocol);
-					output.flush();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				break;
-			} else {
-				try {
-					Object obj = null;
-					do {
-						try {
-							obj = input.readObject();
-						} catch (ClassNotFoundException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} while (obj == null);
-					MultiPlayerProtocol p = (MultiPlayerProtocol) obj;
-					break;
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		closeConnection();
-	}
-	
 	public ObjectInputStream getInputStream() {
 		return input;
 	}
 
+	/**
+	 * Gets the output stream from server(host)/client(join).
+	 * 
+	 * @return Associated output stream with the given server/client socket.
+	 */
 	public ObjectOutputStream getOutputStream() {
 		return output;
-	}
-
-	public static void main(String[] args) {
-		if (args[0].equals("1")) {
-			System.out.println("Server");
-			MultiPlayer server = new MultiPlayer(true, "");
-		} else {
-			System.out.println("Client");
-			MultiPlayer client = new MultiPlayer(false, "127.0.0.1");
-		}
 	}
 }
