@@ -15,7 +15,7 @@ public class StatusBarPanel extends JPanel {
     /**
      * Represents status information.
      */
-    private JLabel statusModifyLbl;
+    private JLabel statusLabel;
 
     /**
      * General purpose constructor. Sets some of the
@@ -32,9 +32,9 @@ public class StatusBarPanel extends JPanel {
      */
     private void initComponents() {
         setPreferredSize(new Dimension(150, 30));
-        statusModifyLbl = new JLabel();
-        statusModifyLbl.setFont(new java.awt.Font("Verdana", 1, 14));
-        add(statusModifyLbl);
+        statusLabel = new JLabel();
+        statusLabel.setFont(new java.awt.Font("Verdana", 1, 14));
+        add(statusLabel);
     }
 
     /**
@@ -42,7 +42,7 @@ public class StatusBarPanel extends JPanel {
      * @param text Status text to be set.
      */
     public void setStatus(String text,Color color) {
-        statusModifyLbl.setText(text);
-        statusModifyLbl.setForeground(color);
+        statusLabel.setText(text);
+        statusLabel.setForeground(color);
     }
 }
