@@ -5,7 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import connect4.view.StatusBarPanel;
+import connect4.view.gameplay.StatusBarPanel;
 import connect4.view.menu.ConfigurationPanel;
 import connect4.view.menu.ContainerPanel;
 import connect4.view.menu.MenuContentPanel;

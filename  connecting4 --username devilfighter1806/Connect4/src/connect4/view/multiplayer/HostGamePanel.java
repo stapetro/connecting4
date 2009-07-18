@@ -11,9 +11,9 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 
 import connect4.controller.GamePlay;
-import connect4.model.GamePlayers;
-import connect4.model.GameProperties;
-import connect4.view.TablePanel;
+import connect4.enums.GamePlayers;
+import connect4.enums.GameProperties;
+import connect4.view.gameplay.TablePanel;
 import connect4.view.menu.MenuContentPanel;
 
 /**

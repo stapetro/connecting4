@@ -1,6 +1,7 @@
-package connect4.view;
+package connect4.view.gameplay;
 
-import connect4.controller.Direction;
+import connect4.enums.Direction;
+
 import java.awt.Graphics;
 import java.awt.Point;
 

@@ -10,12 +10,14 @@ import java.util.Scanner;
 
 import javax.swing.KeyStroke;
 
-import connect4.model.GamePlayers;
-import connect4.model.StatusMessages;
-import connect4.view.MyAbstractAction;
-import connect4.view.MyKeyStrokes;
-import connect4.view.StatusBarPanel;
-import connect4.view.TablePanel;
+import connect4.enums.Direction;
+import connect4.enums.GameMode;
+import connect4.enums.GamePlayers;
+import connect4.enums.KeyStrokes;
+import connect4.enums.StatusMessages;
+import connect4.view.gameplay.KeyAbstractAction;
+import connect4.view.gameplay.StatusBarPanel;
+import connect4.view.gameplay.TablePanel;
 
 /**
  * Controls game play.
@@ -39,7 +41,7 @@ public class GamePlay extends Thread {
 	/**
 	 * Stores connect4 solving algorithms.
 	 */
-	private Connect4Solver connect4;
+	private GameSolver connect4;
 	/**
 	 * Stores multi player reference.
 	 */
@@ -83,7 +85,7 @@ public class GamePlay extends Thread {
 	/**
 	 * Stores key handler references, prevents them from garbage collection.
 	 */
-	private HashSet<MyAbstractAction> abstractActions;
+	private HashSet<KeyAbstractAction> abstractActions;
 
 	/**
 	 * Constructs the game play.
@@ -97,8 +99,8 @@ public class GamePlay extends Thread {
 		isPlayerWin = false;
 		stdin = new Scanner(System.in);
 		this.gameMode = gameMode;
-		connect4 = new Connect4Solver(gameMode, boardSize);
-		this.abstractActions = new HashSet<MyAbstractAction>();
+		connect4 = new GameSolver(gameMode, boardSize);
+		this.abstractActions = new HashSet<KeyAbstractAction>();
 	}
 
 	/**
@@ -109,10 +111,10 @@ public class GamePlay extends Thread {
 	 * @return Current player's turn.
 	 */
 	private char switchPlayer() {
-		if (currentPlayer == Connect4Solver.BLACK) {
-			currentPlayer = Connect4Solver.WHITE;
+		if (currentPlayer == GameSolver.BLACK) {
+			currentPlayer = GameSolver.WHITE;
 		} else {
-			currentPlayer = Connect4Solver.BLACK;
+			currentPlayer = GameSolver.BLACK;
 		}
 		return currentPlayer;
 	}
@@ -300,10 +302,10 @@ public class GamePlay extends Thread {
 	 */
 	private void addKeyHandler() {
 
-		MyAbstractAction temp;
+		KeyAbstractAction temp;
 		String doKey;
-		for (MyKeyStrokes key : MyKeyStrokes.values()) {
-			temp = new MyAbstractAction(key, tablePnl);
+		for (KeyStrokes key : KeyStrokes.values()) {
+			temp = new KeyAbstractAction(key, tablePnl);
 			abstractActions.add(temp);
 
 			doKey = "do" + key.toString();
@@ -346,7 +348,7 @@ public class GamePlay extends Thread {
 	public void playSinglePlayer() {
 		Direction direction;
 		int position;
-		if (currentPlayer == Connect4Solver.BLACK) {
+		if (currentPlayer == GameSolver.BLACK) {
 			connect4.nextBotMove();
 			fillSquare(connect4.getLastMove(connect4.getBot()), tablePnl
 					.acquireDirection(), connect4.getBot());

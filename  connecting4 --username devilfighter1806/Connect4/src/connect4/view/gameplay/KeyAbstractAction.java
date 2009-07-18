@@ -1,10 +1,11 @@
-package connect4.view;
+package connect4.view.gameplay;
 
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import connect4.controller.Direction;
+import connect4.enums.Direction;
+import connect4.enums.KeyStrokes;
 
 /**
  * This class can create objects that can handle KeyBindings events and can be
@@ -16,12 +17,12 @@ import connect4.controller.Direction;
  * @author Leni
  * 
  */
-public class MyAbstractAction extends AbstractAction {
+public class KeyAbstractAction extends AbstractAction {
 
-	private MyKeyStrokes keyStroke;
+	private KeyStrokes keyStroke;
 	private TablePanel panel;
 
-	public MyAbstractAction(MyKeyStrokes key, TablePanel panel) {
+	public KeyAbstractAction(KeyStrokes key, TablePanel panel) {
 		this.keyStroke = key;
 		this.panel = panel;
 	}

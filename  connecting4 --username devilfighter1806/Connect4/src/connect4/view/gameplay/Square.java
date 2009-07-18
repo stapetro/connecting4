@@ -1,4 +1,4 @@
-package connect4.view;
+package connect4.view.gameplay;
 
 import java.awt.Graphics;
 import java.awt.Point;

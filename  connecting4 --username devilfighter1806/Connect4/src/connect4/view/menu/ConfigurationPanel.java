@@ -11,8 +11,8 @@ import java.awt.Font;
 import javax.swing.JComboBox;
 
 import connect4.controller.GamePlay;
-import connect4.model.GamePlayers;
-import connect4.model.GameProperties;
+import connect4.enums.GamePlayers;
+import connect4.enums.GameProperties;
 
 import java.awt.Color;
 import java.awt.Dimension;

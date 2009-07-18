@@ -9,13 +9,14 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import connect4.controller.GameMode;
 import connect4.controller.GamePlay;
 import connect4.controller.menu.MenuController;
-import connect4.model.GamePlayers;
-import connect4.model.GameProperties;
-import connect4.view.StatusBarPanel;
-import connect4.view.TablePanel;
+import connect4.enums.GameMode;
+import connect4.enums.GamePlayers;
+import connect4.enums.GameProperties;
+import connect4.enums.MenuItem;
+import connect4.view.gameplay.StatusBarPanel;
+import connect4.view.gameplay.TablePanel;
 import connect4.view.multiplayer.HostGamePanel;
 import connect4.view.multiplayer.JoinGamePanel;
 
