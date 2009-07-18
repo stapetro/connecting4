@@ -53,6 +53,10 @@ public class GamePlay extends Thread {
 	 */
 	private boolean isPlayerWin;
 	/**
+	 * Stores whether game is draw.
+	 */
+	private boolean isGameDraw;
+	/**
 	 * Stores reference to input stream for client/server communication.
 	 */
 	private ObjectInputStream input;
@@ -151,6 +155,7 @@ public class GamePlay extends Thread {
 		MultiPlayerProtocol prot1 = new MultiPlayerProtocol(currentPlayer, p.x,
 				p.y);
 		prot1.setPlayerWin(isPlayerWin);
+		prot1.setGameDraw(isGameDraw);
 		prot1.setWinPath(connect4.getWinPath());
 		prot1.setDirection(tablePnl.acquireDirection());
 		try {
@@ -181,6 +186,7 @@ public class GamePlay extends Thread {
 		}
 		protocol = (MultiPlayerProtocol) obj;
 		isPlayerWin = protocol.isPlayerWin();
+		isGameDraw = protocol.isGameDraw();
 		connect4.setSquare(protocol.getPlayer(), protocol.getRow(), protocol
 				.getCol());
 		fillSquare(new Point(protocol.getRow(), protocol.getCol()), protocol
@@ -461,7 +467,7 @@ public class GamePlay extends Thread {
 					.acquireDirection(), currentPlayer);
 			sendData();
 		}
-		while (!isPlayerWin) {
+		while (!isPlayerWin && !isGameDraw) {
 			statusBarPanel.setStatus(StatusMessages.NOT_YOUR_TURN.toString(),
 					getPlayerColor(currentPlayer));
 			player = receiveData();
@@ -473,7 +479,7 @@ public class GamePlay extends Thread {
 				statusBarPanel.setStatus(StatusMessages.WIN.toString(),
 						getPlayerColor(protocol.getPlayer()));
 				break;
-			}else if(connect4.isGameDraw()){
+			}else if(isGameDraw){
 				statusBarPanel.setStatus(StatusMessages.DRAW_GAME.toString(),
 						getPlayerColor(protocol.getPlayer()));
 				break;
@@ -499,6 +505,7 @@ public class GamePlay extends Thread {
 			}else if(connect4.isGameDraw()){
 				statusBarPanel.setStatus(StatusMessages.DRAW_GAME.toString(),
 						getPlayerColor(currentPlayer));
+				isGameDraw = true;
 			}
 			sendData();
 		}
