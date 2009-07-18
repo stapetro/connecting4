@@ -40,7 +40,7 @@ public class MainWindow extends JFrame {
 	private void initialize() {
 		this.setSize(500, 500);
 		this.setContentPane(getJContentPane());
-		this.setTitle("Test game menu");
+		this.setTitle("NextGen Connect4");
 		this.setResizable(false);
 		menuContent = new MenuContentPanel();
 		menuContent.setPreferredSize(new Dimension(350, 500));
