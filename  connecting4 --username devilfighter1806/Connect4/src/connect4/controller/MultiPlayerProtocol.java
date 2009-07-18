@@ -36,6 +36,11 @@ public class MultiPlayerProtocol implements Serializable {
 	 */
 	private boolean isPlayerWin;
 	/**
+	 * Stores whether game is draw.
+	 */
+	private boolean isGameDraw;
+
+	/**
 	 * Stores wining path with 4 squares' coordinates.
 	 */
 	private Point[] winPath;
@@ -106,6 +111,14 @@ public class MultiPlayerProtocol implements Serializable {
 
 	public boolean isPlayerWin() {
 		return this.isPlayerWin;
+	}
+	
+	public boolean isGameDraw() {
+		return isGameDraw;
+	}
+
+	public void setGameDraw(boolean isGameDraw) {
+		this.isGameDraw = isGameDraw;
 	}
 
 	public Point[] getWinPath() {
