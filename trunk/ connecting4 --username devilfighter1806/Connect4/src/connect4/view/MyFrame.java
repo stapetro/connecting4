@@ -22,15 +22,15 @@ public class MyFrame extends JFrame {
 		statusBar = new StatusBarPanel();
 		hei = h;
 		wid = w;
-		drawPanel = new TablePanel(wid, hei, 13, Color.RED);
+		drawPanel = new TablePanel(wid, hei, 17, Color.RED);
 		init();
 	}
 
 	private void init() {
-		setLayout(new BorderLayout());
+//		setLayout(new BorderLayout());
 		add(drawPanel, BorderLayout.CENTER);
-		drawPanel.setLayout(new BorderLayout());
-		drawPanel.add(statusBar, BorderLayout.SOUTH);
+//		drawPanel.setLayout(new BorderLayout());
+		add(statusBar, BorderLayout.SOUTH);
 
 		setTitle("NextGen Connect4");
 		setSize(hei, wid);
@@ -38,7 +38,7 @@ public class MyFrame extends JFrame {
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
+
 		statusBar.setStatus("bla", Color.cyan);
 	}
 
