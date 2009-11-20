@@ -9,7 +9,7 @@ import java.awt.Point;
  * it's position defined by a POINT. The MAN has a color and boolean variable
  * visible that should be checked when displayed.
  * 
- * @author Leni
+ * @author Leni Kirilov
  * 
  */
 public class DrawMan {

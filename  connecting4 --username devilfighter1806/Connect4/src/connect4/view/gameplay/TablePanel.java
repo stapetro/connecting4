@@ -25,7 +25,7 @@ import connect4.enums.Direction;
  * The major JPanel which offers rich interface for handling the array of men,
  * grid and arrow to be displayed.
  * 
- * @author Leni
+ * @author Leni Kirilov
  * 
  */
 
