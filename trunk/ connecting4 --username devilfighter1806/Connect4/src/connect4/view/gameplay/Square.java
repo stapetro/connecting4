@@ -8,7 +8,7 @@ import java.awt.Point;
  * Square that represents the frame of the game board.
  * The limits where the player can reach.
  * 
- * @author Leni
+ * @author Leni Kirilov
  * 
  */
 public class Square {

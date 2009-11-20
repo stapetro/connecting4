@@ -14,7 +14,7 @@ import connect4.enums.KeyStrokes;
  * Here it's used to catch keyPressings of the keys defined in MyKeyStrokes.
  * 
  * 
- * @author Leni
+ * @author Leni Kirilov
  * 
  */
 public class KeyAbstractAction extends AbstractAction {

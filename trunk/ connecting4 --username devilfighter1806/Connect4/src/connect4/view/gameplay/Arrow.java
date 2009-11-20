@@ -9,7 +9,7 @@ import java.awt.Point;
  * An 2D-arrow pointing at all directions Has states - defining the pointing
  * direction.
  * 
- * @author Leni
+ * @author Leni Kirilov
  * 
  */
 public class Arrow {

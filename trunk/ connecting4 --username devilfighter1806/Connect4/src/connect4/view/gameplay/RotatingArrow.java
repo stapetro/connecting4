@@ -2,7 +2,7 @@ package connect4.view.gameplay;
 
 /**
  * An arrow that can rotate
- * @author Leni
+ * @author Leni Kirilov
  *
  */
 
@@ -11,7 +11,4 @@ public class RotatingArrow extends Arrow {
 	public RotatingArrow(int size, int x, int y) {
 		super(size, x, y);
 	}
-
-	
-	
 }

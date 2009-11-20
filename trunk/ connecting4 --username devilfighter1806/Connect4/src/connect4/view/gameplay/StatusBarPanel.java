@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 /**
  * Status information.
- * @author 
+ * @author Leni Kirilov
  */
 public class StatusBarPanel extends JPanel {
 
