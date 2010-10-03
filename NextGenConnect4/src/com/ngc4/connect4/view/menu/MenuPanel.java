@@ -146,7 +146,7 @@ public class MenuPanel extends JPanel {
 			case CONFIGURE_GAME: {
 				gamePlay.setGameMode(GameMode.SINGLE_PLAYER);
 				configurationPnl = new ConfigurationPanel(gamePlay);
-				menuController.setContent(configurationPnl);
+				menuController.setContentPanel(configurationPnl);
 				break;
 			}
 			case INTERNET: {
@@ -156,7 +156,7 @@ public class MenuPanel extends JPanel {
 			case HOST_GAME: {
 				selectItem();
 				hostGamePnl = new HostGamePanel(gamePlay);
-				menuController.setContent(hostGamePnl);
+				menuController.setContentPanel(hostGamePnl);
 				break;
 			}
 			case HOST: {
@@ -166,7 +166,7 @@ public class MenuPanel extends JPanel {
 			case JOIN_GAME: {
 				selectItem();
 				joinGamePnl = new JoinGamePanel(gamePlay);
-				menuController.setContent(joinGamePnl);
+				menuController.setContentPanel(joinGamePnl);
 				break;
 			}
 			case JOIN: {
@@ -216,7 +216,7 @@ public class MenuPanel extends JPanel {
 				break;
 			}
 			case JOIN: {
-				gamePlay.setServerAddress(joinGamePnl.getIPAddress());
+				gamePlay.setServerIPAddress(joinGamePnl.getIPAddress());
 				gamePlay.setPlayer(GamePlayers.values()[joinGamePnl
 						.getPlayerComboBoxSelectedIndex()].getPlayer());
 				break;

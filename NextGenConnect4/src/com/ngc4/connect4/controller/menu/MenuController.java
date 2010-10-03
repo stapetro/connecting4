@@ -6,7 +6,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import com.ngc4.connect4.view.gameplay.StatusBarPanel;
-import com.ngc4.connect4.view.menu.ConfigurationPanel;
+//import com.ngc4.connect4.view.menu.ConfigurationPanel;
 import com.ngc4.connect4.view.menu.ContainerPanel;
 import com.ngc4.connect4.view.menu.MenuContentPanel;
 
@@ -16,22 +16,12 @@ import com.ngc4.connect4.view.menu.MenuContentPanel;
  * menu item.
  * 
  * @author Stanislav Petrov
- * 
  */
 public class MenuController {
 
-	/**
-	 * Stores reference to the menu content panel.
-	 */
 	private MenuContentPanel menuContentPnl;
-	/**
-	 * Stores reference to the container panel.
-	 */
 	private ContainerPanel containerPnl;
-	/**
-	 * Stores reference to the configuraiton panel.
-	 */
-	private ConfigurationPanel configurationPnl;
+//	private ConfigurationPanel configurationPnl;
 
 	/**
 	 * Initializes all data necessary for the controller.
@@ -47,18 +37,12 @@ public class MenuController {
 		this.containerPnl = containerPnl;
 	}
 
-	/**
-	 * Sets content to the content panel.
-	 * 
-	 * @param contentPnl
-	 *            Panel with content to be added to the content panel.
-	 */
-	public void setContent(JPanel contentPnl) {
-		if (contentPnl instanceof ConfigurationPanel) {
-			this.configurationPnl = (ConfigurationPanel) contentPnl;
-		}
+	public void setContentPanel(JPanel contentPаnеl) {
+//		if (contentPаnеl instanceof ConfigurationPanel) {
+//			this.configurationPnl = (ConfigurationPanel) contentPаnеl;
+//		}
 		menuContentPnl.removeAll();
-		menuContentPnl.add(contentPnl);
+		menuContentPnl.add(contentPаnеl);
 		menuContentPnl.updateUI();
 	}
 
@@ -70,7 +54,7 @@ public class MenuController {
 	}
 
 	/**
-	 * Adds contetn to the container panel, remove the menu.
+	 * Adds content to the container panel, remove the menu.
 	 * 
 	 * @param component
 	 *            Component to be added to the whole container panel.
