@@ -59,7 +59,6 @@ public enum Direction {
 
 	/**
 	 * General purpose constructor.
-	 * 
 	 * @param num
 	 *            Sequential number to be set.
 	 * @param position
